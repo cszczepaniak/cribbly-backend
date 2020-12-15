@@ -1,6 +1,6 @@
 using System;
 
-namespace cribbly_backend
+namespace CribblyBackend
 {
     public class WeatherForecast
     {

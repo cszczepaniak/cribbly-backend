@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace cribbly_backend.Controllers
+namespace CribblyBackend.Controllers
 {
     [ApiController]
     [Route("[controller]")]

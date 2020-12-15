@@ -10,7 +10,7 @@ namespace CribblyBackend.Models
         //Specify if game is a PlayIn game or Bracket game
         public string Type { get; set; }
         public Team Winner { get; set; }
-        public Team Loser { get; set; }
         public int ScoreDifference { get; set; }
+        public int GameRound { get; set; }
     }
 }

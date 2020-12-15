@@ -12,7 +12,6 @@ namespace CribblyBackend.Controllers
         public Tournament Get()
         {
             Tournament tournament = new Tournament();
-            tournament.placeholder = "this will soon be a ton of JSON";
             return tournament;
         }
     }

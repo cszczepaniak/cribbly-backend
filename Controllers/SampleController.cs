@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+namespace CribblyBackend.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class SampleController : ControllerBase
+    {
+        [HttpGet]
+        public async Task<ActionResult<string>> Get()
+        {
+            return await Task.Run(() =>
+            {
+                return Ok("Hello, cribbly!");
+            });
+        }
+    }
+}

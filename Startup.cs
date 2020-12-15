@@ -40,7 +40,7 @@ namespace CribblyBackend
                 });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
+                options.AddPolicy("read:sample", policy => policy.Requirements.Add(new HasScopeRequirement("read:sample", domain)));
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();

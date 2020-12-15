@@ -29,6 +29,7 @@ namespace CribblyBackend.Controllers
         [Authorize("read:sample")]
         public async Task<IActionResult> GetPrivateScoped()
         {
+            // TODO not sure how to test this yet, can't seem to get an access token with a scope defined.
             return await Task.Run(() =>
             {
                 return Ok("Hello, private cribbly, this is a scoped, protected endpoint!");

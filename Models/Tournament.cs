@@ -10,7 +10,6 @@ namespace CribblyBackend.Models
         public List<Player> Players { get; set; }
         public List<Team> Teams { get; set; }
         public List<IGame> Games { get; set; }
-        #nullable enable
-        public Team? Champion { get; set; }
+        public Team Champion { get; set; }
     }
 }

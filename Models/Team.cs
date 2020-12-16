@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using CribblyBackend.Interfaces;
 
 namespace CribblyBackend.Models
 {
@@ -10,7 +8,8 @@ namespace CribblyBackend.Models
         public string Division { get; set; }
         public List<Player> Players { get; set; }
         public List<int> GameScores { get; set; }
-        public List<IGame> Games { get; set; }
+        public List<PlayInGame> PlayInGames { get; set; }
+        public List<BracketGame> BracketGames { get; set; }
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int TotalScore { get; set; }

@@ -17,8 +17,7 @@ namespace CribblyBackend.Controllers
         }
 
         [HttpGet]
-        [Route("{email}")]
-        public async Task<IActionResult> GetByEmail(string email)
+        public async Task<IActionResult> GetByEmail([FromQuery] string email)
         {
             var p = await playerService.GetByEmail(email);
             if (p != null)

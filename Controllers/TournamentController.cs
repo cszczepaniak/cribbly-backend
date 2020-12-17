@@ -13,12 +13,11 @@ namespace CribblyBackend.Controllers
         {
             //Generate mock data and return to client
             Tournament tournament = new Tournament();
-            tournament.PlayInGames = new List<PlayInGame>();
-            tournament.BracketGames = new List<BracketGame>();
-                PlayInGame testgame1 = new PlayInGame();
-                BracketGame testgame2 = new BracketGame();
-                tournament.PlayInGames.Add(testgame1);
-                tournament.BracketGames.Add(testgame2);
+            tournament.Games = new List<Game>();
+                Game testgame1 = new Game();
+                Game testgame2 = new Game();
+                tournament.Games.Add(testgame1);
+                tournament.Games.Add(testgame2);
             tournament.Teams = new List<Team>();
                 tournament.Teams.Add(new Team());
             tournament.Players = new List<Player>();

@@ -7,8 +7,7 @@ namespace CribblyBackend.Models
         public int Year { get; set; }
         public List<Player> Players { get; set; }
         public List<Team> Teams { get; set; }
-        public List<PlayInGame> PlayInGames { get; set; }
-        public List<BracketGame> BracketGames { get; set; }
+        public List<Game> Games { get; set; }
         public Team Champion { get; set; }
     }
 }

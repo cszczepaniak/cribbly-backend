@@ -1,5 +1,7 @@
+using System.Data;
 using System.Security.Claims;
 using CribblyBackend.Auth;
+using CribblyBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
 
 namespace CribblyBackend
 {
@@ -44,10 +47,12 @@ namespace CribblyBackend
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
+            services.AddTransient<IPlayerService, PlayerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IPlayerService playerService)
         {
             if (env.IsDevelopment())
             {
@@ -61,6 +66,8 @@ namespace CribblyBackend
             {
                 endpoints.MapControllers();
             });
+
+            playerService.Initialize();
         }
     }
 }

@@ -49,10 +49,11 @@ namespace CribblyBackend
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
             services.AddTransient<IPlayerService, PlayerService>();
+            services.AddTransient<ITeamService, TeamService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IPlayerService playerService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IPlayerService playerService, ITeamService teamService)
         {
             if (env.IsDevelopment())
             {
@@ -68,6 +69,7 @@ namespace CribblyBackend
             });
 
             playerService.Initialize();
+            teamService.Initialize();
         }
     }
 }

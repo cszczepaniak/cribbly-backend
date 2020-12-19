@@ -8,7 +8,6 @@ namespace CribblyBackend.Services
 {
     public interface IPlayerService
     {
-        void Initialize();
         Task<Player> GetByEmail(string email);
         void Update(Player player);
         Task Create(Player player);
@@ -43,19 +42,6 @@ namespace CribblyBackend.Services
                 new { Email = email }
             );
             return players.FirstOrDefault();
-        }
-
-        public void Initialize()
-        {
-            connection.Execute(
-                @"CREATE TABLE IF NOT EXISTS Players (
-                    Id INT AUTO_INCREMENT PRIMARY KEY,
-                    Email VARCHAR(100) NOT NULL,
-                    Name VARCHAR(100) NOT NULL,
-                    Team INT,
-                    Role VARCHAR(100)
-                );"
-            );
         }
 
         public void Update(Player player)

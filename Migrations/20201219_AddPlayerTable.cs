@@ -20,7 +20,7 @@ namespace CribblyBackend.Migrations
                 .WithColumn("Email").AsString(255).NotNullable().Unique()
                 .WithColumn("Name").AsString(255)
                 .WithColumn("Role").AsString(255)
-                .WithColumn("TeamId").AsInt32().ForeignKey("Teams", "Id");
+                .WithColumn("TeamId").AsInt32().ForeignKey("Teams", "Id").Nullable();
         }
     }
 }

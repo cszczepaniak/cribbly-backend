@@ -10,7 +10,7 @@ namespace CribblyBackend.Services
     public interface ITeamService
     {
         void Initialize();
-        Task<Team> GetById(int id);
+        Task<Team> GetById(int Id);
         void Update(Team Team);
         Task Create(Team Team);
         void Delete(Team Team);
@@ -23,7 +23,7 @@ namespace CribblyBackend.Services
             this.connection = connection;
         }
 
-        public async Task Create(Team Team)
+        public async Task Create(Team team)
         {
             await connection.ExecuteAsync(
                 @"INSERT INTO Teams(
@@ -57,34 +57,34 @@ namespace CribblyBackend.Services
                     @InTournament
                 )",
                 new { 
-                    Id = Team.Id, 
-                    Name = Team.Name, 
-                    Division = Team.Division, 
-                    Players = JsonConvert.SerializeObject(Team.Players), 
-                    GameScores = JsonConvert.SerializeObject(Team.GameScores), 
-                    PlayInGames = JsonConvert.SerializeObject(Team.PlayInGames), 
-                    BracketGames = JsonConvert.SerializeObject(Team.BracketGames), 
-                    Wins = Team.Wins, 
-                    Losses = Team.Losses, 
-                    TotalScore = Team.TotalScore, 
-                    Ranking = Team.Ranking, 
-                    Seed = Team.Seed, 
-                    InTournament = Team.InTournament
+                    Id = team.Id, 
+                    Name = team.Name, 
+                    Division = team.Division, 
+                    Players = JsonConvert.SerializeObject(team.Players), 
+                    GameScores = JsonConvert.SerializeObject(team.GameScores), 
+                    PlayInGames = JsonConvert.SerializeObject(team.PlayInGames), 
+                    BracketGames = JsonConvert.SerializeObject(team.BracketGames), 
+                    Wins = team.Wins, 
+                    Losses = team.Losses, 
+                    TotalScore = team.TotalScore, 
+                    Ranking = team.Ranking, 
+                    Seed = team.Seed, 
+                    InTournament = team.InTournament
                 }
             );
         }
-        public void Delete(Team Team)
+        public void Delete(Team team)
         {
             throw new System.NotImplementedException();
         }
 
         public async Task<Team> GetById(int id)
         {
-            var Teams = await connection.QueryAsync<Team>(
+            var teams = await connection.QueryAsync<Team>(
                 @"SELECT * FROM Teams WHERE Id = @Id",
                 new { Id = id }
             );
-            return Teams.FirstOrDefault();
+            return teams.FirstOrDefault();
         }
         /*This table uses the JSON data type. 
         More info: https://dev.mysql.com/doc/refman/5.7/en/json.html
@@ -112,7 +112,7 @@ namespace CribblyBackend.Services
             );
         }
 
-        public void Update(Team Team)
+        public void Update(Team team)
         {
             throw new System.NotImplementedException();
         }

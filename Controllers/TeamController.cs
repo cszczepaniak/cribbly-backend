@@ -10,19 +10,19 @@ namespace CribblyBackend.Controllers
     [Route("[controller]")]
     public class TeamController : ControllerBase
     {
-        private readonly ITeamService TeamService;
+        private readonly ITeamService teamService;
         public TeamController(ITeamService TeamService)
         {
-            this.TeamService = TeamService;
+            this.teamService = TeamService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById([FromQuery] int id)
         {
-            var p = await TeamService.GetById(id);
+            var p = await teamService.GetById(id);
             if (p != null)
             {
-                return Ok(await TeamService.GetById(id));
+                return Ok(p);
             }
             return NotFound();
         }
@@ -32,7 +32,7 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                await TeamService.Create(Team);
+                await teamService.Create(Team);
             }
             catch (Exception e)
             {

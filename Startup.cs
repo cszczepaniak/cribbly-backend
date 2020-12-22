@@ -1,7 +1,9 @@
 using System.Data;
+using System.Reflection;
 using System.Security.Claims;
 using CribblyBackend.Auth;
 using CribblyBackend.Services;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +47,11 @@ namespace CribblyBackend
             {
                 options.AddPolicy("read:sample", policy => policy.Requirements.Add(new HasScopeRequirement("read:sample", domain)));
             });
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(c => c
+                    .AddMySql5()
+                    .WithGlobalConnectionString(Configuration["MySQL:ConnectionString"])
+                    .ScanIn(Assembly.GetExecutingAssembly()).For.All());
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
@@ -52,7 +59,7 @@ namespace CribblyBackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IPlayerService playerService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
             if (env.IsDevelopment())
             {
@@ -66,8 +73,7 @@ namespace CribblyBackend
             {
                 endpoints.MapControllers();
             });
-
-            playerService.Initialize();
+            migrationRunner.MigrateUp();
         }
     }
 }

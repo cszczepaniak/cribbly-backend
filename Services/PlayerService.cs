@@ -38,7 +38,7 @@ namespace CribblyBackend.Services
         public async Task<Player> GetByEmail(string email)
         {
             var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p WHERE Email = @Email INNER JOIN Teams t ON p.TeamId = t.Id",
+                @"SELECT * FROM Players p INNER JOIN Teams t ON p.TeamId = t.Id WHERE Email = @Email",
                 (p, t) =>
                 {
                     p.Team = t;

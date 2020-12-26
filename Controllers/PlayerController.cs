@@ -23,7 +23,7 @@ namespace CribblyBackend.Controllers
             var emailHeaderExists = Request.Headers.TryGetValue("Email", out StringValues email);
             if (!emailHeaderExists)
             {
-                return BadRequest("`Email` header not found");
+                return BadRequest("`Email` header must be provided");
             }
             var p = await playerService.GetByEmail(email);
             if (p != null)

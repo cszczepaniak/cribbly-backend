@@ -39,12 +39,8 @@ namespace CribblyBackend.Services
         public async Task<Player> GetById(int id)
         {
             var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p INNER JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
-                (p, t) =>
-                {
-                    p.Team = t;
-                    return p;
-                },
+                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
+                MapTeamToPlayer,
                 new { Id = id },
                 splitOn: "TeamId"
             );
@@ -53,12 +49,8 @@ namespace CribblyBackend.Services
         public async Task<Player> GetByEmail(string email)
         {
             var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p INNER JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
-                (p, t) =>
-                {
-                    p.Team = t;
-                    return p;
-                },
+                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
+                MapTeamToPlayer,
                 new { Email = email },
                 splitOn: "TeamId"
             );
@@ -68,6 +60,17 @@ namespace CribblyBackend.Services
         public void Update(Player player)
         {
             throw new System.NotImplementedException();
+        }
+
+        private Player MapTeamToPlayer(Player player, Team team)
+        {
+            if (team.Id == 0)
+            {
+                player.Team = null;
+                return player;
+            }
+            player.Team = team;
+            return player;
         }
     }
 }

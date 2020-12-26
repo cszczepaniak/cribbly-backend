@@ -17,6 +17,17 @@ namespace CribblyBackend.Controllers
             this.playerService = playerService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var p = await playerService.GetById(id);
+            if (p != null)
+            {
+                return Ok(p);
+            }
+            return NotFound();
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetByEmail()
         {
@@ -28,7 +39,7 @@ namespace CribblyBackend.Controllers
             var p = await playerService.GetByEmail(email);
             if (p != null)
             {
-                return Ok(await playerService.GetByEmail(email));
+                return Ok(p);
             }
             return NotFound();
         }

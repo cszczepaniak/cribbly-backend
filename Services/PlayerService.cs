@@ -9,6 +9,7 @@ namespace CribblyBackend.Services
     public interface IPlayerService
     {
         Task<Player> GetByEmail(string email);
+        Task<Player> GetById(int id);
         void Update(Player player);
         Task Create(Player player);
         void Delete(Player player);
@@ -35,6 +36,20 @@ namespace CribblyBackend.Services
             throw new System.NotImplementedException();
         }
 
+        public async Task<Player> GetById(int id)
+        {
+            var players = await connection.QueryAsync<Player, Team, Player>(
+                @"SELECT * FROM Players p INNER JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
+                (p, t) =>
+                {
+                    p.Team = t;
+                    return p;
+                },
+                new { Id = id },
+                splitOn: "TeamId"
+            );
+            return players.FirstOrDefault();
+        }
         public async Task<Player> GetByEmail(string email)
         {
             var players = await connection.QueryAsync<Player, Team, Player>(

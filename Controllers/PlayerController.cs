@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using CribblyBackend.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace CribblyBackend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService playerService;
@@ -17,8 +18,13 @@ namespace CribblyBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetByEmail([FromQuery] string email)
+        public async Task<IActionResult> GetByEmail()
         {
+            var emailHeaderExists = Request.Headers.TryGetValue("Email", out StringValues email);
+            if (!emailHeaderExists)
+            {
+                return BadRequest("`Email` header not found");
+            }
             var p = await playerService.GetByEmail(email);
             if (p != null)
             {

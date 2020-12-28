@@ -25,53 +25,12 @@ namespace CribblyBackend.Services
         public async Task Create(Team team)
         {
             await connection.ExecuteAsync(
-                @"INSERT INTO Teams(
-                    Id, 
-                    Name, 
-                    Division, 
-                    Players, 
-                    GameScores, 
-                    PlayInGames, 
-                    BracketGames, 
-                    Wins, 
-                    Losses, 
-                    TotalScore, 
-                    Ranking, 
-                    Seed, 
-                    InTournament
-                )
-                VALUES (
-                    @Id, 
-                    @Name, 
-                    @Division, 
-                    @Players, 
-                    @GameScores, 
-                    @PlayInGames, 
-                    @BracketGames, 
-                    @Wins, 
-                    @Losses, 
-                    @TotalScore, 
-                    @Ranking, 
-                    @Seed, 
-                    @InTournament
-                )",
-                new { 
-                    Id = team.Id, 
-                    Name = team.Name, 
-                    Division = team.Division, 
-                    Players = JsonConvert.SerializeObject(team.Players), 
-                    GameScores = JsonConvert.SerializeObject(team.GameScores), 
-                    PlayInGames = JsonConvert.SerializeObject(team.PlayInGames), 
-                    BracketGames = JsonConvert.SerializeObject(team.BracketGames), 
-                    Wins = team.Wins, 
-                    Losses = team.Losses, 
-                    TotalScore = team.TotalScore, 
-                    Ranking = team.Ranking, 
-                    Seed = team.Seed, 
-                    InTournament = team.InTournament
-                }
+                @"INSERT INTO Teams(Name) VALUES (@Name)", 
+                new { Name = team.Name }
             );
+            await PairPlayers(team);
         }
+
         public void Delete(Team team)
         {
             throw new System.NotImplementedException();
@@ -88,6 +47,20 @@ namespace CribblyBackend.Services
         public void Update(Team team)
         {
             throw new System.NotImplementedException();
+        }
+        public async Task PairPlayers(Team team)
+        {
+            var playerQuery = await connection.QueryAsync<int>(
+                @"SELECT Id FROM Teams WHERE Name = @Name", 
+                new { Name = team.Name }
+            );
+            int teamId = playerQuery.FirstOrDefault();
+            foreach (Player player in team.Players)
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Players SET TeamId = @TeamId WHERE Id = @PlayerId", 
+                    new {TeamId = teamId, PlayerId = player.Id});
+            }
         }
     }
 }

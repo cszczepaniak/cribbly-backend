@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CribblyBackend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TeamController : ControllerBase
     {
         private readonly ITeamService teamService;

@@ -9,7 +9,6 @@ namespace CribblyBackend.Services
 {
     public interface ITeamService
     {
-        void Initialize();
         Task<Team> GetById(int Id);
         void Update(Team Team);
         Task Create(Team Team);
@@ -86,32 +85,6 @@ namespace CribblyBackend.Services
             );
             return teams.FirstOrDefault();
         }
-        /*This table uses the JSON data type. 
-        More info: https://dev.mysql.com/doc/refman/5.7/en/json.html
-        
-        Also note that InTournament will be represented as 0 or 1 in the DB
-        */
-        public void Initialize()
-        {
-            connection.Execute(
-                @"CREATE TABLE IF NOT EXISTS Teams (
-                    Id INT AUTO_INCREMENT PRIMARY KEY,
-                    Name VARCHAR(100) NOT NULL,
-                    Division VARCHAR(50),
-                    Players JSON,
-                    GameScores JSON,
-                    PlayInGames JSON, 
-                    BracketGames JSON,
-                    Wins INT, 
-                    Losses INT, 
-                    TotalScore INT, 
-                    Ranking INT, 
-                    Seed INT, 
-                    InTournament BOOLEAN
-                );"
-            );
-        }
-
         public void Update(Team team)
         {
             throw new System.NotImplementedException();

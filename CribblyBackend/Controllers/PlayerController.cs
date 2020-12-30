@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CribblyBackend.Models;
 using CribblyBackend.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -68,7 +69,7 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
             }
             return Ok();
         }

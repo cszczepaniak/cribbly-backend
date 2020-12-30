@@ -32,7 +32,7 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task GetById_ShouldReturnNotFoundWhenPlayerIsNull()
+        public async Task GetById_ShouldReturnNotFound_WhenPlayerIsNull()
         {
             mockPlayerService.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync((Player)null);
             var result = await playerController.GetById(1);
@@ -56,7 +56,7 @@ namespace CribblyBackend.UnitTests
             Assert.Equal(expPlayer.Name, actPlayer.Name);
         }
         [Fact]
-        public async Task GetByEmail_ShouldReturnBadRequestWhenHeaderIsOmitted()
+        public async Task GetByEmail_ShouldReturnBadRequest_WhenHeaderIsOmitted()
         {
             var headers = new HeaderDictionary();
             headers.Append("NotTheRightHeader", "");
@@ -67,7 +67,7 @@ namespace CribblyBackend.UnitTests
             Assert.Equal("`Email` header must be provided", msg);
         }
         [Fact]
-        public async Task GetByEmail_ShouldReturnNotFoundWhenPlayerIsNull()
+        public async Task GetByEmail_ShouldReturnNotFound_WhenPlayerIsNull()
         {
             mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync((Player)null);
 
@@ -102,7 +102,7 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Create_ShouldReturnOkIfNoError()
+        public async Task Create_ShouldReturnOk_IfNoError()
         {
             mockPlayerService.Setup(x => x.Create(It.IsAny<Player>()));
 
@@ -112,7 +112,7 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Create_ShouldReturn500IfError()
+        public async Task Create_ShouldReturn500_IfError()
         {
             mockPlayerService.Setup(x => x.Create(It.IsAny<Player>())).Throws(new Exception());
 

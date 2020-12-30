@@ -30,6 +30,10 @@ namespace CribblyBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Team Team)
         {
+            if (Team.Players.Count < 2)
+            {
+                return BadRequest("A Team must not have less than two players");
+            }
             try
             {
                 await teamService.Create(Team);

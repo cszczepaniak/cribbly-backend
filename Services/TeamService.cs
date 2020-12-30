@@ -48,7 +48,8 @@ namespace CribblyBackend.Services
             var teamRecords = await connection.QueryAsync<Team, Player, Team>(
                 @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id", 
                 MapPlayerToTeams, 
-                new {Id = id}
+                new {Id = id},
+                splitOn: "Id"
             );
             //Add the Player List<Player> property from every record into a blank list
             foreach (Team team in teamRecords)
@@ -76,11 +77,9 @@ namespace CribblyBackend.Services
 
             if (!lookup.TryGetValue(team.Id, out teamToReturn)) 
             {
-                lookup.Add(team.Id, teamToReturn = team);
-            }
-            if (teamToReturn.Players == null) 
-            {
+                teamToReturn = team;
                 teamToReturn.Players = new List<Player>();
+                lookup.Add(team.Id, team);
             }
 
             teamToReturn.Players.Add(player);

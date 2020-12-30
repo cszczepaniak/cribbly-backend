@@ -15,7 +15,11 @@ namespace CribblyBackend.Controllers
         {
             this.teamService = teamService;
         }
-
+        /// <summary>
+        /// GetById fetches the specified team.
+        /// </summary>
+        /// <param name="id">The id of the team to get</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetById([FromQuery] int id)
         {
@@ -26,7 +30,11 @@ namespace CribblyBackend.Controllers
             }
             return NotFound();
         }
-
+        /// <summary>
+        /// Create makes a new Team object, and updates Player records accordingly in the database.
+        /// </summary>
+        /// <param name="Team">The Team object that will be created</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Team team)
         {

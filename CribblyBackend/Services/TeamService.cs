@@ -32,7 +32,7 @@ namespace CribblyBackend.Services
             {
                 await connection.ExecuteAsync(
                     @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId", 
-                    new {PlayerId = player.Id});
+                    new { PlayerId = player.Id });
             }
         }
 
@@ -48,7 +48,7 @@ namespace CribblyBackend.Services
             var teamRecords = await connection.QueryAsync<Team, Player, Team>(
                 @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id", 
                 MapPlayerToTeams, 
-                new {Id = id},
+                new { Id = id },
                 splitOn: "Id"
             );
             //Add the Player List<Player> property from every record into a blank list
@@ -62,7 +62,6 @@ namespace CribblyBackend.Services
             */
             Team teamToReturn = teamRecords.FirstOrDefault();
             teamToReturn.Players = playerList;
-
             return teamToReturn;
         }
         public void Update(Team team)
@@ -74,14 +73,12 @@ namespace CribblyBackend.Services
         {
             var lookup = new Dictionary<int, Team>();
             Team teamToReturn;
-
             if (!lookup.TryGetValue(team.Id, out teamToReturn)) 
             {
                 teamToReturn = team;
                 teamToReturn.Players = new List<Player>();
                 lookup.Add(team.Id, team);
             }
-
             teamToReturn.Players.Add(player);
             return teamToReturn;
         }

@@ -15,6 +15,7 @@ namespace CribblyBackend.Controllers
         {
             this.teamService = teamService;
         }
+
         /// <summary>
         /// GetById fetches the specified team.
         /// </summary>
@@ -30,6 +31,7 @@ namespace CribblyBackend.Controllers
             }
             return NotFound();
         }
+        
         /// <summary>
         /// Create makes a new Team object, and updates Player records accordingly in the database.
         /// </summary>

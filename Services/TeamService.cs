@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Models;
 using Dapper;
-using Newtonsoft.Json;
 
 namespace CribblyBackend.Services
 {
@@ -44,27 +43,48 @@ namespace CribblyBackend.Services
 
         public async Task<Team> GetById(int id)
         {
-            var teams = await connection.QueryAsync<Team, List<Player>, Team>(
-                @"SELECT * FROM Teams t LEFT JOIN Players p ON t.Id = p.TeamId WHERE t.Id = @Id",
-                MapPlayersToTeams,
-                new { Id = id }, 
-                splitOn: "Id"
+            List<Player> playerList = new List<Player>();
+            //This returns two Team records, with each player showing up as the sole element of each Teams' Player List<Player>
+            var teamRecords = await connection.QueryAsync<Team, Player, Team>(
+                @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id", 
+                MapPlayerToTeams, 
+                new {Id = id}
             );
-            return teams.FirstOrDefault();
+            //Add the Player List<Player> property from every record into a blank list
+            foreach (Team team in teamRecords)
+            {
+                playerList.AddRange(team.Players);
+            }
+            /*
+                We only need one copy of the Team object properties, so get the FirstOrDefault 
+                and overwrite the Player property with what we grabbed before
+            */
+            Team teamToReturn = teamRecords.FirstOrDefault();
+            teamToReturn.Players = playerList;
+
+            return teamToReturn;
         }
         public void Update(Team team)
         {
             throw new System.NotImplementedException();
         }
 
-        private Team MapPlayersToTeams(Team team, List<Player> players)
+        private Team MapPlayerToTeams(Team team, Player player)
         {
-            team.Players = players;
-            foreach(Player player in players)
+            var lookup = new Dictionary<int, Team>();
+            Team teamToReturn;
+
+            if (!lookup.TryGetValue(team.Id, out teamToReturn)) 
             {
-                team.Players.Add(player);
+                lookup.Add(team.Id, teamToReturn = team);
             }
-            return team;
+            if (teamToReturn.Players == null) 
+            {
+                teamToReturn.Players = new List<Player>();
+            }
+
+            teamToReturn.Players.Add(player);
+            return teamToReturn;
         }
     }
 }

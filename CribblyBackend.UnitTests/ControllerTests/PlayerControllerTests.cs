@@ -65,5 +65,39 @@ namespace CribblyBackend.UnitTests
             var msg = Assert.IsType<string>(typedResult.Value);
             Assert.Equal("`Email` header must be provided", msg);
         }
+        [Fact]
+        public async Task GetByEmail_ShouldReturnNotFoundWhenPlayerIsNull()
+        {
+            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync((Player)null);
+
+            var headers = new HeaderDictionary();
+            headers.Append("Email", "something@something.com");
+            mockHttpRequest.Setup(x => x.Headers).Returns(headers);
+
+            var result = await playerController.GetByEmail();
+            Assert.IsType<NotFoundResult>(result);
+        }
+        [Fact]
+        public async Task GetByEmail_ShouldReturnPlayerAndOkStatus()
+        {
+            var expPlayer = new Player()
+            {
+                Id = 1,
+                Email = "test@test.com",
+                Name = "test player",
+            };
+            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync(expPlayer);
+
+            var headers = new HeaderDictionary();
+            headers.Append("Email", expPlayer.Email);
+            mockHttpRequest.Setup(x => x.Headers).Returns(headers);
+
+            var result = await playerController.GetByEmail();
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actPlayer = Assert.IsType<Player>(okResult.Value);
+            Assert.Equal(expPlayer.Id, actPlayer.Id);
+            Assert.Equal(expPlayer.Email, actPlayer.Email);
+            Assert.Equal(expPlayer.Name, actPlayer.Name);
+        }
     }
 }

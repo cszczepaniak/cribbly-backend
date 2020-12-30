@@ -11,9 +11,9 @@ namespace CribblyBackend.Controllers
     public class TeamController : ControllerBase
     {
         private readonly ITeamService teamService;
-        public TeamController(ITeamService TeamService)
+        public TeamController(ITeamService teamService)
         {
-            this.teamService = TeamService;
+            this.teamService = teamService;
         }
 
         [HttpGet]
@@ -28,15 +28,15 @@ namespace CribblyBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Team Team)
+        public async Task<IActionResult> Create([FromBody] Team team)
         {
-            if (Team.Players.Count < 2)
+            if (team.Players.Count < 2)
             {
                 return BadRequest("A Team must not have less than two players");
             }
             try
             {
-                await teamService.Create(Team);
+                await teamService.Create(team);
             }
             catch (Exception e)
             {

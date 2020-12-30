@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Models;
@@ -98,6 +99,26 @@ namespace CribblyBackend.UnitTests
             Assert.Equal(expPlayer.Id, actPlayer.Id);
             Assert.Equal(expPlayer.Email, actPlayer.Email);
             Assert.Equal(expPlayer.Name, actPlayer.Name);
+        }
+
+        [Fact]
+        public async Task Create_ShouldReturnOkIfNoError()
+        {
+            mockPlayerService.Setup(x => x.Create(It.IsAny<Player>()));
+
+            var result = await playerController.Create(new Player());
+
+            Assert.IsType<OkResult>(result);
+        }
+        [Fact]
+        public async Task Create_ShouldReturn500IfError()
+        {
+            mockPlayerService.Setup(x => x.Create(It.IsAny<Player>())).Throws(new Exception());
+
+            var result = await playerController.Create(new Player());
+
+            var typedResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
         }
     }
 }

@@ -110,6 +110,7 @@ namespace CribblyBackend.UnitTests
 
             Assert.IsType<OkResult>(result);
         }
+
         [Fact]
         public async Task Create_ShouldReturn500IfError()
         {

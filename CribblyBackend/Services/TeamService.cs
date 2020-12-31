@@ -26,7 +26,7 @@ namespace CribblyBackend.Services
         {
             if(team.Players.Count < 2)
             {
-                throw new System.NullReferenceException("A Team must not have less than two players");
+                throw new System.Exception("A Team must not have less than two players");
             }
             await connection.ExecuteAsync(
                 @"INSERT INTO Teams(Name) VALUES (@Name)", 
@@ -67,20 +67,6 @@ namespace CribblyBackend.Services
         public void Update(Team team)
         {
             throw new System.NotImplementedException();
-        }
-
-        private Team MapPlayerToTeams(Team team, Player player)
-        {
-            var lookup = new Dictionary<int, Team>();
-            Team teamToReturn;
-            if (!lookup.TryGetValue(team.Id, out teamToReturn)) 
-            {
-                teamToReturn = team;
-                teamToReturn.Players = new List<Player>();
-                lookup.Add(team.Id, team);
-            }
-            teamToReturn.Players.Add(player);
-            return teamToReturn;
         }
     }
 }

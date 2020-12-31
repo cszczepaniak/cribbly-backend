@@ -21,8 +21,8 @@ namespace CribblyBackend.Controllers
         /// </summary>
         /// <param name="id">The id of the team to get</param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetById([FromQuery] int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
             var p = await teamService.GetById(id);
             if (p != null)
@@ -40,10 +40,6 @@ namespace CribblyBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Team team)
         {
-            if (team.Players.Count < 2 || team == null)
-            {
-                return BadRequest("A Team must not have less than two players");
-            }
             try
             {
                 await teamService.Create(team);

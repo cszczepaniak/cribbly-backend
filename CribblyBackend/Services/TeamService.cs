@@ -24,6 +24,10 @@ namespace CribblyBackend.Services
 
         public async Task Create(Team team)
         {
+            if(team.Players.Count < 2)
+            {
+                throw new System.NullReferenceException("A Team must not have less than two players");
+            }
             await connection.ExecuteAsync(
                 @"INSERT INTO Teams(Name) VALUES (@Name)", 
                 new { Name = team.Name }
@@ -43,26 +47,22 @@ namespace CribblyBackend.Services
 
         public async Task<Team> GetById(int id)
         {
-            List<Player> playerList = new List<Player>();
-            //This returns two Team records, with each player showing up as the sole element of each Teams' Player List<Player>
-            var teamRecords = await connection.QueryAsync<Team, Player, Team>(
+            var players = new Dictionary<int, Player>();
+            var team = (await connection.QueryAsync<Team, Player, Team>(
                 @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id", 
-                MapPlayerToTeams, 
+                (t, p) =>
+                {
+                    if (!players.TryGetValue(p.Id, out Player _))
+                    {
+                        players.Add(p.Id, p);
+                    }
+                    return t;
+                }, 
                 new { Id = id },
                 splitOn: "Id"
-            );
-            //Add the Player List<Player> property from every record into a blank list
-            foreach (Team team in teamRecords)
-            {
-                playerList.AddRange(team.Players);
-            }
-            /*
-                We only need one copy of the Team object properties, so get the FirstOrDefault 
-                and overwrite the Player property with what we grabbed before
-            */
-            Team teamToReturn = teamRecords.FirstOrDefault();
-            teamToReturn.Players = playerList;
-            return teamToReturn;
+                )).FirstOrDefault();
+            team.Players = players.Values.ToList();
+            return team;
         }
         public void Update(Team team)
         {

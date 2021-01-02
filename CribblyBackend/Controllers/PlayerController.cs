@@ -24,7 +24,7 @@ namespace CribblyBackend.Controllers
         /// </summary>
         /// <param name="request">The request</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<LoginResponse> Login([FromBody] LoginRequest request)
         {
             var exists = await playerService.Exists(request.Email);

@@ -104,7 +104,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturnOk_IfNoError()
         {
-            mockPlayerService.Setup(x => x.Create(It.IsAny<Player>()));
+            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>()));
 
             var result = await playerController.Create(new Player());
 
@@ -114,7 +114,8 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturn500_IfError()
         {
-            mockPlayerService.Setup(x => x.Create(It.IsAny<Player>())).Throws(new Exception());
+            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
 
             var result = await playerController.Create(new Player());
 

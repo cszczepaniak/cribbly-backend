@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Models;
+using CribblyBackend.Models.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -121,6 +122,59 @@ namespace CribblyBackend.UnitTests
 
             var typedResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task Login_ShouldReturn400_IfNoEmail()
+        {
+            var result = await playerController.Login(new LoginRequest());
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Login_ShouldGetPlayerAndReturn200_IfPlayerExists()
+        {
+            var req = new LoginRequest()
+            {
+                Email = "abc@abc.com"
+            };
+            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(true);
+            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync(new Player() { });
+
+            var result = Assert.IsType<OkObjectResult>(await playerController.Login(req));
+            var response = Assert.IsType<LoginResponse>(result.Value);
+            Assert.True(response.IsReturning);
+            mockPlayerService.Verify(x => x.GetByEmail(req.Email));
+        }
+
+        [Fact]
+        public async Task Login_ShouldReturn400_IfPlayerDoesNotExistAndNoName()
+        {
+            var req = new LoginRequest()
+            {
+                Email = "abc@abc.com"
+            };
+            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(false);
+            mockPlayerService.Setup(x => x.GetByEmail(req.Email)).ReturnsAsync(new Player() { });
+
+            var result = Assert.IsType<BadRequestObjectResult>(await playerController.Login(req));
+        }
+
+        [Fact]
+        public async Task Login_ShouldCreatePlayerAndReturn200_IfPlayerDoesNotExist()
+        {
+            var req = new LoginRequest()
+            {
+                Email = "abc@abc.com",
+                Name = "name"
+            };
+            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(false);
+            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new Player() { });
+
+            var result = Assert.IsType<OkObjectResult>(await playerController.Login(req));
+            var response = Assert.IsType<LoginResponse>(result.Value);
+            Assert.False(response.IsReturning);
+            mockPlayerService.Verify(x => x.Create(req.Email, req.Name), Times.Once());
         }
     }
 }

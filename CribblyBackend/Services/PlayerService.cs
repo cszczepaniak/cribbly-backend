@@ -35,8 +35,7 @@ namespace CribblyBackend.Services
         public async Task<Player> Create(string email, string name)
         {
             await connection.ExecuteAsync(
-                @"INSERT INTO Players (Email, Name, TeamId, Role)
-                VALUES (@Email, @Name, @TeamId, @Role)",
+                @"INSERT INTO Players (Email, Name) VALUES (@Email, @Name)",
                 new { Email = email, Name = name }
             );
             return await GetByEmail(email);

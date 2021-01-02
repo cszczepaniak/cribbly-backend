@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Models;
+using CribblyBackend.Models.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,33 @@ namespace CribblyBackend.Controllers
         public PlayerController(IPlayerService playerService)
         {
             this.playerService = playerService;
+        }
+
+        /// <summary>
+        /// Handles the login. Creates or gets the player specified in the request.
+        /// </summary>
+        /// <param name="request">The request</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<LoginResponse> Login([FromBody] LoginRequest request)
+        {
+            var exists = await playerService.Exists(request.Email);
+            Player player;
+            if (exists)
+            {
+                player = await playerService.GetByEmail(request.Email);
+                return new LoginResponse()
+                {
+                    Player = player,
+                    IsReturning = true,
+                };
+            }
+            player = await playerService.Create(request.Email, request.Name);
+            return new LoginResponse()
+            {
+                Player = player,
+                IsReturning = false,
+            };
         }
 
         /// <summary>
@@ -65,7 +93,7 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                await playerService.Create(player);
+                await playerService.Create(player.Email, player.Name);
             }
             catch (Exception e)
             {

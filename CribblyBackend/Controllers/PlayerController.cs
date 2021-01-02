@@ -25,25 +25,33 @@ namespace CribblyBackend.Controllers
         /// <param name="request">The request</param>
         /// <returns></returns>
         [HttpPost("login")]
-        public async Task<LoginResponse> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            if (request.Email == null)
+            {
+                return BadRequest("Must provide an email");
+            }
             var exists = await playerService.Exists(request.Email);
             Player player;
             if (exists)
             {
                 player = await playerService.GetByEmail(request.Email);
-                return new LoginResponse()
+                return Ok(new LoginResponse()
                 {
                     Player = player,
                     IsReturning = true,
-                };
+                });
+            }
+            if (request.Name == null)
+            {
+                return BadRequest("Must provide a name if the specified player doesn't exist");
             }
             player = await playerService.Create(request.Email, request.Name);
-            return new LoginResponse()
+            return Ok(new LoginResponse()
             {
                 Player = player,
                 IsReturning = false,
-            };
+            });
         }
 
         /// <summary>

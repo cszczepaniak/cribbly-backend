@@ -60,8 +60,8 @@ namespace CribblyBackend.Services
         public async Task Create(Game game)
         {
             await connection.ExecuteAsync(
-                @"INSERT INTO Games(GameRound, Type) VALUES (@GameRound, @Type)", 
-                new { GameRound = game.GameRound, Type = game.Type }
+                @"INSERT INTO Games(GameRound) VALUES (@GameRound)", 
+                new { GameRound = game.GameRound }
             );
             foreach (Team team in game.Teams)
             {

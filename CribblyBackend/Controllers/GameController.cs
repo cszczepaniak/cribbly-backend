@@ -10,10 +10,10 @@ namespace CribblyBackend.Controllers
     [Route("api/[controller]")]
     public class GameController : ControllerBase
     {
-        private readonly IGameService GameService;
-        public GameController(IGameService GameService)
+        private readonly IGameService gameService;
+        public GameController(IGameService gameService)
         {
-            this.GameService = GameService;
+            this.gameService = gameService;
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var p = await GameService.GetById(id);
+            var p = await gameService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
@@ -38,11 +38,11 @@ namespace CribblyBackend.Controllers
         /// <param name="Game">The Game object that will be created</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Game Game)
+        public async Task<IActionResult> Create([FromBody] Game game)
         {
             try
             {
-                await GameService.Create(Game);
+                await gameService.Create(game);
             }
             catch (Exception e)
             {

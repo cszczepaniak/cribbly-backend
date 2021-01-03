@@ -2,7 +2,7 @@ using FluentMigrator;
 
 namespace CribblyBackend.Migrations
 {
-    [Migration(20210102072700)]
+    [Migration(20210102072800)]
     public class AddGameTable : Migration
     {
         public override void Down()
@@ -16,7 +16,6 @@ namespace CribblyBackend.Migrations
             Create.Table("Games")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("GameRound").AsInt32().NotNullable()
-                .WithColumn("Type").AsString(255).NotNullable()
                 .WithColumn("ScoreDifference").AsInt32().Nullable()
                 .WithColumn("WinnerId").AsInt32().ForeignKey("Teams", "Id").Nullable();
             Create.Table("Assignments")

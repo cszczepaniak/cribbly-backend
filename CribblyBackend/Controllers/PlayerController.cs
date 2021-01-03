@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Models;
+using CribblyBackend.Models.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,41 @@ namespace CribblyBackend.Controllers
         public PlayerController(IPlayerService playerService)
         {
             this.playerService = playerService;
+        }
+
+        /// <summary>
+        /// Handles the login. Creates or gets the player specified in the request.
+        /// </summary>
+        /// <param name="request">The request</param>
+        /// <returns></returns>
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            if (request.Email == null)
+            {
+                return BadRequest("Must provide an email");
+            }
+            var exists = await playerService.Exists(request.Email);
+            Player player;
+            if (exists)
+            {
+                player = await playerService.GetByEmail(request.Email);
+                return Ok(new LoginResponse()
+                {
+                    Player = player,
+                    IsReturning = true,
+                });
+            }
+            if (request.Name == null)
+            {
+                return BadRequest("Must provide a name if the specified player doesn't exist");
+            }
+            player = await playerService.Create(request.Email, request.Name);
+            return Ok(new LoginResponse()
+            {
+                Player = player,
+                IsReturning = false,
+            });
         }
 
         /// <summary>
@@ -53,25 +89,6 @@ namespace CribblyBackend.Controllers
                 return Ok(p);
             }
             return NotFound();
-        }
-
-        /// <summary>
-        /// Create creates the specified player.
-        /// </summary>
-        /// <param name="player">The player to create</param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Player player)
-        {
-            try
-            {
-                await playerService.Create(player);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
-            }
-            return Ok();
         }
     }
 }

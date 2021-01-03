@@ -9,10 +9,11 @@ namespace CribblyBackend.Services
 {
     public interface IPlayerService
     {
+        Task<bool> Exists(string email);
         Task<Player> GetByEmail(string email);
         Task<Player> GetById(int id);
         void Update(Player player);
-        Task Create(Player player);
+        Task<Player> Create(string email, string name);
         void Delete(Player player);
     }
     public class PlayerService : IPlayerService
@@ -23,13 +24,21 @@ namespace CribblyBackend.Services
             this.connection = connection;
         }
 
-        public async Task Create(Player player)
+        public async Task<bool> Exists(string email)
+        {
+            return (await connection.QueryAsync<bool>(
+                @"SELECT EXISTS(SELECT * FROM Players WHERE Email = @Email LIMIT 1)",
+                new { Email = email }
+            )).First();
+        }
+
+        public async Task<Player> Create(string email, string name)
         {
             await connection.ExecuteAsync(
-                @"INSERT INTO Players (Email, Name, TeamId, Role)
-                VALUES (@Email, @Name, @TeamId, @Role)",
-                new { Email = player.Email, Name = player.Name, TeamId = player.Team?.Id, Role = player.Role }
+                @"INSERT INTO Players (Email, Name) VALUES (@Email, @Name)",
+                new { Email = email, Name = name }
             );
+            return await GetByEmail(email);
         }
 
         public void Delete(Player player)

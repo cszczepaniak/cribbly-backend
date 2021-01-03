@@ -15,6 +15,7 @@ namespace CribblyBackend.Models
             SemiFinal = 7, 
             Final = 8
         } 
+        public int Id { get; set; }
         public string Type { get; set; }
         public List<Team> Teams { get; set; }
         public Team Winner { get; set; }

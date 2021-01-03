@@ -14,11 +14,12 @@ namespace CribblyBackend.Models
             QuarterFinal = 6, 
             SemiFinal = 7, 
             Final = 8
-        }
+        } 
         public string Type { get; set; }
         public List<Team> Teams { get; set; }
         public Team Winner { get; set; }
         public int ScoreDifference { get; set; }
+        public Round GameRound { get; set; }
 
     }
 }

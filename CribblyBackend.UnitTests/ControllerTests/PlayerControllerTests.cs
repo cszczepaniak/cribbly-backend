@@ -103,28 +103,6 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Create_ShouldReturnOk_IfNoError()
-        {
-            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>()));
-
-            var result = await playerController.Create(new Player());
-
-            Assert.IsType<OkResult>(result);
-        }
-
-        [Fact]
-        public async Task Create_ShouldReturn500_IfError()
-        {
-            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>()))
-                .Throws(new Exception());
-
-            var result = await playerController.Create(new Player());
-
-            var typedResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
-        }
-
-        [Fact]
         public async Task Login_ShouldReturn400_IfNoEmail()
         {
             var result = await playerController.Login(new LoginRequest());

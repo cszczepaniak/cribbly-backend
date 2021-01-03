@@ -90,24 +90,5 @@ namespace CribblyBackend.Controllers
             }
             return NotFound();
         }
-
-        /// <summary>
-        /// Create creates the specified player.
-        /// </summary>
-        /// <param name="player">The player to create</param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Player player)
-        {
-            try
-            {
-                await playerService.Create(player.Email, player.Name);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
-            }
-            return Ok();
-        }
     }
 }

@@ -4,7 +4,7 @@ namespace CribblyBackend.Models
 {
     public class Game
     {
-        public enum Rounds 
+        public enum Round 
         { 
             Round1 = 1,
             Round2 = 2, 
@@ -14,12 +14,12 @@ namespace CribblyBackend.Models
             QuarterFinal = 6, 
             SemiFinal = 7, 
             Final = 8
-        }
-        public string Type { get; set; }
+        } 
+        public int Id { get; set; }
         public List<Team> Teams { get; set; }
         public Team Winner { get; set; }
         public int ScoreDifference { get; set; }
-        public int GameRound { get; set; }
+        public Round GameRound { get; set; }
 
     }
 }

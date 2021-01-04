@@ -26,21 +26,15 @@ namespace CribblyBackend.Services
         {
             var players = new Dictionary<int, Player>();
             var teams = new Dictionary<int, Team>();
-            var game = (await connection.QueryAsync<Game, Team, Player, Game>(
+            var game = (await connection.QueryAsync<Game, Team, Game>(
                 @"
-                    SELECT * FROM Assignments a 
-                    LEFT JOIN Games g on a.GameId = g.Id 
-                    LEFT JOIN Teams t on a.TeamId = t.Id 
-                    LEFT JOIN Players p on p.TeamId = t.Id
+                    SELECT * FROM Scores s 
+                    LEFT JOIN Games g on s.GameId = g.Id 
+                    LEFT JOIN Teams t on s.TeamId = t.Id 
                     WHERE GameId = @id
                 ", 
-                (g, t, p) =>
+                (g, t) =>
                 {
-                    if (!players.TryGetValue(p.Id, out Player _))
-                    {
-                        p.Team = new Team(){Id = t.Id};
-                        players.Add(p.Id, p);
-                    }
                     if (!teams.TryGetValue(t.Id, out Team _))
                     {
                         teams.Add(t.Id, t);
@@ -51,10 +45,6 @@ namespace CribblyBackend.Services
                 splitOn: "Id"
                 )).FirstOrDefault();
             game.Teams = teams.Values.ToList();
-            foreach(Team team in game.Teams)
-            {
-                team.Players = players.Values.Where(p => p.Team.Id == team.Id).ToList();
-            }
             return game;
         }
         public async Task Create(Game game)
@@ -66,7 +56,7 @@ namespace CribblyBackend.Services
             foreach (Team team in game.Teams)
             {
                 await connection.ExecuteAsync(
-                    @"INSERT INTO Assignments(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)", 
+                    @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)", 
                     new { TeamId = team.Id });
             }
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace CribblyBackend.Services
     public interface ITournamentService
     {
         Task<Tournament> GetNextTournament();
-        Task<Tournament> Create(Tournament tournament);
+        Task<Tournament> Create(DateTime date);
     }
     public class TournamentService : ITournamentService
     {
@@ -18,11 +19,11 @@ namespace CribblyBackend.Services
         {
             this.connection = connection;
         }
-        public async Task<Tournament> Create(Tournament tournament)
+        public async Task<Tournament> Create(DateTime date)
         {
             await connection.ExecuteAsync(
                 @"INSERT INTO Tournaments (Date) VALUES (@Date)",
-                new { Date = tournament.Date }
+                new { Date = date }
             );
             return (await connection.QueryAsync<Tournament>(
                 @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()"

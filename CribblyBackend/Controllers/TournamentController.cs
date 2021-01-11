@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using CribblyBackend.Services;
 using System.Threading.Tasks;
+using CribblyBackend.Models;
+using CribblyBackend.Models.Network;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CribblyBackend.Controllers
 {
@@ -14,7 +18,7 @@ namespace CribblyBackend.Controllers
             this.tournamentService = tournamentService;
         }
 
-        [HttpGet]
+        [HttpGet("next")]
         public async Task<IActionResult> GetNextTournament()
         {
             var nextTournament = await tournamentService.GetNextTournament();
@@ -23,6 +27,20 @@ namespace CribblyBackend.Controllers
                 return NotFound();
             }
             return Ok(nextTournament);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTournament([FromBody] CreateTournamentRequest request)
+        {
+            try
+            {
+                await tournamentService.Create(request.Date);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: ${e.Message}");
+            }
         }
     }
 }

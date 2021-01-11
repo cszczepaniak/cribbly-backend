@@ -57,6 +57,7 @@ namespace CribblyBackend
             services.AddTransient<IPlayerService, PlayerService>();
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IGameService, GameService>();
+            services.AddTransient<ITournamentService, TournamentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

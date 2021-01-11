@@ -32,13 +32,13 @@ namespace CribblyBackend.Services
 
         public async Task<Tournament> GetNextTournament()
         {
-            return (await connection.QueryAsync<Tournament>(
+            var tournaments = await connection.QueryAsync<Tournament>(
                 @"
                 SELECT * FROM Tournaments
                 ORDER BY Date ASC
-                LIMIT 1
                 "
-            )).FirstOrDefault();
+            );
+            return tournaments.Where(t => t.Date.Date >= DateTime.Today).FirstOrDefault();
         }
     }
 }

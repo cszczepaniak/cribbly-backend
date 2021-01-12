@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
+using Serilog;
 
 namespace CribblyBackend
 {
@@ -68,6 +69,7 @@ namespace CribblyBackend
                 app.UseDeveloperExceptionPage();
             }
             app.UseHttpsRedirection();
+            app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

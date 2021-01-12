@@ -30,6 +30,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
+            Log.Information($"Request for team {id} returned no results");
             return NotFound();
         }
         
@@ -47,14 +48,14 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
-                Log.Warning($"Team creation failure [{team.Name}] [{e.Message}]");
+                Log.Information($"Failed to create team {team.Name} with the following players:");
                 foreach(Player player in team.Players)
                 {
-                    Log.Warning($"--->Player: {player.Name}");
+                    Log.Information($"--->Player: {player.Name}");
                 };
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-            Log.Information($"Team created [{team.Name}]");
+            Log.Debug($"Team {team.Name} has been created");
             return Ok();
         }
     }

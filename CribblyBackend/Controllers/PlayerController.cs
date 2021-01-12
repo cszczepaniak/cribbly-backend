@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Models;
 using CribblyBackend.Models.Network;
 using CribblyBackend.Services;
-using Microsoft.AspNetCore.Http;
+using Serilog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -36,6 +36,7 @@ namespace CribblyBackend.Controllers
             if (exists)
             {
                 player = await playerService.GetByEmail(request.Email);
+                Log.Information($"User login [{player.Name} - {player.Email}]");
                 return Ok(new LoginResponse()
                 {
                     Player = player,
@@ -47,6 +48,7 @@ namespace CribblyBackend.Controllers
                 return BadRequest("Must provide a name if the specified player doesn't exist");
             }
             player = await playerService.Create(request.Email, request.Name);
+            Log.Information($"Created new user [{player.Name} - {player.Email}]");
             return Ok(new LoginResponse()
             {
                 Player = player,
@@ -81,6 +83,7 @@ namespace CribblyBackend.Controllers
             var emailHeaderExists = Request.Headers.TryGetValue("Email", out StringValues email);
             if (!emailHeaderExists)
             {
+                Log.Information("player/GetByID: A request was submitted with no email header");
                 return BadRequest("`Email` header must be provided");
             }
             var p = await playerService.GetByEmail(email);
@@ -88,6 +91,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
+            Log.Information($"Email {email} was requested, but not found in the database");
             return NotFound();
         }
     }

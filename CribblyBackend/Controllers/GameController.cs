@@ -30,7 +30,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
-            Log.Information($"Request for game {id} returned no results");
+            Log.Information("Request for game {id} returned no results", id);
             return NotFound();
         }
         
@@ -44,15 +44,12 @@ namespace CribblyBackend.Controllers
         {
             try
             {
+                Log.Information("Received request to create game: {@game}", game);
                 await gameService.Create(game);
             }
             catch (Exception e)
             {
-                Log.Information($"Failed to create game between the following teams:");
-                foreach(Team team in game.Teams)
-                {
-                    Log.Information($"--->Team: {team.Name}");
-                };
+                Log.Information("Failed to create game: {@game}", game);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
             return Ok();

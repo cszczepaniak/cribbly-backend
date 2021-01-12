@@ -27,9 +27,10 @@ namespace CribblyBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            Log.Debug("Received login request: {@request}", request);
             if (request.Email == null)
             {
-                Log.Information("Login request submitted with no email");
+                Log.Information("Login request submitted with no email: {@request}", request);
                 return BadRequest("Must provide an email");
             }
             var exists = await playerService.Exists(request.Email);
@@ -37,7 +38,7 @@ namespace CribblyBackend.Controllers
             if (exists)
             {
                 player = await playerService.GetByEmail(request.Email);
-                Log.Debug($"User {player.Email} successfully logged in");
+                Log.Debug("User {player.Email} successfully logged in", player.Email);
                 return Ok(new LoginResponse()
                 {
                     Player = player,
@@ -46,11 +47,11 @@ namespace CribblyBackend.Controllers
             }
             if (request.Name == null)
             {
-                Log.Information("Login request submitted with no name");
+                Log.Information("Login request submitted with no name: {@request}", request);
                 return BadRequest("Must provide a name if the specified player doesn't exist");
             }
             player = await playerService.Create(request.Email, request.Name);
-            Log.Debug($"New user created: {player.Email}");
+            Log.Debug("New user created: {@player}", player);
             return Ok(new LoginResponse()
             {
                 Player = player,
@@ -66,12 +67,13 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            Log.Debug("Received request to get user using email {id}", id);
             var p = await playerService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            Log.Information($"Request for user id {id} returned no results");
+            Log.Information("Request for user id {id} returned no results", id);
             return NotFound();
         }
 
@@ -84,6 +86,7 @@ namespace CribblyBackend.Controllers
         public async Task<IActionResult> GetByEmail()
         {
             var emailHeaderExists = Request.Headers.TryGetValue("Email", out StringValues email);
+            Log.Debug("Received request to get user using email {email}", email);
             if (!emailHeaderExists)
             {
                 Log.Information("GetByEmail user request submitted with no email");
@@ -94,7 +97,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
-            Log.Information($"Email {email} was requested, but not found");
+            Log.Information("User {email} was requested, but not found", email);
             return NotFound();
         }
     }

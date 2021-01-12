@@ -25,12 +25,13 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            Log.Debug("Received request to get team using id {id}", id);
             var p = await teamService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            Log.Information($"Request for team {id} returned no results");
+            Log.Information("Request for team {id} returned no results", id);
             return NotFound();
         }
         
@@ -44,18 +45,14 @@ namespace CribblyBackend.Controllers
         {
             try
             {
+                Log.Debug("Received request to create team {@team}", team);
                 await teamService.Create(team);
             }
             catch (Exception e)
             {
-                Log.Information($"Failed to create team {team.Name} with the following players:");
-                foreach(Player player in team.Players)
-                {
-                    Log.Information($"--->Player: {player.Name}");
-                };
+                Log.Information("Failed to create team: {@team}", team);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-            Log.Debug($"Team {team.Name} has been created");
             return Ok();
         }
     }

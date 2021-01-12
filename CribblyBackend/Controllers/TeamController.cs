@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace CribblyBackend.Controllers
 {
@@ -46,8 +47,14 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
+                Log.Warning($"Team creation failure [{team.Name}] [{e.Message}]");
+                foreach(Player player in team.Players)
+                {
+                    Log.Warning($"--->Player: {player.Name}");
+                };
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
+            Log.Information($"Team created [{team.Name}]");
             return Ok();
         }
     }

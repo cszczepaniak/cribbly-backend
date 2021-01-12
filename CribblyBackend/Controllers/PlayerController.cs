@@ -38,7 +38,7 @@ namespace CribblyBackend.Controllers
             if (exists)
             {
                 player = await playerService.GetByEmail(request.Email);
-                Log.Debug("User {player.Email} successfully logged in", player.Email);
+                Log.Debug("User {player} successfully logged in", player.Email);
                 return Ok(new LoginResponse()
                 {
                     Player = player,

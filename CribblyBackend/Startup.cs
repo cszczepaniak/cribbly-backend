@@ -1,7 +1,5 @@
 using System.Data;
 using System.Reflection;
-using System.Security.Claims;
-using CribblyBackend.Auth;
 using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

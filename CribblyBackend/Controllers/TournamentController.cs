@@ -39,7 +39,33 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: ${e.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
+            }
+        }
+
+        [HttpPost("setFlags")]
+        public async Task<IActionResult> ChangeTournamentFlags([FromBody] ChangeTournamentFlagsRequest request)
+        {
+            if (!request.IsActive.HasValue && !request.IsOpenForRegistration.HasValue)
+            {
+                return BadRequest("Must set at least one flag");
+            }
+            try
+            {
+
+                if (request.IsActive.HasValue)
+                {
+                    await tournamentService.ChangeActiveStatus(request.Id, request.IsActive.Value);
+                }
+                if (request.IsOpenForRegistration.HasValue)
+                {
+                    await tournamentService.ChangeOpenForRegistrationStatus(request.Id, request.IsOpenForRegistration.Value);
+                }
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
             }
         }
     }

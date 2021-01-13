@@ -68,8 +68,10 @@ namespace CribblyBackend.Services
 
         private async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
         {
+            // Note: this breaks the rule of using only parameterized query strings; however, the external world
+            // CANNOT control flagName here since flagName is passed by us and never from an external source
             var activeTournaments = (await connection.QueryAsync<Tournament>(
-                @"SELECT * FROM Tournaments WHERE @Name = TRUE",
+                $@"SELECT * FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
                 new { Name = flagName }
             )).ToList();
             var (canSetValue, errMessage) = CanSetFlag(newVal, flagName, activeTournaments);
@@ -77,10 +79,12 @@ namespace CribblyBackend.Services
             {
                 throw new Exception($"{errMessage} [attempted to change {flagName} status of {tournamentId}]");
             }
+            // Note: this breaks the rule of using only parameterized query strings; however, the external world
+            // CANNOT control flagName here since flagName is passed by us and never from an external source
             await connection.ExecuteAsync(
-                @"
+                $@"
                 UPDATE Tournaments 
-                SET @Name = @Value 
+                SET {flagName} = @Value
                 WHERE Id = @Id
                 ",
                 new { Name = flagName, Value = newVal, Id = tournamentId }

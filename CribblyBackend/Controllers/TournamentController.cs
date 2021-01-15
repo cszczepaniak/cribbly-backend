@@ -1,30 +1,72 @@
 using Microsoft.AspNetCore.Mvc;
+using CribblyBackend.Services;
+using System.Threading.Tasks;
 using CribblyBackend.Models;
-using System.Collections.Generic;
+using CribblyBackend.Models.Network;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CribblyBackend.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("api/[controller]")]
     public class TournamentController : ControllerBase
     {
-        [HttpGet]
-        public Tournament Get()
+        private readonly ITournamentService tournamentService;
+        public TournamentController(ITournamentService tournamentService)
         {
-            //Generate mock data and return to client
-            Tournament tournament = new Tournament();
-            tournament.Games = new List<Game>();
-                Game testgame1 = new Game();
-                Game testgame2 = new Game();
-                tournament.Games.Add(testgame1);
-                tournament.Games.Add(testgame2);
-            tournament.Teams = new List<Team>();
-                tournament.Teams.Add(new Team());
-            tournament.Players = new List<Player>();
-                tournament.Players.Add(new Player());
-            tournament.Year = 2021;
+            this.tournamentService = tournamentService;
+        }
 
-            return tournament;
+        [HttpGet("next")]
+        public async Task<IActionResult> GetNextTournament()
+        {
+            var nextTournament = await tournamentService.GetNextTournament();
+            if (nextTournament == null)
+            {
+                return NotFound();
+            }
+            return Ok(nextTournament);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTournament([FromBody] CreateTournamentRequest request)
+        {
+            try
+            {
+                await tournamentService.Create(request.Date);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
+            }
+        }
+
+        [HttpPost("setFlags")]
+        public async Task<IActionResult> ChangeTournamentFlags([FromBody] ChangeTournamentFlagsRequest request)
+        {
+            if (!request.IsActive.HasValue && !request.IsOpenForRegistration.HasValue)
+            {
+                return BadRequest("Must set at least one flag");
+            }
+            try
+            {
+
+                if (request.IsActive.HasValue)
+                {
+                    await tournamentService.ChangeActiveStatus(request.Id, request.IsActive.Value);
+                }
+                if (request.IsOpenForRegistration.HasValue)
+                {
+                    await tournamentService.ChangeOpenForRegistrationStatus(request.Id, request.IsOpenForRegistration.Value);
+                }
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
+            }
         }
     }
 }

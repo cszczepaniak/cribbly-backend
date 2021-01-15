@@ -40,10 +40,10 @@ jobs:
         run: |
           if ${{ github.event_name == 'pull_request' }}
           then
-            echo "title='Test Run for PR #${{steps.PRNUMBER.outputs.pr}} (${{github.run_number}})'" >> $GITHUB_ENV
+            echo "title=Test Run for PR #${{steps.PRNUMBER.outputs.pr}} (${{github.run_number}})" >> $GITHUB_ENV
             echo "file_name=TestReport.${{steps.PRNUMBER.outputs.pr}}.${{github.run_number}}.md" >> $GITHUB_ENV
           else
-            echo "title='Test Run ${{github.run_number}}'" >> $GITHUB_ENV
+            echo "title=Test Run ${{github.run_number}}" >> $GITHUB_ENV
             echo "file_name=TestReport.${{github.run_number}}.md" >> $GITHUB_ENV
           fi
 

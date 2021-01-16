@@ -9,11 +9,6 @@ namespace CribblyBackend.Controllers
     [Route("/[controller]")]
     public class TournamentController : ControllerBase
     {
-        private readonly ILogger logger;
-        public TournamentController(ILogger logger)
-        {
-            this.logger = logger;
-        }
         [HttpGet]
         public Tournament Get()
         {

@@ -7,6 +7,7 @@ using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Serilog;
 using Moq;
 using Xunit;
 
@@ -18,6 +19,8 @@ namespace CribblyBackend.UnitTests
         private readonly Mock<HttpContext> mockHttpContext;
         private readonly TeamController TeamController;
         private readonly Mock<ITeamService> mockTeamService;
+        private readonly Mock<ILogger> mockLoggerService;
+
 
         public TeamControllerTests()
         {
@@ -25,7 +28,7 @@ namespace CribblyBackend.UnitTests
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            TeamController = new TeamController(mockTeamService.Object);
+            TeamController = new TeamController(mockTeamService.Object, mockLoggerService.Object);
             TeamController.ControllerContext = new ControllerContext()
             {
                 HttpContext = mockHttpContext.Object

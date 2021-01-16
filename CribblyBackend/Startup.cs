@@ -54,6 +54,7 @@ namespace CribblyBackend
                     .ScanIn(Assembly.GetExecutingAssembly()).For.All());
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            services.AddSingleton(Log.Logger);
             services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
             services.AddTransient<IPlayerService, PlayerService>();
             services.AddTransient<ITeamService, TeamService>();

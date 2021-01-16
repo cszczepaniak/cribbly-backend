@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using CribblyBackend.Models;
 using System.Collections.Generic;
-using Serilog;
 
 namespace CribblyBackend.Controllers
 {

@@ -5,6 +5,7 @@ using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
+
 namespace CribblyBackend.Controllers
 {
     [ApiController]
@@ -12,9 +13,11 @@ namespace CribblyBackend.Controllers
     public class TeamController : ControllerBase
     {
         private readonly ITeamService teamService;
-        public TeamController(ITeamService teamService)
+        private readonly ILogger logger;
+        public TeamController(ITeamService teamService, ILogger logger)
         {
             this.teamService = teamService;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -25,13 +28,13 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            Log.Debug("Received request to get team using id {id}", id);
+            logger.Debug("Received request to get team using id {id}", id);
             var p = await teamService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            Log.Information("Request for team {id} returned no results", id);
+            logger.Information("Request for team {id} returned no results", id);
             return NotFound();
         }
         
@@ -45,12 +48,13 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                Log.Debug("Received request to create team {@team}", team);
+                logger.Debug("Received request to create team {@team}", team);
                 await teamService.Create(team);
+                logger.Debug("New team created: {@team}", team);
             }
             catch (Exception e)
             {
-                Log.Information("Failed to create team: {@team}", team);
+                logger.Information("Failed to create team: {@team} -- MSG: {message}", team, e.Message);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
             return Ok();

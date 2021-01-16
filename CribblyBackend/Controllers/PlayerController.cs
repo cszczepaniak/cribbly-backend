@@ -14,9 +14,11 @@ namespace CribblyBackend.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly IPlayerService playerService;
-        public PlayerController(IPlayerService playerService)
+        private readonly ILogger logger;
+        public PlayerController(IPlayerService playerService, ILogger logger)
         {
             this.playerService = playerService;
+            this.logger = logger;            
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace CribblyBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            Log.Debug("Received login request: {@request}", request);
+            logger.Debug("Received login request: {@request}", request);
             if (request.Email == null)
             {
                 Log.Information("Login request submitted with no email: {@request}", request);
@@ -38,7 +40,7 @@ namespace CribblyBackend.Controllers
             if (exists)
             {
                 player = await playerService.GetByEmail(request.Email);
-                Log.Debug("User {player} successfully logged in", player.Email);
+                logger.Debug("User {player} successfully logged in", player.Id);
                 return Ok(new LoginResponse()
                 {
                     Player = player,
@@ -47,11 +49,11 @@ namespace CribblyBackend.Controllers
             }
             if (request.Name == null)
             {
-                Log.Information("Login request submitted with no name: {@request}", request);
+                logger.Information("Login request submitted with no name: {@request}", request);
                 return BadRequest("Must provide a name if the specified player doesn't exist");
             }
             player = await playerService.Create(request.Email, request.Name);
-            Log.Debug("New user created: {@player}", player);
+            logger.Debug("New user created: {@player}", player);
             return Ok(new LoginResponse()
             {
                 Player = player,
@@ -67,13 +69,13 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            Log.Debug("Received request to get user using email {id}", id);
+            logger.Debug("Received request to get user using email {id}", id);
             var p = await playerService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            Log.Information("Request for user id {id} returned no results", id);
+            logger.Information("Request for user id {id} returned no results", id);
             return NotFound();
         }
 

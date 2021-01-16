@@ -12,9 +12,11 @@ namespace CribblyBackend.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService gameService;
-        public GameController(IGameService gameService)
+        private readonly ILogger logger;
+        public GameController(IGameService gameService, ILogger logger)
         {
             this.gameService = gameService;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
-            Log.Information("Request for game {id} returned no results", id);
+            logger.Information("Request for game {id} returned no results", id);
             return NotFound();
         }
         
@@ -44,12 +46,12 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                Log.Information("Received request to create game: {@game}", game);
+                logger.Information("Received request to create game: {@game}", game);
                 await gameService.Create(game);
             }
             catch (Exception e)
             {
-                Log.Information("Failed to create game: {@game}", game);
+                logger.Information("Failed to create game: {@game} -- MSG: {message}", game, e.Message);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
             return Ok();

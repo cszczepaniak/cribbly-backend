@@ -7,6 +7,7 @@ using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Serilog;
 using Moq;
 using Xunit;
 
@@ -18,14 +19,17 @@ namespace CribblyBackend.UnitTests
         private readonly Mock<HttpContext> mockHttpContext;
         private readonly GameController GameController;
         private readonly Mock<IGameService> mockGameService;
+        private readonly Mock<ILogger> mockLoggerService;
+
 
         public GameControllerTests()
         {
             mockGameService = new Mock<IGameService>();
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
+            mockLoggerService = new Mock<ILogger>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            GameController = new GameController(mockGameService.Object);
+            GameController = new GameController(mockGameService.Object, mockLoggerService.Object);
             GameController.ControllerContext = new ControllerContext()
             {
                 HttpContext = mockHttpContext.Object

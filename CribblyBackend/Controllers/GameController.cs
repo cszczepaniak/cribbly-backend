@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace CribblyBackend.Controllers
 {
@@ -11,9 +12,11 @@ namespace CribblyBackend.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService gameService;
-        public GameController(IGameService gameService)
+        private readonly ILogger logger;
+        public GameController(IGameService gameService, ILogger logger)
         {
             this.gameService = gameService;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -29,6 +32,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
+            logger.Information("Request for game {id} returned no results", id);
             return NotFound();
         }
         
@@ -42,10 +46,12 @@ namespace CribblyBackend.Controllers
         {
             try
             {
+                logger.Information("Received request to create game: {@game}", game);
                 await gameService.Create(game);
             }
             catch (Exception e)
             {
+                logger.Information("Failed to create game: {@game} -- MSG: {message}", game, e.Message);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
             return Ok();

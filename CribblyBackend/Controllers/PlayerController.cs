@@ -32,7 +32,7 @@ namespace CribblyBackend.Controllers
             logger.Debug("Received login request: {@request}", request);
             if (request.Email == null)
             {
-                Log.Information("Login request submitted with no email: {@request}", request);
+                logger.Information("Login request submitted with no email: {@request}", request);
                 return BadRequest("Must provide an email");
             }
             var exists = await playerService.Exists(request.Email);
@@ -88,10 +88,10 @@ namespace CribblyBackend.Controllers
         public async Task<IActionResult> GetByEmail()
         {
             var emailHeaderExists = Request.Headers.TryGetValue("Email", out StringValues email);
-            Log.Debug("Received request to get user using email {email}", email);
+            logger.Debug("Received request to get user using email {email}", email);
             if (!emailHeaderExists)
             {
-                Log.Information("GetByEmail user request submitted with no email");
+                logger.Information("GetByEmail user request submitted with no email");
                 return BadRequest("`Email` header must be provided");
             }
             var p = await playerService.GetByEmail(email);
@@ -99,7 +99,7 @@ namespace CribblyBackend.Controllers
             {
                 return Ok(p);
             }
-            Log.Information("User {email} was requested, but not found", email);
+            logger.Information("User {email} was requested, but not found", email);
             return NotFound();
         }
     }

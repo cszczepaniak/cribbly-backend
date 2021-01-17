@@ -27,6 +27,7 @@ namespace CribblyBackend.UnitTests
             mockGameService = new Mock<IGameService>();
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
+            mockLoggerService = new Mock<ILogger>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
             GameController = new GameController(mockGameService.Object, mockLoggerService.Object);
             GameController.ControllerContext = new ControllerContext()

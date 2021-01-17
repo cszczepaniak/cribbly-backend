@@ -24,6 +24,7 @@ namespace CribblyBackend.UnitTests
         public PlayerControllerTests()
         {
             mockPlayerService = new Mock<IPlayerService>();
+            mockLoggerService = new Mock<ILogger>();
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);

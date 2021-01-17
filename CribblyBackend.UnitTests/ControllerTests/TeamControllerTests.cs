@@ -25,6 +25,7 @@ namespace CribblyBackend.UnitTests
         public TeamControllerTests()
         {
             mockTeamService = new Mock<ITeamService>();
+            mockLoggerService = new Mock<ILogger>();
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);

@@ -52,7 +52,7 @@ namespace CribblyBackend.UnitTests
                 Name = "test Team",
                 Players = new List<Player>()
             };
-            for(int i = 1; i <= 2; i++)
+            for (int i = 1; i <= 2; i++)
             {
                 Player expPlayer = new Player()
                 {
@@ -72,11 +72,12 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Create_ShouldReturnOk_IfNoError()
+        public async Task Create_ShouldReturnOkAndCreatedId_IfNoError()
         {
-            mockTeamService.Setup(x => x.Create(It.IsAny<Team>()));
+            mockTeamService.Setup(x => x.Create(It.IsAny<Team>())).ReturnsAsync(123);
             var result = await TeamController.Create(new Team());
-            Assert.IsType<OkResult>(result);
+            var typedResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(123, typedResult.Value);
         }
 
         [Fact]

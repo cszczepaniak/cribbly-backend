@@ -11,7 +11,7 @@ namespace CribblyBackend.Services
     {
         Task<Team> GetById(int Id);
         void Update(Team Team);
-        Task Create(Team Team);
+        Task<int> Create(Team Team);
         void Delete(Team Team);
     }
     public class TeamService : ITeamService
@@ -22,22 +22,23 @@ namespace CribblyBackend.Services
             this.connection = connection;
         }
 
-        public async Task Create(Team team)
+        public async Task<int> Create(Team team)
         {
-            if(team.Players.Count < 2)
+            if (team.Players.Count < 2)
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
             await connection.ExecuteAsync(
-                @"INSERT INTO Teams(Name) VALUES (@Name)", 
+                @"INSERT INTO Teams(Name) VALUES (@Name)",
                 new { Name = team.Name }
             );
             foreach (Player player in team.Players)
             {
                 await connection.ExecuteAsync(
-                    @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId", 
+                    @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
                     new { PlayerId = player.Id });
             }
+            return (await connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
         public void Delete(Team team)
@@ -49,7 +50,7 @@ namespace CribblyBackend.Services
         {
             var players = new Dictionary<int, Player>();
             var team = (await connection.QueryAsync<Team, Player, Team>(
-                @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id", 
+                @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
                 (t, p) =>
                 {
                     if (!players.TryGetValue(p.Id, out Player _))
@@ -57,7 +58,7 @@ namespace CribblyBackend.Services
                         players.Add(p.Id, p);
                     }
                     return t;
-                }, 
+                },
                 new { Id = id },
                 splitOn: "Id"
                 )).FirstOrDefault();

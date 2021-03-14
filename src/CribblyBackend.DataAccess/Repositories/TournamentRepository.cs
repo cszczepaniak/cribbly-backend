@@ -10,7 +10,6 @@ namespace CribblyBackend.DataAccess.Repositories
 {
     public interface ITournamentRepository
     {
-        Task<Tournament> GetNextTournament();
         Task<Tournament> Create(DateTime date);
         Task SetFlagValue(int tournamentId, string flagName, bool newVal);
         Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName);
@@ -34,26 +33,6 @@ namespace CribblyBackend.DataAccess.Repositories
             return (await _connection.QueryAsync<Tournament>(
                 @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()"
             )).First();
-        }
-
-        public async Task<Tournament> GetNextTournament()
-        {
-            var tournaments = (await _connection.QueryAsync<Tournament>(
-                @"
-                SELECT * FROM Tournaments
-                WHERE IsOpenForRegistration = TRUE
-                "
-            )).ToList();
-            if (tournaments.Count == 0)
-            {
-                // No tournament has been scheduled
-                return null;
-            }
-            if (tournaments.Count > 1)
-            {
-                throw new Exception("There can't be two tournaments simultaneously open for registration");
-            }
-            return tournaments.First();
         }
 
         public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName)

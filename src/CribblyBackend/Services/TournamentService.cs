@@ -30,7 +30,23 @@ namespace CribblyBackend.Services
 
         public async Task<Tournament> GetNextTournament()
         {
-            return await _tournamentRepository.GetNextTournament();
+            var tournaments =
+                await _tournamentRepository.GetTournamentsWithActiveFlag(nameof(Tournament.IsOpenForRegistration));
+
+            var numTournaments = tournaments.Count();
+
+            if (numTournaments == 0)
+            {
+                // No tournament has been scheduled
+                return null;
+            }
+
+            if (numTournaments > 1)
+            {
+                throw new Exception("There can't be two tournaments simultaneously open for registration");
+            }
+
+            return tournaments.Single();
         }
 
         public async Task ChangeActiveStatus(int tournamentId, bool newVal)

@@ -1,14 +1,13 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using Serilog;
 using Moq;
+using Serilog;
 using Xunit;
 
 namespace CribblyBackend.UnitTests
@@ -52,7 +51,7 @@ namespace CribblyBackend.UnitTests
                 Name = "test Team",
                 Players = new List<Player>()
             };
-            for(int i = 1; i <= 2; i++)
+            for (int i = 1; i <= 2; i++)
             {
                 Player expPlayer = new Player()
                 {

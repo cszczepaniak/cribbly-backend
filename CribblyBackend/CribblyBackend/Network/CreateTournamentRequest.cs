@@ -1,6 +1,6 @@
 using System;
 
-namespace CribblyBackend.DataAccess.Models.Network
+namespace CribblyBackend.Network
 {
     public class CreateTournamentRequest
     {

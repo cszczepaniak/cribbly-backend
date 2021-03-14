@@ -1,14 +1,13 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using Serilog;
 using Moq;
+using Serilog;
 using Xunit;
 
 namespace CribblyBackend.UnitTests
@@ -52,15 +51,15 @@ namespace CribblyBackend.UnitTests
                 GameRound = (Game.Round)1,
                 Teams = new List<Team>()
             };
-            for(int i = 1; i <= 2; i++)
+            for (int i = 1; i <= 2; i++)
             {
-                List<Player> playerList = new List<Player>(); 
-                for(int j = 1; j <= 2; j++)
+                List<Player> playerList = new List<Player>();
+                for (int j = 1; j <= 2; j++)
                 {
                     Player player = new Player()
                     {
                         Name = $"test player {j}",
-                        Email = $"test{i+j}@test.com"
+                        Email = $"test{i + j}@test.com"
                     };
                     playerList.Add(player);
                 }
@@ -76,7 +75,7 @@ namespace CribblyBackend.UnitTests
             var result = await GameController.GetById(1);
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actGame = Assert.IsType<Game>(okResult.Value);
-            Assert.Equal(expGame.Id, actGame.Id);         
+            Assert.Equal(expGame.Id, actGame.Id);
             Assert.Equal(expGame.Teams, actGame.Teams);
         }
 

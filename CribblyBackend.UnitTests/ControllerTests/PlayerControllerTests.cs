@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.Models;
-using CribblyBackend.Models.Network;
+using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using Serilog;
 using Moq;
+using Serilog;
 using Xunit;
 
 namespace CribblyBackend.UnitTests

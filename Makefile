@@ -4,4 +4,4 @@ test:
 
 .PHONY: serve
 serve:
-	dotnet run --project CribblyBackend
+	dotnet run --project src/CribblyBackend

@@ -71,11 +71,12 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Create_ShouldReturnOk_IfNoError()
+        public async Task Create_ShouldReturnOkAndCreatedId_IfNoError()
         {
-            mockTeamService.Setup(x => x.Create(It.IsAny<Team>()));
+            mockTeamService.Setup(x => x.Create(It.IsAny<Team>())).ReturnsAsync(123);
             var result = await TeamController.Create(new Team());
-            Assert.IsType<OkResult>(result);
+            var typedResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(123, typedResult.Value);
         }
 
         [Fact]

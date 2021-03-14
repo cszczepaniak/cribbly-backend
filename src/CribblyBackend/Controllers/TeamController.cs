@@ -49,15 +49,15 @@ namespace CribblyBackend.Controllers
             try
             {
                 logger.Debug("Received request to create team {@team}", team);
-                await teamService.Create(team);
+                var createdId = await teamService.Create(team);
                 logger.Debug("New team created: {@team}", team);
+                return Ok(createdId);
             }
             catch (Exception e)
             {
                 logger.Information("Failed to create team: {@team} -- MSG: {message}", team, e.Message);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-            return Ok();
         }
     }
 }

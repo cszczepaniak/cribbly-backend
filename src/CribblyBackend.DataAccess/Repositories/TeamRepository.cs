@@ -11,7 +11,7 @@ namespace CribblyBackend.DataAccess.Repositories
     {
         Task<Team> GetById(int Id);
         void Update(Team Team);
-        Task Create(Team Team);
+        Task<int> Create(Team Team);
         void Delete(Team Team);
     }
     public class TeamRepository : ITeamRepository
@@ -22,7 +22,7 @@ namespace CribblyBackend.DataAccess.Repositories
             _connection = connection;
         }
 
-        public async Task Create(Team team)
+        public async Task<int> Create(Team team)
         {
             if (team.Players.Count < 2)
             {
@@ -38,6 +38,7 @@ namespace CribblyBackend.DataAccess.Repositories
                     @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
                     new { PlayerId = player.Id });
             }
+            return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
         public void Delete(Team team)

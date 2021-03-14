@@ -1,4 +1,4 @@
-namespace CribblyBackend.Models.Network
+namespace CribblyBackend.DataAccess.Models.Network
 {
     public class LoginRequest
     {

@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using Dapper;
 
 namespace CribblyBackend.Services

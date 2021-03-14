@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -37,7 +37,7 @@ namespace CribblyBackend.Controllers
             logger.Information("Request for team {id} returned no results", id);
             return NotFound();
         }
-        
+
         /// <summary>
         /// Create makes a new Team object, and updates Player records accordingly in the database.
         /// </summary>

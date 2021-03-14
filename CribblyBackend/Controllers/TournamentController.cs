@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using CribblyBackend.Services;
-using System.Threading.Tasks;
-using CribblyBackend.Models;
-using CribblyBackend.Models.Network;
-using Microsoft.AspNetCore.Http;
 using System;
+using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Models.Network;
+using CribblyBackend.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CribblyBackend.Controllers
 {

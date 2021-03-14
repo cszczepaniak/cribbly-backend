@@ -8,7 +8,7 @@ namespace CribblyBackend.Services
     {
         Task<Team> GetById(int Id);
         void Update(Team Team);
-        Task Create(Team Team);
+        Task<int> Create(Team Team);
         void Delete(Team Team);
     }
     public class TeamService : ITeamService
@@ -20,9 +20,9 @@ namespace CribblyBackend.Services
             _teamRepository = teamRepository;
         }
 
-        public async Task Create(Team team)
+        public async Task<int> Create(Team team)
         {
-            await _teamRepository.Create(team);
+            return await _teamRepository.Create(team);
         }
 
         public void Delete(Team team)

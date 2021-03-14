@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace CribblyBackend.Migrations
+namespace CribblyBackend.DataAccess.Migrations
 {
     [Migration(20201219100700)]
     public class AddPlayerTable : Migration

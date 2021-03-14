@@ -1,5 +1,6 @@
 using System.Data;
 using System.Reflection;
+using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,7 +50,7 @@ namespace CribblyBackend
                 .ConfigureRunner(c => c
                     .AddMySql5()
                     .WithGlobalConnectionString(Configuration["MySQL:ConnectionString"])
-                    .ScanIn(Assembly.GetExecutingAssembly()).For.All());
+                    .ScanIn(Assembly.GetAssembly(typeof(Game))).For.All());
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddSingleton(Log.Logger);

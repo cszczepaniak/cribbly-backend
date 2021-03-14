@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
-using Dapper;
+using CribblyBackend.DataAccess.Repositories;
 
 namespace CribblyBackend.Services
 {
@@ -16,49 +13,20 @@ namespace CribblyBackend.Services
     }
     public class GameService : IGameService
     {
-        IDbConnection connection;
-        public GameService(IDbConnection connection)
+        private readonly IGameRepository _gameRepository;
+
+        public GameService(IGameRepository gameRepository)
         {
-            this.connection = connection;
+            _gameRepository = gameRepository;
         }
 
         public async Task<Game> GetById(int id)
         {
-            var players = new Dictionary<int, Player>();
-            var teams = new Dictionary<int, Team>();
-            var game = (await connection.QueryAsync<Game, Team, Game>(
-                @"
-                    SELECT * FROM Scores s 
-                    LEFT JOIN Games g on s.GameId = g.Id 
-                    LEFT JOIN Teams t on s.TeamId = t.Id 
-                    WHERE GameId = @id
-                ",
-                (g, t) =>
-                {
-                    if (!teams.TryGetValue(t.Id, out Team _))
-                    {
-                        teams.Add(t.Id, t);
-                    }
-                    return g;
-                },
-                new { Id = id },
-                splitOn: "Id"
-                )).FirstOrDefault();
-            game.Teams = teams.Values.ToList();
-            return game;
+            return await _gameRepository.GetById(id);
         }
         public async Task Create(Game game)
         {
-            await connection.ExecuteAsync(
-                @"INSERT INTO Games(GameRound) VALUES (@GameRound)",
-                new { GameRound = game.GameRound }
-            );
-            foreach (Team team in game.Teams)
-            {
-                await connection.ExecuteAsync(
-                    @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)",
-                    new { TeamId = team.Id });
-            }
+            await _gameRepository.Create(game);
         }
         public void Update(Game game)
         {

@@ -1,8 +1,6 @@
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
-using Dapper;
+using CribblyBackend.DataAccess.Repositories;
 
 namespace CribblyBackend.Services
 {
@@ -17,27 +15,21 @@ namespace CribblyBackend.Services
     }
     public class PlayerService : IPlayerService
     {
-        private readonly IDbConnection connection;
-        public PlayerService(IDbConnection connection)
+        private readonly IPlayerRepository _playerRepository;
+
+        public PlayerService(IPlayerRepository playerRepository)
         {
-            this.connection = connection;
+            _playerRepository = playerRepository;
         }
 
         public async Task<bool> Exists(string email)
         {
-            return (await connection.QueryAsync<bool>(
-                @"SELECT EXISTS(SELECT * FROM Players WHERE Email = @Email LIMIT 1)",
-                new { Email = email }
-            )).First();
+            return await _playerRepository.Exists(email);
         }
 
         public async Task<Player> Create(string email, string name)
         {
-            await connection.ExecuteAsync(
-                @"INSERT INTO Players (Email, Name) VALUES (@Email, @Name)",
-                new { Email = email, Name = name }
-            );
-            return await GetByEmail(email);
+            return await _playerRepository.Create(email, name);
         }
 
         public void Delete(Player player)
@@ -47,39 +39,16 @@ namespace CribblyBackend.Services
 
         public async Task<Player> GetById(int id)
         {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
-                MapTeamToPlayer,
-                new { Id = id },
-                splitOn: "TeamId"
-            );
-            return players.FirstOrDefault();
+            return await _playerRepository.GetById(id);
         }
         public async Task<Player> GetByEmail(string email)
         {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
-                MapTeamToPlayer,
-                new { Email = email },
-                splitOn: "TeamId"
-            );
-            return players.FirstOrDefault();
+            return await _playerRepository.GetByEmail(email);
         }
 
         public void Update(Player player)
         {
             throw new System.NotImplementedException();
-        }
-
-        private Player MapTeamToPlayer(Player player, Team team)
-        {
-            if (team.Id == 0)
-            {
-                player.Team = null;
-                return player;
-            }
-            player.Team = team;
-            return player;
         }
     }
 }

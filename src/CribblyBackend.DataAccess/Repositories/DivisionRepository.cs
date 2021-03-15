@@ -9,7 +9,7 @@ namespace CribblyBackend.DataAccess.Repositories
 {
     public interface IDivisionRepository
     {
-        Task<int> Create(Division division);
+        Task<int> Create(string name, IEnumerable<int> teamIds);
         Task<Division> GetById(int id);
     }
     public class DivisionRepository : IDivisionRepository
@@ -20,20 +20,20 @@ namespace CribblyBackend.DataAccess.Repositories
             _connection = connection;
         }
 
-        public async Task<int> Create(Division division)
+        public async Task<int> Create(string name, IEnumerable<int> teamIds)
         {
             await _connection.ExecuteAsync(
                 @"INSERT INTO Divisions(Name) VALUES (@Name)",
-                new { division.Name }
+                new { Name = name }
             );
-            if (division.Teams.Count > 0)
+            if (teamIds.Count() > 0)
             {
                 using var transaction = _connection.BeginTransaction();
-                foreach (var team in division.Teams)
+                foreach (var id in teamIds)
                 {
                     await _connection.ExecuteAsync(
                         @"UPDATE Teams SET DivisionId = LAST_INSERT_ID() WHERE Id = @TeamId",
-                        new { TeamId = team.Id },
+                        new { TeamId = id },
                         transaction
                     );
                 }

@@ -61,11 +61,14 @@ namespace CribblyBackend
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<ITournamentService, TournamentService>();
+            services.AddTransient<IDivisionService, DivisionService>();
             // repositories
+            services.AddSingleton<IConnectionFactory>(_ => new ConnectionFactory(Configuration["MySQL:ConnectionString"]));
             services.AddTransient<IPlayerRepository, PlayerRepository>();
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
             services.AddTransient<ITournamentRepository, TournamentRepository>();
+            services.AddTransient<IDivisionRepository, DivisionRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -56,6 +57,31 @@ namespace CribblyBackend.Controllers
             catch (Exception e)
             {
                 logger.Information("Failed to create team: {@team} -- MSG: {message}", team, e.Message);
+                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+            }
+        }
+
+        [HttpPost("addToDivision")]
+        public async Task<IActionResult> AddToDivision([FromBody] AddTeamToDivisionRequest request)
+        {
+            try
+            {
+                logger.Debug(
+                    "Received request to add team (ID: {@teamId}) to division (ID: @divisionId)",
+                    request.TeamId,
+                    request.DivisionId
+                );
+                await teamService.AddToDivision(request.TeamId, request.DivisionId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                logger.Error(
+                    "Failed to add team (ID: {@teamId}) to division (ID: @divisionId) -- MSG: {message}",
+                    request.TeamId,
+                    request.DivisionId,
+                    e.Message
+                );
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
         }

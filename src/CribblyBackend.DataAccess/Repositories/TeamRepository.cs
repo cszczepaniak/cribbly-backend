@@ -10,7 +10,7 @@ namespace CribblyBackend.DataAccess.Repositories
     {
         Task<Team> GetById(int Id);
         Task<int> Create(Team Team);
-        Task AddToDivision(Team team, int divisionId);
+        Task AddToDivision(int teamId, int divisionId);
     }
     public class TeamRepository : RepositoryBase, ITeamRepository
     {
@@ -19,12 +19,12 @@ namespace CribblyBackend.DataAccess.Repositories
         {
         }
 
-        public async Task AddToDivision(Team team, int divisionId)
+        public async Task AddToDivision(int teamId, int divisionId)
         {
             using var connection = _connectionFactory.GetOpenConnection();
             await connection.ExecuteAsync(
                 @"UPDATE Teams SET DivisionId = @DivisionId WHERE Id = @TeamId",
-                new { DivisionId = divisionId, TeamId = team.Id }
+                new { DivisionId = divisionId, TeamId = teamId }
             );
         }
 

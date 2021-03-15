@@ -36,7 +36,7 @@ namespace CribblyBackend.MigrationGenerator
             string migrationBody = string.Format(template, timestamp, name);
             // Assume we're in the root of the project
             string startDir = Directory.GetCurrentDirectory();
-            string outFile = Path.Combine(startDir, "CribblyBackend", "Migrations", string.Format(@"{0}_{1}.cs", timestamp, name));
+            string outFile = Path.Combine(startDir, "src", "CribblyBackend.DataAccess", "Migrations", string.Format(@"{0}_{1}.cs", timestamp, name));
             File.WriteAllText(outFile, migrationBody);
         }
 

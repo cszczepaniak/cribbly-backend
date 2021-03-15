@@ -10,9 +10,8 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface ITeamRepository
     {
         Task<Team> GetById(int Id);
-        void Update(Team Team);
         Task<int> Create(Team Team);
-        void Delete(Team Team);
+        Task AddToDivision(Team team, int divisionId);
     }
     public class TeamRepository : ITeamRepository
     {
@@ -22,8 +21,17 @@ namespace CribblyBackend.DataAccess.Repositories
             _connection = connection;
         }
 
+        public async Task AddToDivision(Team team, int divisionId)
+        {
+            await _connection.ExecuteAsync(
+                @"UPDATE Teams SET DivisionId = @DivisionId WHERE Id = @TeamId",
+                new { DivisionId = divisionId, TeamId = team.Id }
+            );
+        }
+
         public async Task<int> Create(Team team)
         {
+            // TODO move this to service
             if (team.Players.Count < 2)
             {
                 throw new System.Exception("A Team must not have less than two players");
@@ -39,11 +47,6 @@ namespace CribblyBackend.DataAccess.Repositories
                     new { PlayerId = player.Id });
             }
             return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
-        }
-
-        public void Delete(Team team)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<Team> GetById(int id)
@@ -64,10 +67,6 @@ namespace CribblyBackend.DataAccess.Repositories
                 )).FirstOrDefault();
             team.Players = players.Values.ToList();
             return team;
-        }
-        public void Update(Team team)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

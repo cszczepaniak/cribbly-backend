@@ -1,4 +1,3 @@
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
@@ -11,20 +10,18 @@ namespace CribblyBackend.DataAccess.Repositories
         Task<bool> Exists(string email);
         Task<Player> GetByEmail(string email);
         Task<Player> GetById(int id);
-        void Update(Player player);
         Task<Player> Create(string email, string name);
-        void Delete(Player player);
     }
-    public class PlayerRepository : IPlayerRepository
+    public class PlayerRepository : RepositoryBase, IPlayerRepository
     {
-        private readonly IDbConnection connection;
-        public PlayerRepository(IDbConnection connection)
+        public PlayerRepository(IConnectionFactory connectionFactory)
+            : base(connectionFactory)
         {
-            this.connection = connection;
         }
 
         public async Task<bool> Exists(string email)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             return (await connection.QueryAsync<bool>(
                 @"SELECT EXISTS(SELECT * FROM Players WHERE Email = @Email LIMIT 1)",
                 new { Email = email }
@@ -33,6 +30,7 @@ namespace CribblyBackend.DataAccess.Repositories
 
         public async Task<Player> Create(string email, string name)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             await connection.ExecuteAsync(
                 @"INSERT INTO Players (Email, Name) VALUES (@Email, @Name)",
                 new { Email = email, Name = name }
@@ -40,13 +38,9 @@ namespace CribblyBackend.DataAccess.Repositories
             return await GetByEmail(email);
         }
 
-        public void Delete(Player player)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public async Task<Player> GetById(int id)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             var players = await connection.QueryAsync<Player, Team, Player>(
                 @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
                 MapTeamToPlayer,
@@ -57,6 +51,7 @@ namespace CribblyBackend.DataAccess.Repositories
         }
         public async Task<Player> GetByEmail(string email)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             var players = await connection.QueryAsync<Player, Team, Player>(
                 @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
                 MapTeamToPlayer,
@@ -64,11 +59,6 @@ namespace CribblyBackend.DataAccess.Repositories
                 splitOn: "TeamId"
             );
             return players.FirstOrDefault();
-        }
-
-        public void Update(Player player)
-        {
-            throw new System.NotImplementedException();
         }
 
         private Player MapTeamToPlayer(Player player, Team team)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
@@ -14,32 +13,33 @@ namespace CribblyBackend.DataAccess.Repositories
         Task SetFlagValue(int tournamentId, string flagName, bool newVal);
         Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName);
     }
-    public class TournamentRepository : ITournamentRepository
+    public class TournamentRepository : RepositoryBase, ITournamentRepository
     {
-        private readonly IDbConnection _connection;
-        public TournamentRepository(IDbConnection connection)
+        public TournamentRepository(IConnectionFactory connectionFactory)
+            : base(connectionFactory)
         {
-            _connection = connection;
         }
         public async Task<Tournament> Create(DateTime date)
         {
-            await _connection.ExecuteAsync(
+            using var connection = _connectionFactory.GetOpenConnection();
+            await connection.ExecuteAsync(
                 @"
                 INSERT INTO Tournaments (Date, IsOpenForRegistration, IsActive) 
                 VALUES (@Date, FALSE, FALSE)
                 ",
                 new { Date = date }
             );
-            return (await _connection.QueryAsync<Tournament>(
+            return (await connection.QueryAsync<Tournament>(
                 @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()"
             )).First();
         }
 
         public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             // Note: this breaks the rule of using only parameterized query strings; however, the external world
             // CANNOT control flagName here since flagName is passed by us and never from an external source
-            return await _connection.QueryAsync<Tournament>(
+            return await connection.QueryAsync<Tournament>(
                 $@"SELECT * FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
                 new { Name = flagName }
             );
@@ -47,16 +47,17 @@ namespace CribblyBackend.DataAccess.Repositories
 
         public async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             // Note: this breaks the rule of using only parameterized query strings; however, the external world
             // CANNOT control flagName here since flagName is passed by us and never from an external source
-            await _connection.ExecuteAsync(
+            await connection.ExecuteAsync(
                 $@"
                 UPDATE Tournaments 
                 SET {flagName} = @Value
                 WHERE Id = @Id
                 ",
                 new { Name = flagName, Value = newVal, Id = tournamentId }
-                );
+            );
         }
     }
 }

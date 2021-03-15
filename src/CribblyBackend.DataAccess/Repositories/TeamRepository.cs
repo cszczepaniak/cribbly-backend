@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
@@ -13,17 +12,17 @@ namespace CribblyBackend.DataAccess.Repositories
         Task<int> Create(Team Team);
         Task AddToDivision(Team team, int divisionId);
     }
-    public class TeamRepository : ITeamRepository
+    public class TeamRepository : RepositoryBase, ITeamRepository
     {
-        private readonly IDbConnection _connection;
-        public TeamRepository(IDbConnection connection)
+        public TeamRepository(IConnectionFactory connectionFactory)
+            : base(connectionFactory)
         {
-            _connection = connection;
         }
 
         public async Task AddToDivision(Team team, int divisionId)
         {
-            await _connection.ExecuteAsync(
+            using var connection = _connectionFactory.GetOpenConnection();
+            await connection.ExecuteAsync(
                 @"UPDATE Teams SET DivisionId = @DivisionId WHERE Id = @TeamId",
                 new { DivisionId = divisionId, TeamId = team.Id }
             );
@@ -31,28 +30,30 @@ namespace CribblyBackend.DataAccess.Repositories
 
         public async Task<int> Create(Team team)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             // TODO move this to service
             if (team.Players.Count < 2)
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await _connection.ExecuteAsync(
+            await connection.ExecuteAsync(
                 @"INSERT INTO Teams(Name) VALUES (@Name)",
                 new { Name = team.Name }
             );
             foreach (Player player in team.Players)
             {
-                await _connection.ExecuteAsync(
+                await connection.ExecuteAsync(
                     @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
                     new { PlayerId = player.Id });
             }
-            return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
+            return (await connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
         public async Task<Team> GetById(int id)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             var players = new Dictionary<int, Player>();
-            var team = (await _connection.QueryAsync<Team, Player, Team>(
+            var team = (await connection.QueryAsync<Team, Player, Team>(
                 @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
                 (t, p) =>
                 {

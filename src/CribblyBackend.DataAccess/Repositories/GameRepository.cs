@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
@@ -10,20 +9,18 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface IGameRepository
     {
         Task<Game> GetById(int Id);
-        void Update(Game Game);
         Task Create(Game Game);
-        void Delete(Game Game);
     }
-    public class GameRepository : IGameRepository
+    public class GameRepository : RepositoryBase, IGameRepository
     {
-        private readonly IDbConnection connection;
-        public GameRepository(IDbConnection connection)
+        public GameRepository(IConnectionFactory connectionFactory)
+            : base(connectionFactory)
         {
-            this.connection = connection;
         }
 
         public async Task<Game> GetById(int id)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             var players = new Dictionary<int, Player>();
             var teams = new Dictionary<int, Team>();
             var game = (await connection.QueryAsync<Game, Team, Game>(
@@ -49,6 +46,7 @@ namespace CribblyBackend.DataAccess.Repositories
         }
         public async Task Create(Game game)
         {
+            using var connection = _connectionFactory.GetOpenConnection();
             await connection.ExecuteAsync(
                 @"INSERT INTO Games(GameRound) VALUES (@GameRound)",
                 new { GameRound = game.GameRound }
@@ -59,14 +57,6 @@ namespace CribblyBackend.DataAccess.Repositories
                     @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)",
                     new { TeamId = team.Id });
             }
-        }
-        public void Update(Game game)
-        {
-            throw new System.NotImplementedException();
-        }
-        public void Delete(Game game)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Data;
 using System.Reflection;
 using CribblyBackend.DataAccess.Models;
 using CribblyBackend.DataAccess.Repositories;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using MySql.Data.MySqlClient;
 using Serilog;
 
 namespace CribblyBackend
@@ -55,7 +53,6 @@ namespace CribblyBackend
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddSingleton(Log.Logger);
-            services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
             // services
             services.AddTransient<IPlayerService, PlayerService>();
             services.AddTransient<ITeamService, TeamService>();

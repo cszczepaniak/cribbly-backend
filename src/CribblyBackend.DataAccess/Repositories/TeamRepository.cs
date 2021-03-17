@@ -1,25 +1,25 @@
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using Dapper;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.DataAccess.Repositories
 {
-    public interface ITeamService
+    public interface ITeamRepository
     {
         Task<Team> GetById(int Id);
         void Update(Team Team);
         Task<int> Create(Team Team);
         void Delete(Team Team);
     }
-    public class TeamService : ITeamService
+    public class TeamRepository : ITeamRepository
     {
-        IDbConnection connection;
-        public TeamService(IDbConnection connection)
+        private readonly IDbConnection _connection;
+        public TeamRepository(IDbConnection connection)
         {
-            this.connection = connection;
+            _connection = connection;
         }
 
         public async Task<int> Create(Team team)
@@ -28,17 +28,17 @@ namespace CribblyBackend.Services
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await connection.ExecuteAsync(
+            await _connection.ExecuteAsync(
                 @"INSERT INTO Teams(Name) VALUES (@Name)",
                 new { Name = team.Name }
             );
             foreach (Player player in team.Players)
             {
-                await connection.ExecuteAsync(
+                await _connection.ExecuteAsync(
                     @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
                     new { PlayerId = player.Id });
             }
-            return (await connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
+            return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
         public void Delete(Team team)
@@ -49,7 +49,7 @@ namespace CribblyBackend.Services
         public async Task<Team> GetById(int id)
         {
             var players = new Dictionary<int, Player>();
-            var team = (await connection.QueryAsync<Team, Player, Team>(
+            var team = (await _connection.QueryAsync<Team, Player, Team>(
                 @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
                 (t, p) =>
                 {

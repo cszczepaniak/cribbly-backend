@@ -1,13 +1,12 @@
 using System.Data;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using Dapper;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.DataAccess.Repositories
 {
-    public interface IPlayerService
+    public interface IPlayerRepository
     {
         Task<bool> Exists(string email);
         Task<Player> GetByEmail(string email);
@@ -16,10 +15,10 @@ namespace CribblyBackend.Services
         Task<Player> Create(string email, string name);
         void Delete(Player player);
     }
-    public class PlayerService : IPlayerService
+    public class PlayerRepository : IPlayerRepository
     {
         private readonly IDbConnection connection;
-        public PlayerService(IDbConnection connection)
+        public PlayerRepository(IDbConnection connection)
         {
             this.connection = connection;
         }

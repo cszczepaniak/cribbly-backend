@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -35,7 +35,7 @@ namespace CribblyBackend.Controllers
             logger.Information("Request for game {id} returned no results", id);
             return NotFound();
         }
-        
+
         /// <summary>
         /// Create makes a new Game object.
         /// </summary>

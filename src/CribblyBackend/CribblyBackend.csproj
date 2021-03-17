@@ -6,8 +6,6 @@
     <UserSecretsId>6fcb902c-390b-4a8c-8a94-c56999a8b33b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.78" />
-    <PackageReference Include="FluentMigrator" Version="3.2.10" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.10" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
@@ -19,5 +17,8 @@
     <PackageReference Include="serilog.settings.configuration" Version="3.1.0" />
     <PackageReference Include="serilog.sinks.rollingfile" Version="3.3.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
   </ItemGroup>
 </Project>

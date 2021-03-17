@@ -1,6 +1,4 @@
-using System;
-
-namespace CribblyBackend.Models.Network
+namespace CribblyBackend.Network
 {
     public class ChangeTournamentFlagsRequest
     {

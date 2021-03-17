@@ -1,56 +1,30 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Repositories;
 using CribblyBackend.Services;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
-using Dapper;
 using Moq.Dapper;
-using System.Data;
-using System.Data.Common;
+using Xunit;
 
 namespace CribblyBackend.UnitTests
 {
     public class TournamentServiceTests
     {
         private readonly TournamentService tournamentService;
-        private readonly Mock<DbConnection> mockConnection;
+        private readonly Mock<ITournamentRepository> mockTournamentRepository;
 
         public TournamentServiceTests()
         {
-            mockConnection = new Mock<DbConnection>();
-            tournamentService = new TournamentService(mockConnection.Object);
-        }
-
-        [Fact]
-        public async Task GetNextTournament_ShouldReturnNull_WhenNoTournamentsAreOpenForRegistration()
-        {
-            mockConnection
-                .SetupDapperAsync(c => c.QueryAsync<Tournament>(It.IsAny<string>(), It.IsAny<object>(), null, null, null))
-                .ReturnsAsync(new List<Tournament>());
-
-            var tournament = await tournamentService.GetNextTournament();
-            Assert.Null(tournament);
-        }
-
-        [Fact]
-        public async Task GetNextTournament_ShouldReturnTournamentOpenForRegistration_WhenSuccessful()
-        {
-            var activeDate = new DateTime(2021, 3, 1);
-            var mockTournaments = new List<Tournament>()
-            {
-                new Tournament() { Date = activeDate },
-            };
-            mockConnection
-                .SetupDapperAsync(c => c.QueryAsync<Tournament>(It.IsAny<string>(), It.IsAny<object>(), null, null, null))
-                .ReturnsAsync(mockTournaments);
-
-            var tournament = await tournamentService.GetNextTournament();
-            Assert.Equal(activeDate, tournament.Date);
+            mockTournamentRepository = new Mock<ITournamentRepository>();
+            tournamentService = new TournamentService(mockTournamentRepository.Object);
         }
 
         [Fact]
@@ -61,8 +35,8 @@ namespace CribblyBackend.UnitTests
                 new Tournament() { Date = new DateTime(1992, 3, 10) },
                 new Tournament() { Date = new DateTime(1995, 4, 14) },
             };
-            mockConnection
-                .SetupDapperAsync(x => x.QueryAsync<Tournament>(It.IsAny<string>(), It.IsAny<object>(), null, null, null))
+            mockTournamentRepository
+                .Setup(x => x.GetTournamentsWithActiveFlag(It.IsAny<string>()))
                 .ReturnsAsync(mockTournaments);
 
             await Assert.ThrowsAsync<Exception>(async () => await tournamentService.GetNextTournament());
@@ -72,54 +46,24 @@ namespace CribblyBackend.UnitTests
         public async Task ChangeActiveStatus_ShouldUpdateDatabase_WhenCanActivateTournament()
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(new List<Tournament> { });
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(new List<Tournament> { });
 
-            // Since Moq.Dapper doesn't support Verify* Moq methods, best we can do is test that no error is thrown
             await tournamentService.ChangeActiveStatus(tournamentId, true);
+
+            VerifyMockTournamentRepositoryFlagCallsMadeWith(tournamentId, "IsActive", true);
         }
 
         [Fact]
         public async Task ChangeActiveStatus_ShouldUpdateDatabase_WhenCanDeactivateTournament()
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(new List<Tournament> { new Tournament { IsActive = true } });
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(
+                new List<Tournament> { new Tournament { IsActive = true } }
+            );
 
-            // Since Moq.Dapper doesn't support Verify* Moq methods, best we can do is test that no error is thrown
             await tournamentService.ChangeActiveStatus(tournamentId, false);
+
+            VerifyMockTournamentRepositoryFlagCallsMadeWith(tournamentId, "IsActive", false);
         }
 
         [Theory]
@@ -127,24 +71,7 @@ namespace CribblyBackend.UnitTests
         public async Task ChangeActiveStatus_ShouldThrowErrors(bool newVal, List<Tournament> mockQueryResult)
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(mockQueryResult);
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(mockQueryResult);
 
             await Assert.ThrowsAsync<Exception>(async () => await tournamentService.ChangeActiveStatus(tournamentId, newVal));
         }
@@ -166,27 +93,11 @@ namespace CribblyBackend.UnitTests
         public async Task ChangeOpenForRegistrationStatus_ShouldUpdateDatabase_WhenCanOpenTournament()
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(new List<Tournament> { });
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(new List<Tournament> { });
 
-            // Since Moq.Dapper doesn't support Verify* Moq methods, best we can do is test that no error is thrown
             await tournamentService.ChangeOpenForRegistrationStatus(tournamentId, true);
+
+            VerifyMockTournamentRepositoryFlagCallsMadeWith(tournamentId, "IsOpenForRegistration", true);
         }
 
 
@@ -194,27 +105,13 @@ namespace CribblyBackend.UnitTests
         public async Task ChangeOpenForRegistrationStatus_ShouldUpdateDatabase_WhenCanCloseTournament()
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(new List<Tournament> { new Tournament { IsOpenForRegistration = true } });
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(
+                new List<Tournament> { new Tournament { IsOpenForRegistration = true } }
+            );
 
-            // Since Moq.Dapper doesn't support Verify* Moq methods, best we can do is test that no error is thrown
             await tournamentService.ChangeOpenForRegistrationStatus(tournamentId, false);
+
+            VerifyMockTournamentRepositoryFlagCallsMadeWith(tournamentId, "IsOpenForRegistration", false);
         }
 
         [Theory]
@@ -222,24 +119,7 @@ namespace CribblyBackend.UnitTests
         public async Task ChangeOpenForRegistrationStatus_ShouldThrowErrors(bool newVal, List<Tournament> mockQueryResult)
         {
             var tournamentId = 123;
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.QueryAsync<Tournament>(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(mockQueryResult);
-            mockConnection
-                .SetupDapperAsync(
-                    x => x.ExecuteAsync(
-                        It.IsAny<string>(),
-                        It.IsAny<object>(),
-                        null,
-                        null,
-                        null))
-                .ReturnsAsync(1);
+            SetupMockTournamentRepositoryFlagCalls(mockQueryResult);
 
             await Assert.ThrowsAsync<Exception>(async () => await tournamentService.ChangeOpenForRegistrationStatus(tournamentId, newVal));
         }
@@ -257,5 +137,25 @@ namespace CribblyBackend.UnitTests
                 new object[] { false, new List<Tournament> { new Tournament { IsOpenForRegistration = false } } },
             };
 
+        private void SetupMockTournamentRepositoryFlagCalls(List<Tournament> fetchResult)
+        {
+            mockTournamentRepository
+                .Setup(r => r.GetTournamentsWithActiveFlag(It.IsAny<string>()))
+                .ReturnsAsync(fetchResult);
+            mockTournamentRepository
+                .Setup(r => r.SetFlagValue(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()));
+        }
+
+        private void VerifyMockTournamentRepositoryFlagCallsMadeWith(int expTourneyId, string expFlagName, bool expVal)
+        {
+            mockTournamentRepository.Verify(r => r.GetTournamentsWithActiveFlag(
+                It.Is<string>(s => s == expFlagName)
+            ));
+            mockTournamentRepository.Verify(r => r.SetFlagValue(
+                It.Is<int>(n => n == expTourneyId),
+                It.Is<string>(s => s == expFlagName),
+                It.Is<bool>(b => b == expVal)
+            ));
+        }
     }
 }

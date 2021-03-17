@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
-using Dapper;
+using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Repositories;
 
 namespace CribblyBackend.Services
 {
@@ -18,43 +16,37 @@ namespace CribblyBackend.Services
     }
     public class TournamentService : ITournamentService
     {
-        private readonly IDbConnection connection;
-        public TournamentService(IDbConnection connection)
+        private readonly ITournamentRepository _tournamentRepository;
+
+        public TournamentService(ITournamentRepository tournamentRepository)
         {
-            this.connection = connection;
+            _tournamentRepository = tournamentRepository;
         }
+
         public async Task<Tournament> Create(DateTime date)
         {
-            await connection.ExecuteAsync(
-                @"
-                INSERT INTO Tournaments (Date, IsOpenForRegistration, IsActive) 
-                VALUES (@Date, FALSE, FALSE)
-                ",
-                new { Date = date }
-            );
-            return (await connection.QueryAsync<Tournament>(
-                @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()"
-            )).First();
+            return await _tournamentRepository.Create(date);
         }
 
         public async Task<Tournament> GetNextTournament()
         {
-            var tournaments = (await connection.QueryAsync<Tournament>(
-                @"
-                SELECT * FROM Tournaments
-                WHERE IsOpenForRegistration = TRUE
-                "
-            )).ToList();
-            if (tournaments.Count == 0)
+            var tournaments =
+                await _tournamentRepository.GetTournamentsWithActiveFlag(nameof(Tournament.IsOpenForRegistration));
+
+            var numTournaments = tournaments.Count();
+
+            if (numTournaments == 0)
             {
                 // No tournament has been scheduled
                 return null;
             }
-            if (tournaments.Count > 1)
+
+            if (numTournaments > 1)
             {
                 throw new Exception("There can't be two tournaments simultaneously open for registration");
             }
-            return tournaments.First();
+
+            return tournaments.Single();
         }
 
         public async Task ChangeActiveStatus(int tournamentId, bool newVal)
@@ -68,27 +60,13 @@ namespace CribblyBackend.Services
 
         private async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
         {
-            // Note: this breaks the rule of using only parameterized query strings; however, the external world
-            // CANNOT control flagName here since flagName is passed by us and never from an external source
-            var activeTournaments = (await connection.QueryAsync<Tournament>(
-                $@"SELECT * FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
-                new { Name = flagName }
-            )).ToList();
-            var (canSetValue, errMessage) = CanSetFlag(newVal, flagName, activeTournaments);
+            var tournamentsWithFlagOn = await _tournamentRepository.GetTournamentsWithActiveFlag(flagName);
+            var (canSetValue, errMessage) = CanSetFlag(newVal, flagName, tournamentsWithFlagOn.ToList());
             if (!canSetValue)
             {
                 throw new Exception($"{errMessage} [attempted to change {flagName} status of {tournamentId}]");
             }
-            // Note: this breaks the rule of using only parameterized query strings; however, the external world
-            // CANNOT control flagName here since flagName is passed by us and never from an external source
-            await connection.ExecuteAsync(
-                $@"
-                UPDATE Tournaments 
-                SET {flagName} = @Value
-                WHERE Id = @Id
-                ",
-                new { Name = flagName, Value = newVal, Id = tournamentId }
-                );
+            await _tournamentRepository.SetFlagValue(tournamentId, flagName, newVal);
         }
 
         private (bool, string) CanSetFlag(bool newVal, string flagName, List<Tournament> resultsWithFlagSet)

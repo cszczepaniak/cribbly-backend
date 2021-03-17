@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 
-namespace CribblyBackend.Models
+namespace CribblyBackend.DataAccess.Models
 {
     public class Division
     {

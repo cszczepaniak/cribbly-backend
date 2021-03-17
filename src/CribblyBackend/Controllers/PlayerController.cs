@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
-using CribblyBackend.Models.Network;
+using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Network;
 using CribblyBackend.Services;
-using Serilog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Serilog;
 
 namespace CribblyBackend.Controllers
 {
@@ -18,7 +18,7 @@ namespace CribblyBackend.Controllers
         public PlayerController(IPlayerService playerService, ILogger logger)
         {
             this.playerService = playerService;
-            this.logger = logger;            
+            this.logger = logger;
         }
 
         /// <summary>

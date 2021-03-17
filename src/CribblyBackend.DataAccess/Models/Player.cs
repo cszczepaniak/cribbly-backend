@@ -1,6 +1,4 @@
-using System;
-
-namespace CribblyBackend.Models
+namespace CribblyBackend.DataAccess.Models
 {
     public class Player
     {

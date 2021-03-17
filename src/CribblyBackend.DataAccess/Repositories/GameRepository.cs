@@ -1,23 +1,23 @@
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using CribblyBackend.Models;
+using CribblyBackend.DataAccess.Models;
 using Dapper;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.DataAccess.Repositories
 {
-    public interface IGameService
+    public interface IGameRepository
     {
         Task<Game> GetById(int Id);
         void Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
     }
-    public class GameService : IGameService
+    public class GameRepository : IGameRepository
     {
-        IDbConnection connection;
-        public GameService(IDbConnection connection)
+        private readonly IDbConnection connection;
+        public GameRepository(IDbConnection connection)
         {
             this.connection = connection;
         }
@@ -32,7 +32,7 @@ namespace CribblyBackend.Services
                     LEFT JOIN Games g on s.GameId = g.Id 
                     LEFT JOIN Teams t on s.TeamId = t.Id 
                     WHERE GameId = @id
-                ", 
+                ",
                 (g, t) =>
                 {
                     if (!teams.TryGetValue(t.Id, out Team _))
@@ -40,7 +40,7 @@ namespace CribblyBackend.Services
                         teams.Add(t.Id, t);
                     }
                     return g;
-                }, 
+                },
                 new { Id = id },
                 splitOn: "Id"
                 )).FirstOrDefault();
@@ -50,23 +50,23 @@ namespace CribblyBackend.Services
         public async Task Create(Game game)
         {
             await connection.ExecuteAsync(
-                @"INSERT INTO Games(GameRound) VALUES (@GameRound)", 
+                @"INSERT INTO Games(GameRound) VALUES (@GameRound)",
                 new { GameRound = game.GameRound }
             );
             foreach (Team team in game.Teams)
             {
                 await connection.ExecuteAsync(
-                    @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)", 
+                    @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)",
                     new { TeamId = team.Id });
             }
         }
         public void Update(Game game)
         {
-            throw new System.NotImplementedException(); 
+            throw new System.NotImplementedException();
         }
         public void Delete(Game game)
         {
-            throw new System.NotImplementedException(); 
+            throw new System.NotImplementedException();
         }
     }
 }

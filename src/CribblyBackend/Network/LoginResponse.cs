@@ -1,4 +1,7 @@
-namespace CribblyBackend.Models.Network
+
+using CribblyBackend.DataAccess.Models;
+
+namespace CribblyBackend.Network
 {
     public class LoginResponse
     {

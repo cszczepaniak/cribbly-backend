@@ -1,7 +1,7 @@
 using System;
 using CribblyBackend.Controllers;
-using CribblyBackend.Models;
-using CribblyBackend.Models.Network;
+using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

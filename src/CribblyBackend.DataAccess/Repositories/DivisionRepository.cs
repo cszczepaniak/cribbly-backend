@@ -61,7 +61,6 @@ namespace CribblyBackend.DataAccess.Repositories
                 {
                     if (!teams.TryGetValue(t.Id, out Team _))
                     {
-                        t.Division = d;
                         teams.Add(t.Id, t);
                     }
                     return d;

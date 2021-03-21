@@ -94,7 +94,7 @@ namespace CribblyBackend.UnitTests
             }
 
 
-            mockTeamService.Setup(x => x.GetAll());
+            mockTeamService.Setup(x => x.GetAll()).ReturnsAsync(expTeams);
             var result = await TeamController.GetAll();
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actTeams = Assert.IsType<List<Team>>(okResult.Value);

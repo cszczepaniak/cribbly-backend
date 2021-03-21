@@ -59,5 +59,25 @@ namespace CribblyBackend.Controllers
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
         }
+        /// <summary>
+        /// GetAll returns all teams that are in the active tournament. 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                logger.Debug("Received request to get all teams");
+                var teams = await teamService.GetAll();
+                logger.Debug("All teams returned");
+                return Ok(teams);
+            }
+            catch (Exception e)
+            {
+                logger.Information(e, "Failed to fetch all teams");
+                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+            }
+        }
     }
 }

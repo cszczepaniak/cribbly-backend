@@ -10,6 +10,7 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface ITeamRepository
     {
         Task<Team> GetById(int Id);
+        Task<List<Team>> GetAll();
         void Update(Team Team);
         Task<int> Create(Team Team);
         void Delete(Team Team);
@@ -21,7 +22,32 @@ namespace CribblyBackend.DataAccess.Repositories
         {
             _connection = connection;
         }
+        public async Task<List<Team>> GetAll()
+        {
+            var players = new List<Player>();
+            var teams = (await _connection.QueryAsync<Team, Player, Team>(
+                @"SELECT * FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId",
+                (t, p) => 
+                {
+                    switch (players.Count)
+                    {
+                        case 0:
+                            players.Add(p);
+                            break;
+                        case 1:
+                            players.Add(p);
+                            t.Players = new List<Player>();
+                            t.Players.AddRange(players);
+                            players.Clear();
+                            break;
+                    }
 
+                    return t;
+                },
+                splitOn: "Id"
+                )).Where(t => t.Players != null).ToList();
+            return teams;
+        }
         public async Task<int> Create(Team team)
         {
             if (team.Players.Count < 2)

@@ -63,8 +63,7 @@ namespace CribblyBackend.Controllers
         /// GetAll returns all teams that are in the active tournament. 
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Get()
         {
             try
             {

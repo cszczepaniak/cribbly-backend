@@ -95,10 +95,10 @@ namespace CribblyBackend.UnitTests
 
 
             mockTeamService.Setup(x => x.GetAll()).ReturnsAsync(expTeams);
-            var result = await TeamController.GetAll();
+            var result = await TeamController.Get();
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actTeams = Assert.IsType<List<Team>>(okResult.Value);
-            Assert.Equal(expTeams.Count, actTeams.Count);
+            Assert.Equal(expTeams, actTeams);
             foreach (Team team in actTeams)
             {
                 Assert.Equal(2, team.Players.Count);

@@ -28,7 +28,7 @@ namespace CribblyBackend.Services
             var teams = await _teamRepository.Get();
             foreach (Team team in teams)
             {
-
+                //TODO: Calculate wins, losses, 
             }
             return teams;
         }

@@ -8,7 +8,7 @@ namespace CribblyBackend.Services
     public interface ITeamService
     {
         Task<Team> GetById(int Id);
-        Task<List<Team>> GetAll();
+        Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
         void Delete(Team Team);
@@ -16,14 +16,21 @@ namespace CribblyBackend.Services
     public class TeamService : ITeamService
     {
         private readonly ITeamRepository _teamRepository;
+        private readonly IGameRepository _gameRepository;
 
-        public TeamService(ITeamRepository teamRepository)
+        public TeamService(ITeamRepository teamRepository, IGameRepository gameRepository)
         {
             _teamRepository = teamRepository;
+            _gameRepository = gameRepository;
         }
-        public async Task<List<Team>> GetAll()
+        public async Task<List<Team>> Get()
         {
-            return await _teamRepository.GetAll();
+            var teams = await _teamRepository.Get();
+            foreach (Team team in teams)
+            {
+
+            }
+            return teams;
         }
         public async Task<int> Create(Team team)
         {

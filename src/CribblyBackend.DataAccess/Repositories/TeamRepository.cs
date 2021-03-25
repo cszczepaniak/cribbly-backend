@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Services;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Repositories
@@ -10,7 +11,7 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface ITeamRepository
     {
         Task<Team> GetById(int Id);
-        Task<List<Team>> GetAll();
+        Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
         void Delete(Team Team);
@@ -22,31 +23,26 @@ namespace CribblyBackend.DataAccess.Repositories
         {
             _connection = connection;
         }
-        public async Task<List<Team>> GetAll()
+        public async Task<List<Team>> Get()
         {
             var players = new List<Player>();
             var teams = (await _connection.QueryAsync<Team, Player, Team>(
-                @"SELECT * FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId",
+                @"SELECT * FROM Teams t 
+                INNER JOIN Players p ON t.Id = p.TeamId",
                 (t, p) => 
                 {
-                    switch (players.Count)
-                    {
-                        case 0:
-                            players.Add(p);
-                            break;
-                        case 1:
-                            players.Add(p);
-                            t.Players = new List<Player>();
-                            t.Players.AddRange(players);
-                            players.Clear();
-                            break;
-                    }
-
+                    p.Team = new Team(){ Id = t.Id };
+                    players.Add(p);
                     return t;
                 },
                 splitOn: "Id"
-                )).Where(t => t.Players != null).ToList();
-            return teams;
+                )).ToList();
+                foreach (Team team in teams)
+                {
+                    var members = players.Where(p => p.Team.Id == team.Id).ToList();
+                    team.Players = members;
+                }
+            return teams.Distinct(new TeamComparer()).ToList();
         }
         public async Task<int> Create(Team team)
         {

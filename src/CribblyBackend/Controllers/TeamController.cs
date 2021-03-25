@@ -68,7 +68,7 @@ namespace CribblyBackend.Controllers
             try
             {
                 logger.Debug("Received request to get all teams");
-                var teams = await teamService.GetAll();
+                var teams = await teamService.Get();
                 logger.Debug("All teams returned");
                 return Ok(teams);
             }

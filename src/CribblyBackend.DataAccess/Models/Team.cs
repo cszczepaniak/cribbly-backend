@@ -6,7 +6,7 @@ namespace CribblyBackend.DataAccess.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Division Division { get; set; }
+        public int Division { get; set; }
         public List<Player> Players { get; set; }
         public List<int> GameScores { get; set; }
         public List<Game> PlayInGames { get; set; }

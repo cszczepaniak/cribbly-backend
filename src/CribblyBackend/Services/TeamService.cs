@@ -26,10 +26,8 @@ namespace CribblyBackend.Services
         public async Task<List<Team>> Get()
         {
             var teams = await _teamRepository.Get();
-            foreach (Team team in teams)
-            {
-                //TODO: Calculate wins, losses, 
-            }
+            //TODO: Calculate wins, losses, 
+
             return teams;
         }
         public async Task<int> Create(Team team)

@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Services;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Repositories
@@ -10,6 +11,7 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface ITeamRepository
     {
         Task<Team> GetById(int Id);
+        Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
         void Delete(Team Team);
@@ -21,7 +23,27 @@ namespace CribblyBackend.DataAccess.Repositories
         {
             _connection = connection;
         }
-
+        public async Task<List<Team>> Get()
+        {
+            var players = new List<Player>();
+            var teams = (await _connection.QueryAsync<Team, Player, Team>(
+                @"SELECT * FROM Teams t 
+                INNER JOIN Players p ON t.Id = p.TeamId",
+                (t, p) => 
+                {
+                    p.Team = new Team(){ Id = t.Id };
+                    players.Add(p);
+                    return t;
+                },
+                splitOn: "Id"
+                )).ToList();
+                foreach (Team team in teams)
+                {
+                    var members = players.Where(p => p.Team.Id == team.Id).ToList();
+                    team.Players = members;
+                }
+            return teams.Distinct(new TeamComparer()).ToList();
+        }
         public async Task<int> Create(Team team)
         {
             if (team.Players.Count < 2)

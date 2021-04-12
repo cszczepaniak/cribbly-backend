@@ -69,6 +69,41 @@ namespace CribblyBackend.UnitTests
             Assert.Equal(expTeam.Name, actTeam.Name);
             Assert.Equal(expTeam.Players, actTeam.Players);
         }
+        [Fact]
+        public async Task GetAll_ShouldReturnTeamsAndOkStatus()
+        {
+            var expTeams = new List<Team>();
+            for (int i = 1; i <= 30; i++)
+            {
+                Team team = new Team()
+                {
+                    Id = i,
+                    Name = $"test Team {i}",
+                    Players = new List<Player>()
+                };
+                for (int j = 1; j <= 2; j++)
+                {
+                    Player expPlayer = new Player()
+                    {
+                        Id = i,
+                        Email = $"test{i}@test.com",
+                        Name = $"test player {i}"
+                    };
+                    team.Players.Add(expPlayer);
+                }
+            }
+
+
+            mockTeamService.Setup(x => x.Get()).ReturnsAsync(expTeams);
+            var result = await TeamController.Get();
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actTeams = Assert.IsType<List<Team>>(okResult.Value);
+            Assert.Equal(expTeams, actTeams);
+            foreach (Team team in actTeams)
+            {
+                Assert.Equal(2, team.Players.Count);
+            }
+        }
 
         [Fact]
         public async Task Create_ShouldReturnOkAndCreatedId_IfNoError()

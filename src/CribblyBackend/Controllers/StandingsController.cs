@@ -27,7 +27,8 @@ namespace CribblyBackend.Controllers
         /// <param name="request">The request</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Get([FromBody] Team team)
+        [Route("Calculate")]
+        public async Task<IActionResult> Calculate([FromBody] Team team)
         {
             try
             {

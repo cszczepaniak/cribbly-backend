@@ -16,19 +16,16 @@ namespace CribblyBackend.Services
     public class TeamService : ITeamService
     {
         private readonly ITeamRepository _teamRepository;
-        private readonly IGameRepository _gameRepository;
+        private readonly IStandingsService _standingsService;
 
-        public TeamService(ITeamRepository teamRepository, IGameRepository gameRepository)
+        public TeamService(ITeamRepository teamRepository, IStandingsService standingsService)
         {
             _teamRepository = teamRepository;
-            _gameRepository = gameRepository;
+            _standingsService = standingsService;
         }
         public async Task<List<Team>> Get()
         {
-            var teams = await _teamRepository.Get();
-            //TODO: Calculate wins, losses, 
-
-            return teams;
+            return await _teamRepository.Get();
         }
         public async Task<int> Create(Team team)
         {
@@ -42,7 +39,8 @@ namespace CribblyBackend.Services
 
         public async Task<Team> GetById(int id)
         {
-            return await _teamRepository.GetById(id);
+            var team = await _teamRepository.GetById(id);
+            return team;
         }
         public void Update(Team team)
         {

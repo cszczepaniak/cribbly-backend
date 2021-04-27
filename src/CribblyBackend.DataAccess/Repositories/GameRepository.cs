@@ -60,7 +60,6 @@ namespace CribblyBackend.DataAccess.Repositories
                     WHERE s.TeamId = @id
                     AND s.GameId = s2.GameId
                     AND s.TeamId != s2.TeamId
-
                 ",
                 (g, t, t2) =>
                 {

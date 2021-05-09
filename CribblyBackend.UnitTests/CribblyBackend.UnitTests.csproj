@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\src\CribblyBackend\CribblyBackend.csproj" />
     <ProjectReference Include="..\src\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
+    <ProjectReference Include="..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Players.Models;
+using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
@@ -28,10 +28,12 @@ namespace CribblyBackend.UnitTests
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            playerController = new PlayerController(mockPlayerService.Object, mockLoggerService.Object);
-            playerController.ControllerContext = new ControllerContext()
+            playerController = new PlayerController(mockPlayerService.Object, mockLoggerService.Object)
             {
-                HttpContext = mockHttpContext.Object
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = mockHttpContext.Object
+                }
             };
         }
 

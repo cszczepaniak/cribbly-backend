@@ -1,6 +1,5 @@
-using System;
+using CribblyBackend.Core.Games.Models;
 using CribblyBackend.DataAccess.Common;
-using CribblyBackend.DataAccess.Games.Models;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
 {

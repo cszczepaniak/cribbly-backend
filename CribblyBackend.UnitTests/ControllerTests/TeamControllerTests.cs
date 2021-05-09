@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Players.Models;
-using CribblyBackend.DataAccess.Teams.Models;
+using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,10 +29,12 @@ namespace CribblyBackend.UnitTests
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            TeamController = new TeamController(mockTeamService.Object, mockLoggerService.Object);
-            TeamController.ControllerContext = new ControllerContext()
+            TeamController = new TeamController(mockTeamService.Object, mockLoggerService.Object)
             {
-                HttpContext = mockHttpContext.Object
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = mockHttpContext.Object
+                }
             };
         }
 
@@ -54,7 +56,7 @@ namespace CribblyBackend.UnitTests
             };
             for (int i = 1; i <= 2; i++)
             {
-                Player expPlayer = new Player()
+                var expPlayer = new Player()
                 {
                     Id = i,
                     Email = $"test{i}@test.com",
@@ -76,7 +78,7 @@ namespace CribblyBackend.UnitTests
             var expTeams = new List<Team>();
             for (int i = 1; i <= 30; i++)
             {
-                Team team = new Team()
+                var team = new Team()
                 {
                     Id = i,
                     Name = $"test Team {i}",
@@ -84,7 +86,7 @@ namespace CribblyBackend.UnitTests
                 };
                 for (int j = 1; j <= 2; j++)
                 {
-                    Player expPlayer = new Player()
+                    var expPlayer = new Player()
                     {
                         Id = i,
                         Email = $"test{i}@test.com",

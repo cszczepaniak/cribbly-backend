@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.DataAccess.Extensions;
-using CribblyBackend.DataAccess.Tournaments.Models;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Tournaments.Repositories

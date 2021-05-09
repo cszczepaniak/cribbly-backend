@@ -1,7 +1,7 @@
 using System.Data;
 using System.Reflection;
+using CribblyBackend.Core.Games.Models;
 using CribblyBackend.DataAccess;
-using CribblyBackend.DataAccess.Games.Models;
 using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using CribblyBackend.DataAccess.Divisions.Models;
-using CribblyBackend.DataAccess.Games.Models;
-using CribblyBackend.DataAccess.Players.Models;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Games.Models;
+using CribblyBackend.Core.Players.Models;
 
-namespace CribblyBackend.DataAccess.Teams.Models
+namespace CribblyBackend.Core.Teams.Models
 {
     public class Team
     {

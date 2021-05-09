@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Tournaments.Models;
+using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.DataAccess.Tournaments.Repositories;
 
 namespace CribblyBackend.Services
@@ -69,7 +69,7 @@ namespace CribblyBackend.Services
             await _tournamentRepository.SetFlagValue(tournamentId, flagName, newVal);
         }
 
-        private (bool, string) CanSetFlag(bool newVal, string flagName, List<Tournament> resultsWithFlagSet)
+        private static (bool, string) CanSetFlag(bool newVal, string flagName, List<Tournament> resultsWithFlagSet)
         {
             if (newVal)
             {

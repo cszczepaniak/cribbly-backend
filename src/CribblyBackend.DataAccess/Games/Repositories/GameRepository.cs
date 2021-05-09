@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Games.Models;
+using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Extensions;
-using CribblyBackend.DataAccess.Games.Models;
-using CribblyBackend.DataAccess.Players.Models;
-using CribblyBackend.DataAccess.Teams.Models;
-using Dapper;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using CribblyBackend.DataAccess.Teams.Models;
+using CribblyBackend.Core.Teams.Models;
 
-namespace CribblyBackend.DataAccess.Games.Models
+namespace CribblyBackend.Core.Games.Models
 {
     public enum Round
     {

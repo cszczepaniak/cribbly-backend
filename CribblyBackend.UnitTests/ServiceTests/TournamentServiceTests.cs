@@ -1,17 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Threading.Tasks;
-using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Tournaments.Models;
+using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.DataAccess.Tournaments.Repositories;
 using CribblyBackend.Services;
-using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Moq.Dapper;
 using Xunit;
 
 namespace CribblyBackend.UnitTests

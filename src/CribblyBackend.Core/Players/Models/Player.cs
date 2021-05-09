@@ -1,6 +1,6 @@
-using CribblyBackend.DataAccess.Teams.Models;
+using CribblyBackend.Core.Teams.Models;
 
-namespace CribblyBackend.DataAccess.Players.Models
+namespace CribblyBackend.Core.Players.Models
 {
     public class Player
     {

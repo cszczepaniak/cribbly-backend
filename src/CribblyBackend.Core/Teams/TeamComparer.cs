@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using CribblyBackend.DataAccess.Teams.Models;
+using CribblyBackend.Core.Teams.Models;
 
-namespace CribblyBackend.DataAccess.Teams
+namespace CribblyBackend.Core.Teams
 {
     public class TeamComparer : IEqualityComparer<Team>
     {

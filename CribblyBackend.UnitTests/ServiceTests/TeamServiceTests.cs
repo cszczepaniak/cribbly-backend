@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.Controllers;
+
+using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Games.Repositories;
-using CribblyBackend.DataAccess.Players.Models;
-using CribblyBackend.DataAccess.Teams.Models;
 using CribblyBackend.DataAccess.Teams.Repositories;
 using CribblyBackend.Services;
-using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+
 using Moq;
-using Moq.Dapper;
+
 using Xunit;
 
 namespace CribblyBackend.UnitTests
@@ -36,7 +32,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task CreateTeamWithOnePlayer_ShouldThrowError()
         {
-            Team badTeam = new Team()
+            var badTeam = new Team()
             {
                 Name = "bad",
                 Players = new List<Player>() { new Player() { Name = "Tobias Funke" } }
@@ -48,7 +44,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Get_ShouldNotReturnDuplicateTeams()
         {
-            List<Team> teams = new List<Team>()
+            var teams = new List<Team>()
             {
                 new Team() { Name = "team1" },
                 new Team() { Name = "team2" }
@@ -58,7 +54,7 @@ namespace CribblyBackend.UnitTests
             Assert.True(TeamListHasNoDuplicates(teamsList));
         }
 
-        public bool TeamListHasNoDuplicates(List<Team> teams)
+        public static bool TeamListHasNoDuplicates(List<Team> teams)
         {
             return teams.GroupBy(t => t.Id).Any(grp => grp.Count() > 1);
         }

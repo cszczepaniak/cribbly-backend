@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Teams.Models;
-using CribblyBackend.DataAccess.Games.Repositories;
-using CribblyBackend.DataAccess.Teams.Repositories;
+using CribblyBackend.Core.Teams.Repositories;
 
-namespace CribblyBackend.DataAccess.Teams.Services
+namespace CribblyBackend.Core.Teams.Services
 {
     public interface ITeamService
     {

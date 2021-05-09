@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Players.Services;
 using CribblyBackend.Network;
-using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
-using CribblyBackend.DataAccess.Tournaments.Repositories;
+using CribblyBackend.Core.Tournaments.Repositories;
 
-namespace CribblyBackend.DataAccess.Tournaments.Services
+namespace CribblyBackend.Core.Tournaments.Services
 {
     public interface ITournamentService
     {

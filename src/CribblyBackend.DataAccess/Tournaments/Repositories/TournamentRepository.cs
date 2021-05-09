@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
+using CribblyBackend.Core.Tournaments.Repositories;
 using CribblyBackend.DataAccess.Extensions;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Tournaments.Repositories
 {
-    public interface ITournamentRepository
-    {
-        Task<Tournament> Create(DateTime date);
-        Task SetFlagValue(int tournamentId, string flagName, bool newVal);
-        Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName);
-    }
     public class TournamentRepository : ITournamentRepository
     {
         private readonly IDbConnection _connection;

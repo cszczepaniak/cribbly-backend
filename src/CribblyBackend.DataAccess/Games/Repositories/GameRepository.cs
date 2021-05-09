@@ -3,19 +3,13 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
+using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Extensions;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
 {
-    public interface IGameRepository
-    {
-        Task<Game> GetById(int Id);
-        void Update(Game Game);
-        Task Create(Game Game);
-        void Delete(Game Game);
-    }
     public class GameRepository : IGameRepository
     {
         private readonly IDbConnection connection;

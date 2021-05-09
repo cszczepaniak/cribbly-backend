@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Teams.Models;
-using CribblyBackend.DataAccess.Teams.Services;
+using CribblyBackend.Core.Teams.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 

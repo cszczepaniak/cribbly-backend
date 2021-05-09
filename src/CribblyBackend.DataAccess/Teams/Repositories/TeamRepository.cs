@@ -5,18 +5,11 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams;
 using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Extensions;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
-    public interface ITeamRepository
-    {
-        Task<Team> GetById(int Id);
-        Task<List<Team>> Get();
-        void Update(Team Team);
-        Task<int> Create(Team Team);
-        void Delete(Team Team);
-    }
     public class TeamRepository : ITeamRepository
     {
         private readonly IDbConnection _connection;

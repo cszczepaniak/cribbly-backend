@@ -2,20 +2,12 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Extensions;
 
 namespace CribblyBackend.DataAccess.Players.Repositories
 {
-    public interface IPlayerRepository
-    {
-        Task<bool> Exists(string email);
-        Task<Player> GetByEmail(string email);
-        Task<Player> GetById(int id);
-        void Update(Player player);
-        Task<Player> Create(string email, string name);
-        void Delete(Player player);
-    }
     public class PlayerRepository : IPlayerRepository
     {
         private readonly IDbConnection connection;

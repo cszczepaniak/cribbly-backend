@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
-using CribblyBackend.DataAccess.Players.Repositories;
+using CribblyBackend.Core.Players.Repositories;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.Core.Players.Services
 {
     public interface IPlayerService
     {

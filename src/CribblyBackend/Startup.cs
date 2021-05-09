@@ -1,11 +1,8 @@
 using System.Data;
 using System.Reflection;
+using CribblyBackend.Core.Extensions;
 using CribblyBackend.Core.Games.Models;
-using CribblyBackend.Core.Games.Services;
 using CribblyBackend.DataAccess;
-using CribblyBackend.DataAccess.Teams.Services;
-using CribblyBackend.DataAccess.Tournaments.Services;
-using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -59,11 +56,8 @@ namespace CribblyBackend
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddSingleton(Log.Logger);
             services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
-            // services
-            services.AddTransient<IPlayerService, PlayerService>();
-            services.AddTransient<ITeamService, TeamService>();
-            services.AddTransient<IGameService, GameService>();
-            services.AddTransient<ITournamentService, TournamentService>();
+
+            services.AddCoreServices();
             services.AddDataAccess();
         }
 

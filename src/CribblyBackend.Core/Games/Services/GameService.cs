@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
-using CribblyBackend.DataAccess.Games.Repositories;
+using CribblyBackend.Core.Games.Repositories;
 
 namespace CribblyBackend.Core.Games.Services
 {

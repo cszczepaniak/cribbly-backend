@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
-using CribblyBackend.DataAccess.Tournaments.Repositories;
-using CribblyBackend.DataAccess.Tournaments.Services;
+using CribblyBackend.Core.Tournaments.Repositories;
+using CribblyBackend.Core.Tournaments.Services;
 using Moq;
 using Xunit;
 

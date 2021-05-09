@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Players.Services;
 using CribblyBackend.Network;
-using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Serilog;

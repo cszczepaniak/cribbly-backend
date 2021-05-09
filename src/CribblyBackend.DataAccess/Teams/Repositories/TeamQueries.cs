@@ -5,43 +5,35 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
 {
     public static class TeamQueries
     {
-        private const string CreateTeamWithNameQuery = @"INSERT INTO Teams(Name) VALUES (@Name)";
         public static Query CreateWithName(string name)
         {
             return new()
             {
-                Sql = CreateTeamWithNameQuery,
+                Sql = @"INSERT INTO Teams(Name) VALUES (@Name)",
                 Params = new { Name = name },
             };
         }
-        private const string UpdatePlayerTeamToLastIdQuery
-            = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId";
         public static Query UpdatePlayerWithLastTeamId(int playerId)
         {
             return new()
             {
-                Sql = UpdatePlayerTeamToLastIdQuery,
+                Sql = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
                 Params = new { Id = playerId },
             };
         }
-
-        private const string GetByIdQuery
-             = @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id";
         public static Query GetById(int id)
         {
             return new()
             {
-                Sql = GetByIdQuery,
+                Sql = @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
                 Params = new { Id = id },
             };
         }
-        private const string GetAllQuery
-            = @"SELECT * FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId";
         public static Query GetAll()
         {
             return new()
             {
-                Sql = GetAllQuery,
+                Sql = @"SELECT * FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId",
             };
         }
     }

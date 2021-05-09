@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Extensions;
 using CribblyBackend.DataAccess.Tournaments.Models;
 using Dapper;
 
@@ -23,40 +24,26 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         }
         public async Task<Tournament> Create(DateTime date)
         {
-            await _connection.ExecuteAsync(
-                @"
-                INSERT INTO Tournaments (Date, IsOpenForRegistration, IsActive) 
-                VALUES (@Date, FALSE, FALSE)
-                ",
-                new { Date = date }
+            await _connection.ExecuteWithObjectAsync(
+                TournamentQueries.Create(date)
             );
-            return (await _connection.QueryAsync<Tournament>(
-                @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()"
-            )).First();
+            return await _connection.QuerySingleAsync<Tournament>(
+                TournamentQueries.GetLast().Sql
+            );
         }
 
         public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName)
         {
-            // Note: this breaks the rule of using only parameterized query strings; however, the external world
-            // CANNOT control flagName here since flagName is passed by us and never from an external source
-            return await _connection.QueryAsync<Tournament>(
-                $@"SELECT * FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
-                new { Name = flagName }
+            return await _connection.QueryWithObjectAsync<Tournament>(
+                TournamentQueries.GetAllWithActiveFlag(flagName)
             );
         }
 
         public async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
         {
-            // Note: this breaks the rule of using only parameterized query strings; however, the external world
-            // CANNOT control flagName here since flagName is passed by us and never from an external source
-            await _connection.ExecuteAsync(
-                $@"
-                UPDATE Tournaments 
-                SET {flagName} = @Value
-                WHERE Id = @Id
-                ",
-                new { Name = flagName, Value = newVal, Id = tournamentId }
-                );
+            await _connection.ExecuteWithObjectAsync(
+                TournamentQueries.SetFlag(tournamentId, flagName, newVal)
+            );
         }
     }
 }

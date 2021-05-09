@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Common;
 using Dapper;
@@ -30,6 +31,10 @@ namespace CribblyBackend.DataAccess.Extensions
         )
         {
             return await connection.QueryAsync<T1, T2, T3, TReturn>(query.Sql, map, param: query.Params);
+        }
+        public static async Task<IEnumerable<TReturn>> QueryWithObjectAsync<TReturn>(this IDbConnection connection, Query query)
+        {
+            return await connection.QueryAsync<TReturn>(query.Sql, query.Params);
         }
         public static async Task<int> ExecuteWithObjectAsync(this IDbConnection connection, Query query)
         {

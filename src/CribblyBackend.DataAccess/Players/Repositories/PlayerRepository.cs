@@ -1,9 +1,9 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Extensions;
 using CribblyBackend.DataAccess.Players.Models;
 using CribblyBackend.DataAccess.Teams.Models;
-using Dapper;
 
 namespace CribblyBackend.DataAccess.Players.Repositories
 {
@@ -26,17 +26,15 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task<bool> Exists(string email)
         {
-            return (await connection.QueryAsync<bool>(
-                @"SELECT EXISTS(SELECT * FROM Players WHERE Email = @Email LIMIT 1)",
-                new { Email = email }
-            )).First();
+            return (await connection.QueryWithObjectAsync<bool>(
+                PlayerQueries.PlayerExistsWithEmail(email)
+            )).Single();
         }
 
         public async Task<Player> Create(string email, string name)
         {
-            await connection.ExecuteAsync(
-                @"INSERT INTO Players (Email, Name) VALUES (@Email, @Name)",
-                new { Email = email, Name = name }
+            await connection.ExecuteWithObjectAsync(
+                PlayerQueries.CreatePlayerQuery(email, name)
             );
             return await GetByEmail(email);
         }
@@ -48,21 +46,17 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task<Player> GetById(int id)
         {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
-                MapTeamToPlayer,
-                new { Id = id },
-                splitOn: "TeamId"
+            var players = await connection.QueryWithObjectAsync<Player, Team, Player>(
+                PlayerQueries.GetById(id),
+                MapTeamToPlayer
             );
             return players.FirstOrDefault();
         }
         public async Task<Player> GetByEmail(string email)
         {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
-                MapTeamToPlayer,
-                new { Email = email },
-                splitOn: "TeamId"
+            var players = await connection.QueryWithObjectAsync<Player, Team, Player>(
+                PlayerQueries.GetByEmail(email),
+                MapTeamToPlayer
             );
             return players.FirstOrDefault();
         }

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
+using CribblyBackend.DataAccess.Tournaments.Models;
+using CribblyBackend.DataAccess.Tournaments.Repositories;
 
 namespace CribblyBackend.Services
 {

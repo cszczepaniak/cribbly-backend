@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Tournaments.Models;
 using Dapper;
 
-namespace CribblyBackend.DataAccess.Repositories
+namespace CribblyBackend.DataAccess.Tournaments.Repositories
 {
     public interface ITournamentRepository
     {

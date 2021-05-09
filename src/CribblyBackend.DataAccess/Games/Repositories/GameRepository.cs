@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Games.Models;
+using CribblyBackend.DataAccess.Players.Models;
+using CribblyBackend.DataAccess.Teams.Models;
 using Dapper;
 
-namespace CribblyBackend.DataAccess.Repositories
+namespace CribblyBackend.DataAccess.Games.Repositories
 {
     public interface IGameRepository
     {

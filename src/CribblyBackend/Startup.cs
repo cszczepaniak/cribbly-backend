@@ -1,7 +1,10 @@
 using System.Data;
 using System.Reflection;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
+using CribblyBackend.DataAccess.Games.Models;
+using CribblyBackend.DataAccess.Games.Repositories;
+using CribblyBackend.DataAccess.Players.Repositories;
+using CribblyBackend.DataAccess.Teams.Repositories;
+using CribblyBackend.DataAccess.Tournaments.Repositories;
 using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -1,7 +1,8 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
+using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Games.Repositories;
+using CribblyBackend.DataAccess.Teams.Models;
+using CribblyBackend.DataAccess.Teams.Repositories;
 
 namespace CribblyBackend.Services
 {

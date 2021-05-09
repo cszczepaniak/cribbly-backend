@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Players.Models;
 using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;

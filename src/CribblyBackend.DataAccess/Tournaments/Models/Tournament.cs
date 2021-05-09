@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using CribblyBackend.DataAccess.Games.Models;
+using CribblyBackend.DataAccess.Players.Models;
+using CribblyBackend.DataAccess.Teams.Models;
 
-namespace CribblyBackend.DataAccess.Models
+
+namespace CribblyBackend.DataAccess.Tournaments.Models
 {
     public class Tournament
     {

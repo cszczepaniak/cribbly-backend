@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Teams.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;

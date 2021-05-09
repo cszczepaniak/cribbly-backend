@@ -1,6 +1,6 @@
 using System;
 using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Tournaments.Models;
 using CribblyBackend.Network;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;

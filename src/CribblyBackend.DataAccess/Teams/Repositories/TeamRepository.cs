@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Players.Models;
 using CribblyBackend.DataAccess.Services;
+using CribblyBackend.DataAccess.Teams.Models;
 using Dapper;
 
-namespace CribblyBackend.DataAccess.Repositories
+namespace CribblyBackend.DataAccess.Teams.Repositories
 {
     public interface ITeamRepository
     {
@@ -29,19 +30,19 @@ namespace CribblyBackend.DataAccess.Repositories
             var teams = (await _connection.QueryAsync<Team, Player, Team>(
                 @"SELECT * FROM Teams t 
                 INNER JOIN Players p ON t.Id = p.TeamId",
-                (t, p) => 
+                (t, p) =>
                 {
-                    p.Team = new Team(){ Id = t.Id };
+                    p.Team = new Team() { Id = t.Id };
                     players.Add(p);
                     return t;
                 },
                 splitOn: "Id"
                 )).ToList();
-                foreach (Team team in teams)
-                {
-                    var members = players.Where(p => p.Team.Id == team.Id).ToList();
-                    team.Players = members;
-                }
+            foreach (Team team in teams)
+            {
+                var members = players.Where(p => p.Team.Id == team.Id).ToList();
+                team.Players = members;
+            }
             return teams.Distinct(new TeamComparer()).ToList();
         }
         public async Task<int> Create(Team team)

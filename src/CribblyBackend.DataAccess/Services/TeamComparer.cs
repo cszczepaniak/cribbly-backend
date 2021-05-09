@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess.Teams.Models;
 
 namespace CribblyBackend.DataAccess.Services
 {
@@ -12,7 +12,7 @@ namespace CribblyBackend.DataAccess.Services
 
         public int GetHashCode(Team team)
         {
-            if(team == null) return 0;
+            if (team == null) return 0;
             unchecked
             {
                 int hash = 69;

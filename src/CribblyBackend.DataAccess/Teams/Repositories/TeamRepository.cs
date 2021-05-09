@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Extensions;
 using CribblyBackend.DataAccess.Players.Models;
-using CribblyBackend.DataAccess.Services;
 using CribblyBackend.DataAccess.Teams.Models;
-using Dapper;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
@@ -27,16 +26,14 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         public async Task<List<Team>> Get()
         {
             var players = new List<Player>();
-            var teams = (await _connection.QueryAsync<Team, Player, Team>(
-                @"SELECT * FROM Teams t 
-                INNER JOIN Players p ON t.Id = p.TeamId",
+            var teams = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
+                TeamQueries.GetAll(),
                 (t, p) =>
                 {
                     p.Team = new Team() { Id = t.Id };
                     players.Add(p);
                     return t;
-                },
-                splitOn: "Id"
+                }
                 )).ToList();
             foreach (Team team in teams)
             {
@@ -51,17 +48,12 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await _connection.ExecuteAsync(
-                @"INSERT INTO Teams(Name) VALUES (@Name)",
-                new { Name = team.Name }
-            );
+            await _connection.ExecuteWithObjectAsync(TeamQueries.CreateWithName(team.Name));
             foreach (Player player in team.Players)
             {
-                await _connection.ExecuteAsync(
-                    @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
-                    new { PlayerId = player.Id });
+                await _connection.ExecuteWithObjectAsync(TeamQueries.UpdatePlayerWithLastTeamId(player.Id));
             }
-            return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
+            return await _connection.QueryLastInsertedId();
         }
 
         public void Delete(Team team)
@@ -72,8 +64,8 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         public async Task<Team> GetById(int id)
         {
             var players = new Dictionary<int, Player>();
-            var team = (await _connection.QueryAsync<Team, Player, Team>(
-                @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
+            var team = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
+                TeamQueries.GetById(id),
                 (t, p) =>
                 {
                     if (!players.TryGetValue(p.Id, out Player _))
@@ -81,9 +73,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                         players.Add(p.Id, p);
                     }
                     return t;
-                },
-                new { Id = id },
-                splitOn: "Id"
+                }
                 )).FirstOrDefault();
             team.Players = players.Values.ToList();
             return team;

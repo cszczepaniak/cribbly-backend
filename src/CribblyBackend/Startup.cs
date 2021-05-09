@@ -1,10 +1,7 @@
 using System.Data;
 using System.Reflection;
+using CribblyBackend.DataAccess;
 using CribblyBackend.DataAccess.Games.Models;
-using CribblyBackend.DataAccess.Games.Repositories;
-using CribblyBackend.DataAccess.Players.Repositories;
-using CribblyBackend.DataAccess.Teams.Repositories;
-using CribblyBackend.DataAccess.Tournaments.Repositories;
 using CribblyBackend.Services;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,11 +61,7 @@ namespace CribblyBackend
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<ITournamentService, TournamentService>();
-            // repositories
-            services.AddTransient<IPlayerRepository, PlayerRepository>();
-            services.AddTransient<ITeamRepository, TeamRepository>();
-            services.AddTransient<IGameRepository, GameRepository>();
-            services.AddTransient<ITournamentRepository, TournamentRepository>();
+            services.AddDataAccess();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

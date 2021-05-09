@@ -30,10 +30,12 @@ namespace CribblyBackend.UnitTests
             mockHttpContext = new Mock<HttpContext>();
             mockLoggerService = new Mock<ILogger>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            GameController = new GameController(mockGameService.Object, mockLoggerService.Object);
-            GameController.ControllerContext = new ControllerContext()
+            GameController = new GameController(mockGameService.Object, mockLoggerService.Object)
             {
-                HttpContext = mockHttpContext.Object
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = mockHttpContext.Object
+                }
             };
         }
 
@@ -50,22 +52,22 @@ namespace CribblyBackend.UnitTests
             var expGame = new Game()
             {
                 Id = 1,
-                GameRound = (Game.Round)1,
+                GameRound = (Round)1,
                 Teams = new List<Team>()
             };
             for (int i = 1; i <= 2; i++)
             {
-                List<Player> playerList = new List<Player>();
+                var playerList = new List<Player>();
                 for (int j = 1; j <= 2; j++)
                 {
-                    Player player = new Player()
+                    var player = new Player
                     {
                         Name = $"test player {j}",
                         Email = $"test{i + j}@test.com"
                     };
                     playerList.Add(player);
                 }
-                Team expTeam = new Team()
+                var expTeam = new Team
                 {
                     Id = i,
                     Name = $"test team {i}",

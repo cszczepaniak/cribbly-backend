@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using CribblyBackend.Core.Games.Services;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Games.Repositories;
 using CribblyBackend.DataAccess.Teams.Repositories;
-using CribblyBackend.Services;
-
+using CribblyBackend.DataAccess.Teams.Services;
 using Moq;
 
 using Xunit;

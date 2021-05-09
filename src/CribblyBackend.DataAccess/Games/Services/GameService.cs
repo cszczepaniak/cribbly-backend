@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.DataAccess.Games.Repositories;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.Core.Games.Services
 {
     public interface IGameService
     {

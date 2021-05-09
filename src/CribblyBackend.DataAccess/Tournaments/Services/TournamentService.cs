@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.DataAccess.Tournaments.Repositories;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.DataAccess.Tournaments.Services
 {
     public interface ITournamentService
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using CribblyBackend.DataAccess.Tournaments.Services;
 using CribblyBackend.Network;
-using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

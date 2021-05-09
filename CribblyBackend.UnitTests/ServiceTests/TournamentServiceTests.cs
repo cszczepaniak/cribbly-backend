@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.DataAccess.Tournaments.Repositories;
-using CribblyBackend.Services;
+using CribblyBackend.DataAccess.Tournaments.Services;
 using Moq;
 using Xunit;
 
@@ -11,7 +11,7 @@ namespace CribblyBackend.UnitTests
 {
     public class TournamentServiceTests
     {
-        private readonly TournamentService tournamentService;
+        private readonly ITournamentService tournamentService;
         private readonly Mock<ITournamentRepository> mockTournamentRepository;
 
         public TournamentServiceTests()

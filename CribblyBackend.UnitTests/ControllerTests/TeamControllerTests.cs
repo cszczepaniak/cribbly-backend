@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
-using CribblyBackend.Services;
+using CribblyBackend.DataAccess.Teams.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

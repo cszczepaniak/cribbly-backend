@@ -4,7 +4,7 @@ using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Games.Repositories;
 using CribblyBackend.DataAccess.Teams.Repositories;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.DataAccess.Teams.Services
 {
     public interface ITeamService
     {

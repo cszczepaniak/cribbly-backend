@@ -24,7 +24,7 @@ namespace CribblyBackend.Controllers
         /// <summary>
         /// Returns a Team object with standings filled in.
         /// </summary>
-        /// <param name="request">The request</param>
+        /// <param name="team">The team for which to get standings</param>
         /// <returns></returns>
         [HttpPost]
         [Route("Calculate")]

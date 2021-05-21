@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ namespace CribblyBackend.Controllers
         public async Task<IActionResult> GetByTeamId(int id)
         {
             var g = await gameService.GetByTeamId(id);
-            if (g != null)
+            if (g.Count() > 0)
             {
                 return Ok(g);
             }

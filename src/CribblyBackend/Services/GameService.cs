@@ -8,7 +8,7 @@ namespace CribblyBackend.Services
     public interface IGameService
     {
         Task<Game> GetById(int Id);
-        Task<List<Game>> GetByTeamId(int Id);
+        Task<IEnumerable<Game>> GetByTeamId(int Id);
         void Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
@@ -26,7 +26,7 @@ namespace CribblyBackend.Services
         {
             return await _gameRepository.GetById(id);
         }
-        public async Task<List<Game>> GetByTeamId(int id)
+        public async Task<IEnumerable<Game>> GetByTeamId(int id)
         {
             return await _gameRepository.GetByTeamId(id);
         }

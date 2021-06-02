@@ -10,6 +10,7 @@ namespace CribblyBackend.DataAccess.Repositories
     public interface IGameRepository
     {
         Task<Game> GetById(int Id);
+        Task<IEnumerable<Game>> GetByTeamId(int id);
         void Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
@@ -46,6 +47,30 @@ namespace CribblyBackend.DataAccess.Repositories
                 )).FirstOrDefault();
             game.Teams = teams.Values.ToList();
             return game;
+        }
+        public async Task<IEnumerable<Game>> GetByTeamId(int id)
+        {
+            var games = (await connection.QueryAsync<Game, Team, Team, Game>(
+                @"
+                    SELECT * FROM Scores s 
+                    LEFT JOIN Games g on s.GameId = g.Id 
+                    LEFT JOIN Teams t on s.TeamId = t.Id 
+                    LEFT JOIN Scores s2 on s.GameId = s2.GameId
+                    LEFT JOIN Teams t2 on s2.TeamId = t2.Id
+                    WHERE s.TeamId = @id
+                    AND s.TeamId != s2.TeamId
+                ",
+                (g, t, t2) =>
+                {
+                    g.Teams = new List<Team>();
+                    g.Teams.Add(t);
+                    g.Teams.Add(t2);
+                    return g;
+                },
+                new { Id = id }
+                ));
+
+            return games.ToList();
         }
         public async Task Create(Game game)
         {

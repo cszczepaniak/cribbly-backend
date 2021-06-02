@@ -36,24 +36,6 @@ namespace CribblyBackend.Controllers
             logger.Information("Request for game {id} returned no results", id);
             return NotFound();
         }
-        
-        /// <summary>
-        /// GetByTeamId fetches all games associated with a given TeamId.
-        /// </summary>
-        /// <param name="id">The id of the Team for which to get all games</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GetByTeamId")]
-        public async Task<IActionResult> GetByTeamId(int id)
-        {
-            var g = await gameService.GetByTeamId(id);
-            if (g.Count() > 0)
-            {
-                return Ok(g);
-            }
-            logger.Information("Request for games from team {id} returned no results", id);
-            return NotFound();
-        }
 
         /// <summary>
         /// Create makes a new Game object.

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Services;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 

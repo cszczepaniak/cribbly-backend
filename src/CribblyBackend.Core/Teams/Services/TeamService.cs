@@ -9,6 +9,7 @@ namespace CribblyBackend.Core.Teams.Services
     public interface ITeamService
     {
         Task<Team> GetById(int Id);
+        Task<IEnumerable<Game>> GetGamesAsync(int teamId);
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
@@ -48,6 +49,11 @@ namespace CribblyBackend.Core.Teams.Services
         public void Update(Team team)
         {
             throw new System.NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Game>> GetGamesAsync(int teamId)
+        {
+            return await _gameRepository.GetByTeamId(teamId);
         }
     }
 }

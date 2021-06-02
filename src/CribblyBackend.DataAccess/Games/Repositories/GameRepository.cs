@@ -7,6 +7,7 @@ using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.DataAccess.Extensions;
+using Dapper;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;

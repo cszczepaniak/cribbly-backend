@@ -60,7 +60,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         private Player MapTeamToPlayer(Player player, Team team)
         {
-            if (team.Id == 0)
+            if (team == null || team.Id == 0)
             {
                 player.Team = null;
                 return player;

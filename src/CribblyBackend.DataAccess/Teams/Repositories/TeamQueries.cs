@@ -17,7 +17,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         {
             return new()
             {
-                Sql = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @PlayerId",
+                Sql = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @Id",
                 Params = new { Id = playerId },
             };
         }

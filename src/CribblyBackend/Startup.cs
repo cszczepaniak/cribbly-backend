@@ -61,6 +61,7 @@ namespace CribblyBackend
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<IGameService, GameService>();
             services.AddTransient<ITournamentService, TournamentService>();
+            services.AddTransient<IStandingsService, StandingsService>();
             // repositories
             services.AddTransient<IPlayerRepository, PlayerRepository>();
             services.AddTransient<ITeamRepository, TeamRepository>();

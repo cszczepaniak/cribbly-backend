@@ -18,11 +18,13 @@ namespace CribblyBackend.Services
     {
         private readonly ITeamRepository _teamRepository;
         private readonly IStandingsService _standingsService;
+        private readonly IGameRepository _gameRepository;
 
-        public TeamService(ITeamRepository teamRepository, IStandingsService standingsService)
+        public TeamService(ITeamRepository teamRepository, IStandingsService standingsService, IGameRepository gameRepository)
         {
             _teamRepository = teamRepository;
             _standingsService = standingsService;
+            _gameRepository = gameRepository;
         }
         public async Task<List<Team>> Get()
         {

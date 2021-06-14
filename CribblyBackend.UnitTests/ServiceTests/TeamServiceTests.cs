@@ -32,7 +32,7 @@ namespace CribblyBackend.UnitTests
             mockGameRepository = new Mock<IGameRepository>();
             mockStandingsService = new Mock<IStandingsService>();
             gameService = new GameService(mockGameRepository.Object);
-            teamService = new TeamService(mockTeamRepository.Object, mockStandingsService.Object);
+            teamService = new TeamService(mockTeamRepository.Object, mockStandingsService.Object, mockGameRepository.Object);
             standingsService = new StandingsService(mockGameRepository.Object);
         }
         [Fact]

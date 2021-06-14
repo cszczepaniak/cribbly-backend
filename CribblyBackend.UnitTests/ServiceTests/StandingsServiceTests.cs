@@ -15,7 +15,7 @@ namespace CribblyBackend.UnitTests
         private readonly Mock<IGameRepository> mockGameRepository;
 
         private Team team1 = new Team() { Id = 1, Name = "team1"};
-        private Team team2 = new Team() { Id = 1, Name = "team2"};
+        private Team team2 = new Team() { Id = 2, Name = "team2"};
 
         public StandingsServiceTests()
         {
@@ -36,8 +36,7 @@ namespace CribblyBackend.UnitTests
         public async Task Calculate_ShouldReturnTeamWithOneLossIfTheyHaveLoss()
         {
             Game game = new Game(){ Teams = new List<Team>(){team1, team2}, Winner = team2};
-            var games = new List<Game>(){game};
-            mockGameRepository.Setup(x => x.GetByTeamId(team1.Id)).ReturnsAsync(games);
+            mockGameRepository.Setup(x => x.GetByTeamId(team1.Id)).ReturnsAsync(new List<Game>(){game});
             var result = await StandingsService.Calculate(team1);
             Assert.Equal(0, result.Wins);
             Assert.Equal(1, result.Losses);

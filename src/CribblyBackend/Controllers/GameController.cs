@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -33,24 +34,6 @@ namespace CribblyBackend.Controllers
                 return Ok(p);
             }
             logger.Information("Request for game {id} returned no results", id);
-            return NotFound();
-        }
-        
-        /// <summary>
-        /// GetByTeamId fetches all games associated with a given TeamId.
-        /// </summary>
-        /// <param name="id">The id of the Team for which to get all games</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("GetByTeamId")]
-        public async Task<IActionResult> GetByTeamId(int id)
-        {
-            var g = await gameService.GetByTeamId(id);
-            if (g != null)
-            {
-                return Ok(g);
-            }
-            logger.Information("Request for games from team {id} returned no results", id);
             return NotFound();
         }
 

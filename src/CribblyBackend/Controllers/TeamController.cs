@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
 using CribblyBackend.Services;
@@ -12,12 +13,12 @@ namespace CribblyBackend.Controllers
     [Route("api/[controller]")]
     public class TeamController : ControllerBase
     {
-        private readonly ITeamService teamService;
-        private readonly ILogger logger;
+        private readonly ITeamService _teamService;
+        private readonly ILogger _logger;
         public TeamController(ITeamService teamService, ILogger logger)
         {
-            this.teamService = teamService;
-            this.logger = logger;
+            _teamService = teamService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -28,13 +29,13 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            logger.Debug("Received request to get team using id {id}", id);
-            var p = await teamService.GetById(id);
+            _logger.Debug("Received request to get team using id {id}", id);
+            var p = await _teamService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            logger.Information("Request for team {id} returned no results", id);
+            _logger.Information("Request for team {id} returned no results", id);
             return NotFound();
         }
 
@@ -48,14 +49,14 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                logger.Debug("Received request to create team {@team}", team);
-                var createdId = await teamService.Create(team);
-                logger.Debug("New team created: {@team}", team);
+                _logger.Debug("Received request to create team {@team}", team);
+                var createdId = await _teamService.Create(team);
+                _logger.Debug("New team created: {@team}", team);
                 return Ok(createdId);
             }
             catch (Exception e)
             {
-                logger.Information("Failed to create team: {@team} -- MSG: {message}", team, e.Message);
+                _logger.Information("Failed to create team: {@team} -- MSG: {message}", team, e.Message);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
         }
@@ -67,16 +68,34 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                logger.Debug("Received request to get all teams");
-                var teams = await teamService.Get();
-                logger.Debug("All teams returned");
+                _logger.Debug("Received request to get all teams");
+                var teams = await _teamService.Get();
+                _logger.Debug("All teams returned");
                 return Ok(teams);
             }
             catch (Exception e)
             {
-                logger.Information(e, "Failed to fetch all teams");
+                _logger.Information(e, "Failed to fetch all teams");
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// GetByTeamId fetches all games associated with a given TeamId.
+        /// </summary>
+        /// <param name="id">The id of the Team for which to get all games</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}/games")]
+        public async Task<IActionResult> GetByTeamId(int id)
+        {
+            var games = await _teamService.GetGamesAsync(id);
+            if (games.Any())
+            {
+                return Ok(games);
+            }
+            _logger.Information("Request for games from team {id} returned no results", id);
+            return NotFound();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace CribblyBackend.UnitTests
             Assert.IsType<List<Game>>(result.PlayInGames);
         }
         [Fact]
-        public async Task Calculate_ShouldReturnTeamWithOneWinIfTheyHaveLoss()
+        public async Task Calculate_ShouldReturnTeamWithOneLossIfTheyHaveLoss()
         {
             Game game = new Game(){ Teams = new List<Team>(){team1, team2}, Winner = team2};
             var games = new List<Game>(){game};

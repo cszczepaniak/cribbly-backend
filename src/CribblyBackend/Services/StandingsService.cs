@@ -24,8 +24,8 @@ namespace CribblyBackend.Services
             team.PlayInGames = allGames.Where(g => g.GameRound <= Game.Round.Round3).ToList();
             team.BracketGames = allGames.Where(g => g.GameRound >= Game.Round.TourneyRound1).ToList();
 
-            team.Wins = allGames.Where(g => g.Winner != null && g.Winner.Name == team.Name).ToList().Count;
-            team.Losses = allGames.Where(g => g.Winner != null && g.Winner.Name != team.Name).ToList().Count;
+            team.Wins = allGames.Count(g => g.Winner != null && g.Winner.Id == team.Id);
+            team.Losses = allGames.Count(g => g.Winner != null && g.Winner.Id != team.Id);
 
             foreach(Game game in allGames)
             {

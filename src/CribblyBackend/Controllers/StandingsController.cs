@@ -13,12 +13,12 @@ namespace CribblyBackend.Controllers
     [Route("api/[controller]")]
     public class StandingsController : ControllerBase
     {
-        private readonly IStandingsService StandingsService;
-        private readonly ILogger logger;
-        public StandingsController(IStandingsService StandingsService, ILogger logger)
+        private readonly IStandingsService _standingsService;
+        private readonly ILogger _logger;
+        public StandingsController(IStandingsService standingsService, ILogger logger)
         {
-            this.StandingsService = StandingsService;
-            this.logger = logger;
+            _standingsService = standingsService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,12 +32,12 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                var standing = await StandingsService.Calculate(team);
+                var standing = await _standingsService.Calculate(team);
                 return Ok(standing);
             }
             catch (Exception ex)
             {
-                logger.Information(ex, "Failed to get standings");
+                _logger.Information(ex, "Failed to get standings");
                 return StatusCode(500, $"Failed to get standings: {ex.Message}");
             }
 

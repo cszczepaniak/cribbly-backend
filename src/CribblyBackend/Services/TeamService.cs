@@ -39,8 +39,7 @@ namespace CribblyBackend.Services
 
         public async Task<Team> GetById(int id)
         {
-            var team = await _teamRepository.GetById(id);
-            return team;
+            return await _teamRepository.GetById(id);;
         }
         public void Update(Team team)
         {

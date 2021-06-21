@@ -12,10 +12,11 @@ namespace CribblyBackend.Core.Extensions
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
             return services
-                .AddTransient<IGameService, GameService>()
                 .AddTransient<IPlayerService, PlayerService>()
                 .AddTransient<ITeamService, TeamService>()
-                .AddTransient<ITournamentService, TournamentService>();
+                .AddTransient<IGameService, GameService>()
+                .AddTransient<ITournamentService, TournamentService>()
+                .AddTransient<IStandingsService, StandingsService>();
         }
     }
 }

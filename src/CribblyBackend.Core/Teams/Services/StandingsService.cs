@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Linq;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
+using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.Core.Games.Repositories;
+using CribblyBackend.Core.Games.Models;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.Core.Teams.Services
 {
     public interface IStandingsService
     {
@@ -21,13 +21,13 @@ namespace CribblyBackend.Services
         public async Task<Team> Calculate(Team team)
         {
             var allGames = await _gameRepository.GetByTeamId(team.Id);
-            team.PlayInGames = allGames.Where(g => g.GameRound <= Game.Round.Round3).ToList();
-            team.BracketGames = allGames.Where(g => g.GameRound >= Game.Round.TourneyRound1).ToList();
+            team.PlayInGames = allGames.Where(g => g.GameRound <= Round.Round3).ToList();
+            team.BracketGames = allGames.Where(g => g.GameRound >= Round.TourneyRound1).ToList();
 
             team.Wins = allGames.Count(g => g.Winner != null && g.Winner.Id == team.Id);
             team.Losses = allGames.Count(g => g.Winner != null && g.Winner.Id != team.Id);
 
-            foreach(Game game in allGames)
+            foreach (Game game in allGames)
             {
                 if (game.Winner != null && game.Winner.Name == team.Name)
                 {

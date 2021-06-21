@@ -18,15 +18,19 @@ namespace CribblyBackend.UnitTests
     {
         private readonly TeamService teamService;
         private readonly GameService gameService;
+        private readonly StandingsService standingsService;
         private readonly Mock<ITeamRepository> mockTeamRepository;
         private readonly Mock<IGameRepository> mockGameRepository;
+        private readonly Mock<IStandingsService> mockStandingsService;
 
         public TeamServiceTests()
         {
             mockTeamRepository = new Mock<ITeamRepository>();
             mockGameRepository = new Mock<IGameRepository>();
+            mockStandingsService = new Mock<IStandingsService>();
             gameService = new GameService(mockGameRepository.Object);
-            teamService = new TeamService(mockTeamRepository.Object, mockGameRepository.Object);
+            teamService = new TeamService(mockTeamRepository.Object, mockStandingsService.Object, mockGameRepository.Object);
+            standingsService = new StandingsService(mockGameRepository.Object);
         }
         [Fact]
         public async Task CreateTeamWithOnePlayer_ShouldThrowError()
@@ -48,12 +52,13 @@ namespace CribblyBackend.UnitTests
                 new Team() { Name = "team1" },
                 new Team() { Name = "team2" }
             };
+
             mockTeamRepository.Setup(x => x.Get()).ReturnsAsync(teams);
+
             var teamsList = await teamService.Get();
             Assert.True(TeamListHasNoDuplicates(teamsList));
         }
-
-        public static bool TeamListHasNoDuplicates(List<Team> teams)
+        public bool TeamListHasNoDuplicates(List<Team> teams)
         {
             return teams.GroupBy(t => t.Id).Any(grp => grp.Count() > 1);
         }

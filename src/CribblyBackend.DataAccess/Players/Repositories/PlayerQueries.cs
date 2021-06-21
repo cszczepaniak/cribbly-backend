@@ -1,10 +1,17 @@
 using System;
+using System.Linq;
 using CribblyBackend.DataAccess.Common;
+using CribblyBackend.DataAccess.Teams.Repositories;
 
 namespace CribblyBackend.DataAccess.Players.Repositories
 {
     public static class PlayerQueries
     {
+        public static string PlayerFields(string prefix)
+        {
+            var fields = new[] { "Id", "Email", "Name", "Role", "TeamId" }.Select(f => prefix + f);
+            return string.Join(", ", fields);
+        }
         public static Query CreatePlayerQuery(string email, string name)
         {
             return new()
@@ -17,7 +24,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             return new()
             {
-                Sql = @"SELECT EXISTS(SELECT * FROM Players WHERE Email = @Email LIMIT 1)",
+                Sql = @"SELECT EXISTS(SELECT Id FROM Players WHERE Email = @Email LIMIT 1)",
                 Params = new { Email = email },
             };
         }
@@ -26,7 +33,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             return new()
             {
-                Sql = @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
+                Sql = $@"SELECT {PlayerFields("p.")}, {TeamQueries.TeamFields("t.")} FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Id = @Id",
                 Params = new { Id = id },
                 SplitOn = "TeamId",
             };
@@ -36,7 +43,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             return new()
             {
-                Sql = @"SELECT * FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
+                Sql = $@"SELECT {PlayerFields("p.")}, {TeamQueries.TeamFields("t.")} FROM Players p LEFT JOIN Teams t ON p.TeamId = t.Id WHERE p.Email = @Email",
                 Params = new { Email = email },
                 SplitOn = "TeamId",
             };

@@ -5,6 +5,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
 {
     public static class TournamentQueries
     {
+        private const string allTournamentColumns = "Id, Date, IsOpenForRegistration, IsActive";
         public static Query Create(DateTime date)
         {
             return new()
@@ -22,14 +23,14 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
             // CANNOT control flagName here since flagName is passed by us and never from an external source
             return new()
             {
-                Sql = @"SELECT * FROM Tournaments WHERE Id = LAST_INSERT_ID()",
+                Sql = $@"SELECT {allTournamentColumns} FROM Tournaments WHERE Id = LAST_INSERT_ID()",
             };
         }
         public static Query GetAllWithActiveFlag(string flagName)
         {
             return new()
             {
-                Sql = $@"SELECT * FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
+                Sql = $@"SELECT {allTournamentColumns} FROM Tournaments WHERE {flagName} = 1", // `true` doesn't exist in mysql; use 1
                 Params = new { Name = flagName }
             };
         }

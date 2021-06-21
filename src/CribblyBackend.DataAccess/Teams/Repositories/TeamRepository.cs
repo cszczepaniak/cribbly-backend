@@ -62,6 +62,10 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                 TeamQueries.GetById(id),
                 (t, p) =>
                 {
+                    if (p == null)
+                    {
+                        return t;
+                    }
                     if (!players.TryGetValue(p.Id, out Player _))
                     {
                         players.Add(p.Id, p);

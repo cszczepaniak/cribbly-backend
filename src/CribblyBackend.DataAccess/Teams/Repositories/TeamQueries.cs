@@ -1,10 +1,18 @@
 using System;
+using System.Linq;
 using CribblyBackend.DataAccess.Common;
+using CribblyBackend.DataAccess.Players.Repositories;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
     public static class TeamQueries
     {
+        public static string TeamFields(string prefix)
+        {
+            var fields = new[] { "Id", "Name", "Division" }.Select(f => prefix + f);
+            return string.Join(", ", fields);
+        }
+
         public static Query CreateWithName(string name)
         {
             return new()
@@ -25,7 +33,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         {
             return new()
             {
-                Sql = @"SELECT t.*, p.* FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId WHERE p.TeamId = @Id",
+                Sql = $@"SELECT {TeamFields("t.")}, {PlayerQueries.PlayerFields("p.")} FROM Teams t LEFT JOIN Players p ON t.Id = p.TeamId WHERE t.Id = @Id",
                 Params = new { Id = id },
             };
         }
@@ -33,7 +41,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         {
             return new()
             {
-                Sql = @"SELECT * FROM Teams t INNER JOIN Players p ON t.Id = p.TeamId",
+                Sql = $@"SELECT {TeamFields("t.")}, {PlayerQueries.PlayerFields("p.")} FROM Teams t LEFT JOIN Players p ON t.Id = p.TeamId",
             };
         }
     }

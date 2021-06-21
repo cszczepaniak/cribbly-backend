@@ -13,7 +13,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     SELECT * FROM Scores s 
                     LEFT JOIN Games g on s.GameId = g.Id 
                     LEFT JOIN Teams t on s.TeamId = t.Id 
-                    WHERE GameId = @id
+                    WHERE GameId = @Id
                 ",
                 Params = new { Id = id },
                 SplitOn = "Id",

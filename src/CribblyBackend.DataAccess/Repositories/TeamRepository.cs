@@ -14,7 +14,7 @@ namespace CribblyBackend.DataAccess.Repositories
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
-        void Delete(Team Team);
+        Task Delete(Team Team);
     }
     public class TeamRepository : ITeamRepository
     {
@@ -63,9 +63,28 @@ namespace CribblyBackend.DataAccess.Repositories
             return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
-        public void Delete(Team team)
+        public async Task Delete(Team team)
         {
-            throw new System.NotImplementedException();
+            if (this.GetById(team.Id).Result == null)
+            {
+                throw new System.ArgumentNullException("Team not found, nothing to delete");
+            };
+
+            await _connection.ExecuteAsync(
+                @"
+                    SET foreign_key_checks = 0;
+
+                    UPDATE cribblydev.players
+                    SET cribblydev.players.TeamId = 0
+                    WHERE TeamId = @Id;
+
+                    DELETE FROM cribblydev.teams
+                    WHERE cribblydev.teams.Id = @Id;
+
+                    SET foreign_key_checks = 1;
+                ",
+                new { Id = team.Id }
+            );
         }
 
         public async Task<Team> GetById(int id)
@@ -84,7 +103,12 @@ namespace CribblyBackend.DataAccess.Repositories
                 new { Id = id },
                 splitOn: "Id"
                 )).FirstOrDefault();
-            team.Players = players.Values.ToList();
+
+            if (team != null)
+            {
+                team.Players = players.Values.ToList();
+            }
+
             return team;
         }
         public void Update(Team team)

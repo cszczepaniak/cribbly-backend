@@ -12,7 +12,7 @@ namespace CribblyBackend.Services
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
-        void Delete(Team Team);
+        Task Delete(Team Team);
     }
     public class TeamService : ITeamService
     {
@@ -35,9 +35,9 @@ namespace CribblyBackend.Services
             return await _teamRepository.Create(team);
         }
 
-        public void Delete(Team team)
+        public async Task Delete(Team team)
         {
-            throw new System.NotImplementedException();
+            await _teamRepository.Delete(team);
         }
 
         public async Task<Team> GetById(int id)

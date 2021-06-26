@@ -122,5 +122,21 @@ namespace CribblyBackend.UnitTests
             var typedResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
         }
+
+        [Fact]
+        public async Task Delete_ShouldReturnOk_IfNoError()
+        {
+            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>()));
+            var result = await TeamController.Delete(new Team());
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldReturn404_IfTeamNotFound()
+        {
+            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>())).ThrowsAsync(new ArgumentNullException());
+            var result = await TeamController.Delete(new Team());
+            Assert.IsType<NotFoundResult>(result);
+        }
     }
 }

@@ -64,6 +64,7 @@ namespace CribblyBackend.Controllers
         /// GetAll returns all teams that are in the active tournament. 
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
@@ -96,6 +97,34 @@ namespace CribblyBackend.Controllers
             }
             _logger.Information("Request for games from team {id} returned no results", id);
             return NotFound();
+        }
+
+        /// <summary>
+        /// Delete permanently removes the team with the specified id.
+        /// </summary>
+        /// <param name="id">The Team object that will be deleted from the database</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromBody] Team team)
+        {
+            _logger.Information("Received request to delete team {@team}", team);
+
+            try
+            {
+                await _teamService.Delete(team); 
+                _logger.Warning("Team {@team} was deleted", team);
+                return Ok();
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                _logger.Information(e, "Failed to delete {@team}", team);
+                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+            }
+
         }
     }
 }

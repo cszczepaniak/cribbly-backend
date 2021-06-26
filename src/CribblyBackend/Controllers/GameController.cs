@@ -70,7 +70,12 @@ namespace CribblyBackend.Controllers
             {
                 logger.Information("Received request to update game: {@game}", game);
                 Game updatedGame = await gameService.Update(game);
-                return Ok(game);
+                if (updatedGame != null)
+                {
+                    return Ok(updatedGame);
+                }
+
+                return NotFound();
             }
             catch (Exception e)
             {

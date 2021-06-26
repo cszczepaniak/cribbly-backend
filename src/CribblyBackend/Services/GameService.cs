@@ -16,12 +16,10 @@ namespace CribblyBackend.Services
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
-        private readonly ILogger _logger;
 
-        public GameService(IGameRepository gameRepository, ILogger logger)
+        public GameService(IGameRepository gameRepository)
         {
             _gameRepository = gameRepository;
-            _logger = logger;
         }
 
         public async Task<Game> GetById(int id)
@@ -34,16 +32,7 @@ namespace CribblyBackend.Services
         }
         public async Task<Game> Update(Game game)
         {
-            try
-            {
-                return await _gameRepository.Update(game);
-            }
-            catch (System.Exception e)
-            {
-                _logger.Error(e, "Database error updating game");
-                throw;
-            }
-
+            return await _gameRepository.Update(game);
         }
         public void Delete(Game game)
         {

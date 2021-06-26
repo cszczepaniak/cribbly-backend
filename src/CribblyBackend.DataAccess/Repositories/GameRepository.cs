@@ -91,37 +91,26 @@ namespace CribblyBackend.DataAccess.Repositories
         }
         public async Task<Game> Update(Game game)
         {
-            try
-            {
-                await connection.ExecuteAsync(
-                    @"
-                        UPDATE Games g
-                        SET
-                        g.GameRound = @GameRound,
-                        g.WinnerId = @WinnerId,
-                        g.ScoreDifference = @ScoreDifference
-                        WHERE g.Id = @Id
-                    ",
-                    new 
-                    { 
-                        Id = game.Id,
-                        GameRound = game.GameRound,
-                        ScoreDifference = game.ScoreDifference,
-                        WinnerId = game.Winner.Id
-                    }
+            await connection.ExecuteAsync(
+                @"
+                    UPDATE Games g
+                    SET
+                    g.GameRound = @GameRound,
+                    g.WinnerId = @WinnerId,
+                    g.ScoreDifference = @ScoreDifference
+                    WHERE g.Id = @Id
+                ",
+                new 
+                { 
+                    Id = game.Id,
+                    GameRound = game.GameRound,
+                    ScoreDifference = game.ScoreDifference,
+                    WinnerId = game.Winner.Id
+                }
             );
 
-                Game newGame = await this.GetById(game.Id); 
-                return newGame;
-            }
-            catch (System.Exception e)
-            {
-                
-                throw;
-            }
-
-
-
+            Game newGame = await this.GetById(game.Id); 
+            return newGame;
         }
         public void Delete(Game game)
         {

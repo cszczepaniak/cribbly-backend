@@ -11,7 +11,7 @@ namespace CribblyBackend.DataAccess.Repositories
     {
         Task<Game> GetById(int Id);
         Task<IEnumerable<Game>> GetByTeamId(int id);
-        void Update(Game Game);
+        Task<Game> Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
     }
@@ -45,7 +45,11 @@ namespace CribblyBackend.DataAccess.Repositories
                 new { Id = id },
                 splitOn: "Id"
                 )).FirstOrDefault();
-            game.Teams = teams.Values.ToList();
+            if (game != null)
+            {
+                game.Teams = teams.Values.ToList();
+            }
+            
             return game;
         }
         public async Task<IEnumerable<Game>> GetByTeamId(int id)
@@ -85,9 +89,39 @@ namespace CribblyBackend.DataAccess.Repositories
                     new { TeamId = team.Id });
             }
         }
-        public void Update(Game game)
+        public async Task<Game> Update(Game game)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"
+                        UPDATE Games g
+                        SET
+                        g.GameRound = @GameRound,
+                        g.WinnerId = @WinnerId,
+                        g.ScoreDifference = @ScoreDifference
+                        WHERE g.Id = @Id
+                    ",
+                    new 
+                    { 
+                        Id = game.Id,
+                        GameRound = game.GameRound,
+                        ScoreDifference = game.ScoreDifference,
+                        WinnerId = game.Winner.Id
+                    }
+            );
+
+                Game newGame = await this.GetById(game.Id); 
+                return newGame;
+            }
+            catch (System.Exception e)
+            {
+                
+                throw;
+            }
+
+
+
         }
         public void Delete(Game game)
         {

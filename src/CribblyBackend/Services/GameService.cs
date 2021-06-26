@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Serilog;
 using CribblyBackend.DataAccess.Models;
 using CribblyBackend.DataAccess.Repositories;
 
@@ -8,17 +9,19 @@ namespace CribblyBackend.Services
     public interface IGameService
     {
         Task<Game> GetById(int Id);
-        void Update(Game Game);
+        Task<Game> Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
     }
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
+        private readonly ILogger _logger;
 
-        public GameService(IGameRepository gameRepository)
+        public GameService(IGameRepository gameRepository, ILogger logger)
         {
             _gameRepository = gameRepository;
+            _logger = logger;
         }
 
         public async Task<Game> GetById(int id)
@@ -29,9 +32,18 @@ namespace CribblyBackend.Services
         {
             await _gameRepository.Create(game);
         }
-        public void Update(Game game)
+        public async Task<Game> Update(Game game)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                return await _gameRepository.Update(game);
+            }
+            catch (System.Exception e)
+            {
+                _logger.Error(e, "Database error updating game");
+                throw;
+            }
+
         }
         public void Delete(Game game)
         {

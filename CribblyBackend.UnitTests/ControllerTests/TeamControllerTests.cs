@@ -124,11 +124,11 @@ namespace CribblyBackend.UnitTests
         }
 
         [Fact]
-        public async Task Delete_ShouldReturnOk_IfNoError()
+        public async Task Delete_ShouldReturnNoContent_IfNoError()
         {
             mockTeamService.Setup(x => x.Delete(It.IsAny<Team>()));
             var result = await TeamController.Delete(new Team());
-            Assert.IsType<OkResult>(result);
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]

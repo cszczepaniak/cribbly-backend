@@ -113,7 +113,7 @@ namespace CribblyBackend.Controllers
             {
                 await _teamService.Delete(team); 
                 _logger.Warning("Team {@team} was deleted", team);
-                return Ok();
+                return NoContent();
             }
             catch (ArgumentNullException)
             {

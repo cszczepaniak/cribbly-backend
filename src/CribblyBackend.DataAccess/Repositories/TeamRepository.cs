@@ -74,12 +74,12 @@ namespace CribblyBackend.DataAccess.Repositories
                 @"
                     SET foreign_key_checks = 0;
 
-                    UPDATE cribblydev.players
-                    SET cribblydev.players.TeamId = 0
+                    UPDATE players
+                    SET players.TeamId = 0
                     WHERE TeamId = @Id;
 
-                    DELETE FROM cribblydev.teams
-                    WHERE cribblydev.teams.Id = @Id;
+                    DELETE FROM teams
+                    WHERE teams.Id = @Id;
 
                     SET foreign_key_checks = 1;
                 ",

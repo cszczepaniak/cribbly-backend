@@ -37,11 +37,12 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturnOkAndCreatedId_IfNoError()
         {
-            Division division = new Division();
+            Division division = new Division(){Id = 1};
             mockDivisionService.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(division);
-            var result = await divisionController.Create(new Division());
+            var result = await divisionController.Create(division);
             var typedResult = Assert.IsType<OkObjectResult>(result);
             Assert.IsType<Division>(typedResult.Value);
+            Assert.Equal(division, typedResult.Value);
         }
 
         [Fact]

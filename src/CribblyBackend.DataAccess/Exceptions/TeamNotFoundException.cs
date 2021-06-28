@@ -1,7 +1,7 @@
 using System;
 using CribblyBackend.DataAccess.Models;
 
-namespace CribblyBackend.DataAccess
+namespace CribblyBackend.DataAccess.Exceptions
 {
     public class TeamNotFoundException : Exception
     {

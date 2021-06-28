@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess;
+using CribblyBackend.DataAccess.Exceptions;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

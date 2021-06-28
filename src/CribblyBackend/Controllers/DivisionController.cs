@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -33,6 +34,10 @@ namespace CribblyBackend.Controllers
                 _logger.Information("Received request to get division {@id}", id);
                 var division = await _divisionService.GetById(id);
                 return Ok(division);
+            }
+            catch (DivisionNotFoundException)
+            {
+                return NotFound();
             }
             catch (Exception e)
             {
@@ -76,6 +81,10 @@ namespace CribblyBackend.Controllers
                 _logger.Information("Received request to add team {@team} to division {@div}", team, id);
                 Division div = await _divisionService.AddTeam(id, team);
                 return Ok(div);
+            }
+            catch (DivisionNotFoundException)
+            {
+                return NotFound();
             }
             catch (Exception e)
             {

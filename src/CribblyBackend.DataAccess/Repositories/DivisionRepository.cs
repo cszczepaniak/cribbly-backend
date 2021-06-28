@@ -61,16 +61,24 @@ namespace CribblyBackend.DataAccess.Repositories
         }
         public async Task<Division> AddTeam(int id, Team team)
         {
-            var result = await _connection.ExecuteAsync(
-                @"
-                    UPDATE Teams
-                    SET Teams.Division = @Id
-                    WHERE Teams.Id = @TeamId
-                ",
-                new {Id = id, TeamId = team.Id}
-            );
+            if (this.GetById(id) != null)
+            {
+                var result = await _connection.ExecuteAsync(
+                    @"
+                        UPDATE Teams
+                        SET Teams.Division = @Id
+                        WHERE Teams.Id = @TeamId
+                    ",
+                    new {Id = id, TeamId = team.Id}
+                );
 
-            return await this.GetById(id);
+                return await this.GetById(id);
+            }
+            else
+            {
+                throw new DivisionNotFoundException();
+            }
+
         }
         public void Update(Division division)
         {

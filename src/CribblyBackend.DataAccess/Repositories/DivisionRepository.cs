@@ -9,9 +9,10 @@ namespace CribblyBackend.DataAccess.Repositories
 {
     public interface IDivisionRepository
     {
-        void GetById(int id);
+        Task<Division> GetById(int id);
         void Update(Division diivision);
         Task<Division> Create(Division division);
+        Task<Division> AddTeam(int id, Team team);
         void Delete(Division division);
     }
     public class DivisionRepository : IDivisionRepository
@@ -22,9 +23,32 @@ namespace CribblyBackend.DataAccess.Repositories
             _connection = connection;
         }
 
-        public void GetById(int id)
+        public async Task<Division> GetById(int id)
         {
-            throw new System.NotImplementedException();
+            List<Team> teams = new List<Team>();
+            var result = await _connection.QueryAsync<Division, Team, Division>(
+                @"
+                    SELECT 
+                    divisions.Id,
+                    divisions.Name,
+                    teams.Id,
+                    teams.Name
+
+                    FROM divisions
+                    INNER JOIN teams 
+                    ON teams.Division = divisions.Id
+                    WHERE divisions.Id = @id;
+                ",
+                (d, t) => 
+                {
+                    teams.Add(t);
+                    return d;
+                }
+                ,
+                new {Id = id}
+            );
+            result.First().Teams = teams;
+            return result.First();
         }
         public async Task<Division> Create(Division division)
         {
@@ -34,6 +58,19 @@ namespace CribblyBackend.DataAccess.Repositories
             );
 
             return division;
+        }
+        public async Task<Division> AddTeam(int id, Team team)
+        {
+            var result = await _connection.ExecuteAsync(
+                @"
+                    UPDATE Teams
+                    SET Teams.Division = @Id
+                    WHERE Teams.Id = @TeamId
+                ",
+                new {Id = id, TeamId = team.Id}
+            );
+
+            return await this.GetById(id);
         }
         public void Update(Division division)
         {

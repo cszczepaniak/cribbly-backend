@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -115,7 +116,7 @@ namespace CribblyBackend.Controllers
                 _logger.Warning("Team {@team} was deleted", team);
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (TeamNotFoundException)
             {
                 return NotFound();
             }

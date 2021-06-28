@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.DataAccess.Models;
+using CribblyBackend.DataAccess;
 using CribblyBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -134,7 +135,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Delete_ShouldReturn404_IfTeamNotFound()
         {
-            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>())).ThrowsAsync(new ArgumentNullException());
+            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>())).ThrowsAsync(new TeamNotFoundException());
             var result = await TeamController.Delete(new Team());
             Assert.IsType<NotFoundResult>(result);
         }

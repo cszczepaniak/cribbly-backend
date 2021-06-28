@@ -67,7 +67,7 @@ namespace CribblyBackend.DataAccess.Repositories
         {
             if (this.GetById(team.Id).Result == null)
             {
-                throw new System.ArgumentNullException("Team not found, nothing to delete");
+                throw new TeamNotFoundException();
             };
 
             await _connection.ExecuteAsync(

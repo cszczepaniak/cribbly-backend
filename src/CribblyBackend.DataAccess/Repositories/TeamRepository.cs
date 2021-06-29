@@ -73,16 +73,12 @@ namespace CribblyBackend.DataAccess.Repositories
 
             await _connection.ExecuteAsync(
                 @"
-                    SET foreign_key_checks = 0;
-
                     UPDATE players
-                    SET players.TeamId = 0
+                    SET players.TeamId = null
                     WHERE TeamId = @Id;
 
                     DELETE FROM teams
                     WHERE teams.Id = @Id;
-
-                    SET foreign_key_checks = 1;
                 ",
                 new { Id = team.Id }
             );

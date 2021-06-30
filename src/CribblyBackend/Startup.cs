@@ -1,7 +1,6 @@
 using System.Data;
 using System.Reflection;
 using CribblyBackend.Core.Extensions;
-using CribblyBackend.Core.Games.Models;
 using CribblyBackend.DataAccess;
 using CribblyBackend.DataAccess.Games.Repositories;
 using FluentMigrator.Runner;

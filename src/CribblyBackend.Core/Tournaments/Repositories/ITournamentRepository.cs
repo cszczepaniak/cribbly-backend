@@ -10,5 +10,6 @@ namespace CribblyBackend.Core.Tournaments.Repositories
         Task<Tournament> Create(DateTime date);
         Task SetFlagValue(int tournamentId, string flagName, bool newVal);
         Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName);
+        Task<Tournament> GetById(int id);
     }
 }

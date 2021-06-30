@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.Core.Tournaments.Repositories;
@@ -24,6 +25,17 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
             return await _connection.QuerySingleAsync<Tournament>(
                 TournamentQueries.GetLast().Sql
             );
+        }
+
+        public async Task<Tournament> GetById(int id)
+        {
+            var tournaments = await _connection.QueryAsync<Tournament>(
+                @"SELECT Id, Date, IsOpenForRegistration, IsActive
+                FROM Tournaments
+                WHERE Id = @Id",
+                new { Id = id }
+            );
+            return tournaments.Single();
         }
 
         public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName)

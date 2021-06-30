@@ -16,6 +16,7 @@ namespace CribblyBackend.Core.Extensions
                 .AddTransient<ITeamService, TeamService>()
                 .AddTransient<IGameService, GameService>()
                 .AddTransient<ITournamentService, TournamentService>()
+                .AddTransient<IDivisionService, DivisionService>()
                 .AddTransient<IStandingsService, StandingsService>();
         }
     }

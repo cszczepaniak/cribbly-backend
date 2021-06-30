@@ -1,11 +1,12 @@
 .PHONY: test
 test:
 	dotnet test CribblyBackend.UnitTests
+	dotnet test tests/CribblyBackend.Core.UnitTests
 
 .PHONY: serve
 serve:
 	dotnet run --project src/CribblyBackend
 
-.PHONY: launch
-launch:
-	sh ./launch.sh
+.PHONY: build
+build:
+	dotnet build src/CribblyBackend

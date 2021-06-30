@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Divisions.Repositories;
 
-namespace CribblyBackend.Services
+namespace CribblyBackend.Core.Divisions.Services
 {
     public interface IDivisionService
     {

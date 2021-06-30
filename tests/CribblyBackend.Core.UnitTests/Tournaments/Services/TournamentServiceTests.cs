@@ -7,7 +7,7 @@ using CribblyBackend.Core.Tournaments.Services;
 using Moq;
 using Xunit;
 
-namespace CribblyBackend.UnitTests
+namespace CribblyBackend.Core.UnitTests.Tournaments.Services
 {
     public class TournamentServiceTests
     {

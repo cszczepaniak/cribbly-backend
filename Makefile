@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	dotnet test CribblyBackend.UnitTests
+	dotnet test tests/CribblyBackend.UnitTests
 	dotnet test tests/CribblyBackend.Core.UnitTests
 
 .PHONY: serve

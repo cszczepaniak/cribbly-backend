@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Common
@@ -18,7 +19,16 @@ namespace CribblyBackend.DataAccess.Common
                 {
                     throw new ArgumentException("Even-numbered args must be strings");
                 }
-                p.Add((string)ps[i], ps[i + 1]);
+                var name = (string)ps[i];
+                if (ps[i + 1] is IEnumerable)
+                {
+                    foreach (var o in (IEnumerable)ps[i + 1])
+                    {
+                        p.Add(name, o);
+                    }
+                    continue;
+                }
+                p.Add(name, ps[i + 1]);
             }
             return p;
         }

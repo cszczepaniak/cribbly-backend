@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using CribblyBackend.Core.Divisions.Models;
 using CribblyBackend.Core.Players.Models;
-using CribblyBackend.Core.Teams;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Common;
@@ -48,21 +48,21 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await _connection.ExecuteAsync(
-                TeamQueries.CreateWithName,
-                Query.Params("@Name", team.Name)
-            );
-            var updateTasks = new List<Task>(team.Players.Count);
-            foreach (Player player in team.Players)
+
+            using (var scope = new TransactionScope())
             {
-                updateTasks.Add(
-                    _connection.ExecuteAsync(
-                        TeamQueries.UpdatePlayerWithLastTeamId,
-                        Query.Params("@Id", player.Id)
-                    )
+                await _connection.ExecuteAsync(
+                    TeamQueries.CreateWithName,
+                    Query.Params("@Name", team.Name)
                 );
+
+                await _connection.ExecuteAsync(
+                    TeamQueries.UpdatePlayerWithLastTeamId,
+                    Query.Params("@Id", team.Players.Select(p => p.Id))
+                );
+
+                scope.Complete();
             }
-            await Task.WhenAll(updateTasks);
             return await _connection.QueryLastInsertedId();
         }
 

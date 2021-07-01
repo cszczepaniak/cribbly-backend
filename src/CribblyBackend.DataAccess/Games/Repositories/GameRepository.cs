@@ -58,15 +58,11 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                 Query.Params("@GameRound", game.GameRound)
             );
 
-            IEnumerable<Task> createTasks = null;
-            createTasks = game.Teams.Select(t =>
-                _connection.ExecuteAsync(
-                    GameQueries.CreateScoresForTeam,
-                    Query.Params("@TeamId", t.Id)
-                )
+            await _connection.ExecuteAsync(
+                GameQueries.CreateScoresForTeam,
+                Query.Params("@TeamId", game.Teams.Select(t => t.Id))
             );
 
-            await Task.WhenAll(createTasks);
             scope.Complete();
         }
         public void Update(Game game)

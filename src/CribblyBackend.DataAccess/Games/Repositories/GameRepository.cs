@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Teams.Models;
@@ -50,21 +51,23 @@ namespace CribblyBackend.DataAccess.Games.Repositories
         }
         public async Task Create(Game game)
         {
+            using var scope = new TransactionScope();
+
             await _connection.ExecuteAsync(
                 GameQueries.Create,
                 Query.Params("@GameRound", game.GameRound)
             );
-            var createTasks = new List<Task>(game.Teams.Count);
-            foreach (Team team in game.Teams)
-            {
-                createTasks.Add(
-                    _connection.ExecuteAsync(
-                        GameQueries.CreateScoresForTeam,
-                        Query.Params("@Id", team.Id)
-                    )
-                );
-            }
+
+            IEnumerable<Task> createTasks = null;
+            createTasks = game.Teams.Select(t =>
+                _connection.ExecuteAsync(
+                    GameQueries.CreateScoresForTeam,
+                    Query.Params("@TeamId", t.Id)
+                )
+            );
+
             await Task.WhenAll(createTasks);
+            scope.Complete();
         }
         public void Update(Game game)
         {

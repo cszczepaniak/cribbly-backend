@@ -19,6 +19,6 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             AND s.TeamId != s2.TeamId";
         public static string Create = @"INSERT INTO Games(GameRound) VALUES (@GameRound)";
         public static string CreateScoresForTeam =
-            @"INSERT INTO Scores(GameId, TeamId) VALUES ((SELECT MAX(id) FROM Games), @TeamId)";
+            @"INSERT INTO Scores(GameId, TeamId, GameScore) VALUES ((SELECT MAX(id) FROM Games), @TeamId, 0)";
     }
 }

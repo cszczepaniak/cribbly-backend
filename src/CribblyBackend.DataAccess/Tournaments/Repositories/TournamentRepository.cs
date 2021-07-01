@@ -4,8 +4,6 @@ using System.Data;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.Core.Tournaments.Repositories;
-using CribblyBackend.DataAccess.Common;
-using CribblyBackend.DataAccess.Extensions;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Tournaments.Repositories
@@ -21,7 +19,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         {
             await _connection.ExecuteAsync(
                 TournamentQueries.Create,
-                Query.Params("@Date", date)
+                new { Date = date }
             );
             return await _connection.QuerySingleAsync<Tournament>(TournamentQueries.GetLast);
         }
@@ -37,7 +35,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         {
             await _connection.ExecuteAsync(
                 TournamentQueries.SetFlag(flagName),
-                Query.Params("@Id", tournamentId, "@Value", newVal)
+                new { Id = tournamentId, Value = newVal }
             );
         }
     }

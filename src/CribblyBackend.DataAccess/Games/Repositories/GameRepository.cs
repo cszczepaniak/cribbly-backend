@@ -6,7 +6,6 @@ using System.Transactions;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Teams.Models;
-using CribblyBackend.DataAccess.Common;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
@@ -32,7 +31,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     }
                     return g;
                 },
-                Query.Params("@Id", id)
+                new { Id = id }
             )).Single();
             game.Teams = teams.Values.ToList();
             return game;
@@ -46,7 +45,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     g.Teams = new List<Team> { t1, t2 };
                     return g;
                 },
-                Query.Params("@Id", id)
+                new { Id = id }
             )).ToList();
         }
         public async Task Create(Game game)
@@ -55,12 +54,12 @@ namespace CribblyBackend.DataAccess.Games.Repositories
 
             await _connection.ExecuteAsync(
                 GameQueries.Create,
-                Query.Params("@GameRound", game.GameRound)
+                new { GameRound = game.GameRound }
             );
 
             await _connection.ExecuteAsync(
                 GameQueries.CreateScoresForTeam,
-                Query.Params("@TeamId", game.Teams.Select(t => t.Id))
+                game.Teams.Select(t => new { TeamId = t.Id })
             );
 
             scope.Complete();

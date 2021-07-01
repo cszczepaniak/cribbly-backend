@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Teams.Models;
-using CribblyBackend.DataAccess.Common;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Players.Repositories
@@ -21,7 +20,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             return (await connection.QueryAsync<bool>(
                 PlayerQueries.PlayerExistsWithEmail,
-                Query.Params("@Email", email)
+                new { Email = email }
             )).Single();
         }
 
@@ -29,7 +28,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             await connection.ExecuteAsync(
                 PlayerQueries.CreatePlayerQuery,
-                Query.Params("@Email", email, "@Name", name)
+                new { Email = email, Name = name }
             );
             return await GetByEmail(email);
         }
@@ -44,7 +43,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             var players = await connection.QueryAsync<Player, Team, Player>(
                 PlayerQueries.GetById,
                 MapTeamToPlayer,
-                Query.Params("@Id", id)
+                new { Id = id }
             );
             return players.FirstOrDefault();
         }
@@ -53,7 +52,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             var players = await connection.QueryAsync<Player, Team, Player>(
                 PlayerQueries.GetByEmail,
                 MapTeamToPlayer,
-                Query.Params("@Email", email)
+                new { Email = email }
             );
             return players.FirstOrDefault();
         }

@@ -1,14 +1,9 @@
-using System;
-using System.Linq;
-using CribblyBackend.DataAccess.Common;
-using CribblyBackend.DataAccess.Players.Repositories;
-
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
     public static class TeamQueries
     {
         public static string CreateWithName = @"INSERT INTO Teams(Name) VALUES (@Name)";
-        public static string UpdatePlayerWithLastTeamId = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @Id";
+        public static string UpdatePlayerTeamId = @"UPDATE Players SET TeamId = @TeamId WHERE Id = @PlayerId";
         public static string GetById = $@"
             SELECT 
                 t.Id, t.Name, 

@@ -1,6 +1,3 @@
-using System;
-using CribblyBackend.DataAccess.Common;
-
 namespace CribblyBackend.DataAccess.Tournaments.Repositories
 {
     public static class TournamentQueries

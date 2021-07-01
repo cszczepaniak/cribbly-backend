@@ -7,7 +7,6 @@ using CribblyBackend.Core.Divisions.Models;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
-using CribblyBackend.DataAccess.Common;
 using CribblyBackend.DataAccess.Extensions;
 using Dapper;
 
@@ -49,16 +48,21 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                 throw new System.Exception("A Team must not have less than two players");
             }
 
+            var createdId = 0;
+
             using (var scope = new TransactionScope())
             {
                 await _connection.ExecuteAsync(
                     TeamQueries.CreateWithName,
-                    Query.Params("@Name", team.Name)
+                    new { Name = team.Name }
                 );
 
+                createdId = await _connection.QueryLastInsertedId();
+
+
                 await _connection.ExecuteAsync(
-                    TeamQueries.UpdatePlayerWithLastTeamId,
-                    Query.Params("@Id", team.Players.Select(p => p.Id))
+                    TeamQueries.UpdatePlayerTeamId,
+                    team.Players.Select(p => new { PlayerId = p.Id, TeamId = createdId })
                 );
 
                 scope.Complete();
@@ -89,7 +93,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                     }
                     return t;
                 },
-                Query.Params("@Id", id)
+                new { Id = id }
             );
             var team = teams.Single();
             team.Players = players.Values.ToList();

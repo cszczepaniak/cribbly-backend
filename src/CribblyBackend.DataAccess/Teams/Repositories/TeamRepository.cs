@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Divisions.Models;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Extensions;
+using Dapper;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
@@ -58,10 +60,21 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         public async Task<Team> GetById(int id)
         {
             var players = new Dictionary<int, Player>();
-            var team = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
-                TeamQueries.GetById(id),
-                (t, p) =>
+            var teams = await _connection.QueryAsync<Team, Player, Division, Team>(
+                $@"
+                SELECT 
+                    t.Id, t.Name, 
+                    p.Id, p.Email, p.Name, p.Role, p.TeamId, 
+                    d.Id, d.Name
+                FROM Teams t 
+                LEFT JOIN Players p 
+                ON t.Id = p.TeamId
+                LEFT JOIN Divisions d
+                ON t.Division = d.Id 
+                WHERE t.Id = @Id",
+                (t, p, d) =>
                 {
+                    t.Division = d;
                     if (p == null)
                     {
                         return t;
@@ -71,8 +84,10 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                         players.Add(p.Id, p);
                     }
                     return t;
-                }
-                )).FirstOrDefault();
+                },
+                new { Id = id }
+            );
+            var team = teams.Single();
             team.Players = players.Values.ToList();
             return team;
         }

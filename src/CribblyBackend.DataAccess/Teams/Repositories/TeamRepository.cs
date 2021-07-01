@@ -7,6 +7,7 @@ using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
+using CribblyBackend.DataAccess.Common;
 using CribblyBackend.DataAccess.Extensions;
 using Dapper;
 
@@ -21,22 +22,25 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         }
         public async Task<List<Team>> Get()
         {
-            var players = new List<Player>();
-            var teams = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
-                TeamQueries.GetAll(),
+            var playerMap = new Dictionary<int, List<Player>>();
+            var teams = await _connection.QueryAsync<Team, Player, Team>(
+                TeamQueries.GetAll,
                 (t, p) =>
                 {
-                    p.Team = new Team() { Id = t.Id };
-                    players.Add(p);
+                    if (playerMap.TryGetValue(t.Id, out var ps))
+                    {
+                        ps.Add(p);
+                        return t;
+                    }
+                    playerMap[t.Id] = new List<Player> { p };
                     return t;
                 }
-                )).ToList();
-            foreach (Team team in teams)
+            );
+            foreach (var team in teams)
             {
-                var members = players.Where(p => p.Team.Id == team.Id).ToList();
-                team.Players = members;
+                team.Players = playerMap[team.Id];
             }
-            return teams.Distinct(new TeamComparer()).ToList();
+            return teams.ToList();
         }
         public async Task<int> Create(Team team)
         {
@@ -44,11 +48,21 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await _connection.ExecuteWithObjectAsync(TeamQueries.CreateWithName(team.Name));
+            await _connection.ExecuteAsync(
+                TeamQueries.CreateWithName,
+                Query.Params("@Name", team.Name)
+            );
+            var updateTasks = new List<Task>(team.Players.Count);
             foreach (Player player in team.Players)
             {
-                await _connection.ExecuteWithObjectAsync(TeamQueries.UpdatePlayerWithLastTeamId(player.Id));
+                updateTasks.Add(
+                    _connection.ExecuteAsync(
+                        TeamQueries.UpdatePlayerWithLastTeamId,
+                        Query.Params("@Id", player.Id)
+                    )
+                );
             }
+            await Task.WhenAll(updateTasks);
             return await _connection.QueryLastInsertedId();
         }
 
@@ -61,17 +75,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         {
             var players = new Dictionary<int, Player>();
             var teams = await _connection.QueryAsync<Team, Player, Division, Team>(
-                $@"
-                SELECT 
-                    t.Id, t.Name, 
-                    p.Id, p.Email, p.Name, p.Role, p.TeamId, 
-                    d.Id, d.Name
-                FROM Teams t 
-                LEFT JOIN Players p 
-                ON t.Id = p.TeamId
-                LEFT JOIN Divisions d
-                ON t.Division = d.Id 
-                WHERE t.Id = @Id",
+                TeamQueries.GetById,
                 (t, p, d) =>
                 {
                     t.Division = d;
@@ -85,7 +89,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                     }
                     return t;
                 },
-                new { Id = id }
+                Query.Params("@Id", id)
             );
             var team = teams.Single();
             team.Players = players.Values.ToList();

@@ -7,42 +7,25 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
 {
     public static class TeamQueries
     {
-        public static string TeamFields(string prefix)
-        {
-            var fields = new[] { "Id", "Name", "Division" }.Select(f => prefix + f);
-            return string.Join(", ", fields);
-        }
-
-        public static Query CreateWithName(string name)
-        {
-            return new()
-            {
-                Sql = @"INSERT INTO Teams(Name) VALUES (@Name)",
-                Params = new { Name = name },
-            };
-        }
-        public static Query UpdatePlayerWithLastTeamId(int playerId)
-        {
-            return new()
-            {
-                Sql = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @Id",
-                Params = new { Id = playerId },
-            };
-        }
-        public static Query GetById(int id)
-        {
-            return new()
-            {
-                Sql = $@"SELECT {TeamFields("t.")}, {PlayerQueries.PlayerFields("p.")} FROM Teams t LEFT JOIN Players p ON t.Id = p.TeamId WHERE t.Id = @Id",
-                Params = new { Id = id },
-            };
-        }
-        public static Query GetAll()
-        {
-            return new()
-            {
-                Sql = $@"SELECT {TeamFields("t.")}, {PlayerQueries.PlayerFields("p.")} FROM Teams t LEFT JOIN Players p ON t.Id = p.TeamId",
-            };
-        }
+        public static string CreateWithName = @"INSERT INTO Teams(Name) VALUES (@Name)";
+        public static string UpdatePlayerWithLastTeamId = @"UPDATE Players SET TeamId = LAST_INSERT_ID() WHERE Id = @Id";
+        public static string GetById = $@"
+            SELECT 
+                t.Id, t.Name, 
+                p.Id, p.Email, p.Name, p.Role, p.TeamId, 
+                d.Id, d.Name
+            FROM Teams t 
+            LEFT JOIN Players p 
+            ON t.Id = p.TeamId
+            LEFT JOIN Divisions d
+            ON t.Division = d.Id 
+            WHERE t.Id = @Id";
+        public static string GetAll = @"
+            SELECT 
+            t.Id, t.Name, 
+            p.Id, p.Email, p.Name, p.Role, p.TeamId 
+            FROM Teams t 
+            LEFT JOIN Players p 
+            ON t.Id = p.TeamId";
     }
 }

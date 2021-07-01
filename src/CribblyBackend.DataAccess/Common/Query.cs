@@ -1,9 +1,26 @@
+using System;
+using Dapper;
+
 namespace CribblyBackend.DataAccess.Common
 {
-    public class Query
+    public static class Query
     {
-        public string Sql { get; set; }
-        public object Params { get; set; }
-        public string SplitOn { get; set; }
+        public static DynamicParameters Params(params object[] ps)
+        {
+            if (ps.Length % 2 != 0)
+            {
+                throw new ArgumentException("Must pass an even number of parameters");
+            }
+            var p = new DynamicParameters();
+            for (int i = 0; i < ps.Length; i += 2)
+            {
+                if (!(ps[i] is string))
+                {
+                    throw new ArgumentException("Even-numbered args must be strings");
+                }
+                p.Add((string)ps[i], ps[i + 1]);
+            }
+            return p;
+        }
     }
 }

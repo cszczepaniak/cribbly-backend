@@ -57,17 +57,18 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                     new { Name = team.Name }
                 );
 
-                createdId = await _connection.QueryLastInsertedId();
-
-
-                await _connection.ExecuteAsync(
-                    TeamQueries.UpdatePlayerTeamId,
-                    team.Players.Select(p => new { PlayerId = p.Id, TeamId = createdId })
+                var createdIdTask = _connection.QueryLastInsertedId();
+                var updatePlayerTask = _connection.ExecuteAsync(
+                    TeamQueries.UpdatePlayerTeamToLastTeamId,
+                    team.Players.Select(p => new { PlayerId = p.Id })
                 );
+
+                await Task.WhenAll(createdIdTask, updatePlayerTask);
+                createdId = await createdIdTask;
 
                 scope.Complete();
             }
-            return await _connection.QueryLastInsertedId();
+            return createdId;
         }
 
         public void Delete(Team team)

@@ -31,8 +31,9 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     }
                     return g;
                 },
-                new { Id = id }
-            )).Single();
+                new { Id = id },
+                splitOn: "TeamId"
+            )).FirstOrDefault();
             game.Teams = teams.Values.ToList();
             return game;
         }
@@ -64,9 +65,28 @@ namespace CribblyBackend.DataAccess.Games.Repositories
 
             scope.Complete();
         }
-        public void Update(Game game)
+        public async Task<Game> Update(Game game)
         {
-            throw new System.NotImplementedException();
+            await _connection.ExecuteAsync(
+                @"
+                    UPDATE Games g
+                    SET
+                    g.GameRound = @GameRound,
+                    g.WinnerId = @WinnerId,
+                    g.ScoreDifference = @ScoreDifference
+                    WHERE g.Id = @Id
+                ",
+                new 
+                { 
+                    Id = game.Id,
+                    GameRound = game.GameRound,
+                    ScoreDifference = game.ScoreDifference,
+                    WinnerId = game.Winner.Id
+                }
+            );
+
+            Game newGame = await this.GetById(game.Id); 
+            return newGame;
         }
         public void Delete(Game game)
         {

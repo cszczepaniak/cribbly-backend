@@ -3,9 +3,6 @@ using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using System.Collections.Generic;
 using Serilog;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
-
 namespace CribblyBackend.Core.Games.Services
 {
     public interface IGameService

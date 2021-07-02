@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.Services;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Divisions.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -37,7 +37,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturnOk_IfNoError()
         {
-            Division division = new Division(){Id = 1};
+            Division division = new Division() { Id = 1 };
             mockDivisionService.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(division);
             var result = await divisionController.Create(division);
             Assert.IsType<OkObjectResult>(result);

@@ -7,8 +7,8 @@ namespace CribblyBackend.Migrations
     {
         public override void Down()
         {
-            Delete.Table("Divisions");
             Delete.Column("Division").FromTable("Teams");
+            Delete.Table("Divisions");
             Alter.Table("Teams")
                 .AddColumn("Division").AsInt32();
         }

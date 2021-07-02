@@ -1,5 +1,4 @@
-
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Core.Players.Models;
 
 namespace CribblyBackend.Network
 {

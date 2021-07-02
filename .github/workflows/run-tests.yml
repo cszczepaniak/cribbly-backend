@@ -10,14 +10,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      config: 'Release'
+      config: "Release"
 
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.101
+          dotnet-version: 5.0.202
 
       - name: Install Dependencies
         run: dotnet restore CribblyBackend.UnitTests
@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{always()}}
         with:
-          name: 'Test Run'
+          name: "Test Run"
           path: ${{github.workspace}}/${{env.file_name}}
 
       - name: Comment PR

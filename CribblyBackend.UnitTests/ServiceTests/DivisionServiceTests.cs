@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
-using CribblyBackend.Services;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Divisions.Repositories;
+using CribblyBackend.Core.Divisions.Services;
 using Moq;
 using Xunit;
 
@@ -23,7 +21,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturnCreatedObject()
         {
-            Division division = new Division() {Id = 1, Name = "Test"};
+            Division division = new Division() { Id = 1, Name = "Test" };
             _mockDivisionRepository.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(division);
             var result = await _divisionService.Create(division);
             Assert.Equal(division, result);

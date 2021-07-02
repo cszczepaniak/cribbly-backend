@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.Network;
-using CribblyBackend.Services;
+using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.Core.Teams.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Serilog;
 
 namespace CribblyBackend.Controllers

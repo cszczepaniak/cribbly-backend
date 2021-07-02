@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using System.Linq;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.Services;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Divisions.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 

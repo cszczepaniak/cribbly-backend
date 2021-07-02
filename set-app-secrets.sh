@@ -6,5 +6,5 @@
 
 # usage: sh set-app-secrets.sh <mysqlConnectionString> <firebaseAuthAudience>
 
-dotnet user-secrets set MySQL:ConnectionString "$1"
-dotnet user-secrets set FirebaseAuth:Audience "$2"
+dotnet user-secrets set MySQL:ConnectionString "$1" --project src/CribblyBackend
+dotnet user-secrets set FirebaseAuth:Audience "$2" --project src/CribblyBackend

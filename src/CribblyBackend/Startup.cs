@@ -1,8 +1,8 @@
 using System.Data;
 using System.Reflection;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
-using CribblyBackend.Services;
+using CribblyBackend.Core.Extensions;
+using CribblyBackend.DataAccess;
+using CribblyBackend.DataAccess.Games.Repositories;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -51,24 +51,14 @@ namespace CribblyBackend
                 .ConfigureRunner(c => c
                     .AddMySql5()
                     .WithGlobalConnectionString(Configuration["MySQL:ConnectionString"])
-                    .ScanIn(Assembly.GetAssembly(typeof(Game))).For.All());
+                    .ScanIn(Assembly.GetAssembly(typeof(GameQueries))).For.All());
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddSingleton(Log.Logger);
             services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
-            // services
-            services.AddTransient<IPlayerService, PlayerService>();
-            services.AddTransient<ITeamService, TeamService>();
-            services.AddTransient<IGameService, GameService>();
-            services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<IStandingsService, StandingsService>();
-            services.AddTransient<IDivisionService, DivisionService>();
-            // repositories
-            services.AddTransient<IPlayerRepository, PlayerRepository>();
-            services.AddTransient<ITeamRepository, TeamRepository>();
-            services.AddTransient<IGameRepository, GameRepository>();
-            services.AddTransient<ITournamentRepository, TournamentRepository>();
-            services.AddTransient<IDivisionRepository, DivisionRepository>();
+
+            services.AddCoreServices();
+            services.AddDataAccess();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

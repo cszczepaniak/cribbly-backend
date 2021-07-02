@@ -27,7 +27,7 @@ namespace CribblyBackend.Core.Teams.Services
             team.Wins = allGames.Count(g => g.Winner != null && g.Winner.Id == team.Id);
             team.Losses = allGames.Count(g => g.Winner != null && g.Winner.Id != team.Id);
 
-            foreach (Game game in allGames)
+            foreach (var game in allGames)
             {
                 if (game.Winner != null && game.Winner.Name == team.Name)
                 {

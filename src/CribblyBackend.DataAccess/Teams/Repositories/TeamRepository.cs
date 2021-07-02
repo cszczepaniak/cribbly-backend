@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
+using CribblyBackend.Core.Divisions.Models;
 using CribblyBackend.Core.Players.Models;
-using CribblyBackend.Core.Teams;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Extensions;
+using Dapper;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
 {
@@ -19,22 +21,25 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         }
         public async Task<List<Team>> Get()
         {
-            var players = new List<Player>();
-            var teams = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
-                TeamQueries.GetAll(),
+            var playerMap = new Dictionary<int, List<Player>>();
+            var teams = await _connection.QueryAsync<Team, Player, Team>(
+                TeamQueries.GetAll,
                 (t, p) =>
                 {
-                    p.Team = new Team() { Id = t.Id };
-                    players.Add(p);
+                    if (playerMap.TryGetValue(t.Id, out var ps))
+                    {
+                        ps.Add(p);
+                        return t;
+                    }
+                    playerMap[t.Id] = new List<Player> { p };
                     return t;
                 }
-                )).ToList();
-            foreach (Team team in teams)
+            );
+            foreach (var team in teams)
             {
-                var members = players.Where(p => p.Team.Id == team.Id).ToList();
-                team.Players = members;
+                team.Players = playerMap[team.Id];
             }
-            return teams.Distinct(new TeamComparer()).ToList();
+            return teams.ToList();
         }
         public async Task<int> Create(Team team)
         {
@@ -42,12 +47,28 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             {
                 throw new System.Exception("A Team must not have less than two players");
             }
-            await _connection.ExecuteWithObjectAsync(TeamQueries.CreateWithName(team.Name));
-            foreach (Player player in team.Players)
+
+            var createdId = 0;
+
+            using (var scope = new TransactionScope())
             {
-                await _connection.ExecuteWithObjectAsync(TeamQueries.UpdatePlayerWithLastTeamId(player.Id));
+                await _connection.ExecuteAsync(
+                    TeamQueries.CreateWithName,
+                    new { Name = team.Name }
+                );
+
+                var createdIdTask = _connection.QueryLastInsertedId();
+                var updatePlayerTask = _connection.ExecuteAsync(
+                    TeamQueries.UpdatePlayerTeamToLastTeamId,
+                    team.Players.Select(p => new { PlayerId = p.Id })
+                );
+
+                await Task.WhenAll(createdIdTask, updatePlayerTask);
+                createdId = await createdIdTask;
+
+                scope.Complete();
             }
-            return await _connection.QueryLastInsertedId();
+            return createdId;
         }
 
         public void Delete(Team team)
@@ -58,10 +79,11 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         public async Task<Team> GetById(int id)
         {
             var players = new Dictionary<int, Player>();
-            var team = (await _connection.QueryWithObjectAsync<Team, Player, Team>(
-                TeamQueries.GetById(id),
-                (t, p) =>
+            var teams = await _connection.QueryAsync<Team, Player, Division, Team>(
+                TeamQueries.GetById,
+                (t, p, d) =>
                 {
+                    t.Division = d;
                     if (p == null)
                     {
                         return t;
@@ -71,8 +93,10 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                         players.Add(p.Id, p);
                     }
                     return t;
-                }
-                )).FirstOrDefault();
+                },
+                new { Id = id }
+            );
+            var team = teams.Single();
             team.Players = players.Values.ToList();
             return team;
         }

@@ -102,7 +102,7 @@ namespace CribblyBackend.UnitTests
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actTeams = Assert.IsType<List<Team>>(okResult.Value);
             Assert.Equal(expTeams, actTeams);
-            foreach (Team team in actTeams)
+            foreach (var team in actTeams)
             {
                 Assert.Equal(2, team.Players.Count);
             }

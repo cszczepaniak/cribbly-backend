@@ -107,7 +107,7 @@ namespace CribblyBackend.UnitTests
             {
                 ScoreDifference = 1,
                 Winner = new Team(){Id = 69},
-                GameRound = Game.Round.Round1
+                GameRound = (Round)1
             };
             mockGameService.Setup(x => x.Update(It.IsAny<Game>())).ReturnsAsync(newGame);
             var result = await GameController.Update(newGame);
@@ -122,7 +122,7 @@ namespace CribblyBackend.UnitTests
             {
                 Id = 99,
                 Winner = new Team(){Id = 69},
-                GameRound = Game.Round.Final
+                GameRound = (Round)8
             };
 
             mockGameService.Setup(x => x.Update(It.IsAny<Game>())).ReturnsAsync(() => null);

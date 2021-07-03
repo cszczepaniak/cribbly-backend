@@ -91,7 +91,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             );
 
             await _connection.ExecuteAsync(
-                GameQueries.CreateScoresForTeam,
+                GameQueries.InitializeScoresForTeam,
                 game.Teams.Select(t => new { TeamId = t.Id })
             );
 
@@ -99,6 +99,8 @@ namespace CribblyBackend.DataAccess.Games.Repositories
         }
         public async Task<Game> Update(Game game)
         {
+            using var scope = new TransactionScope();
+
             await _connection.ExecuteAsync(
                 GameQueries.UpdateGame,
                 new
@@ -110,6 +112,20 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                 }
             );
 
+            if (game.Winner != null)
+            {
+                await _connection.ExecuteAsync(
+                    GameQueries.UpdateScoreForTeam,
+                    new { Score = 121, TeamId = game.Winner.Id, GameId = game.Id }
+                );
+
+                await _connection.ExecuteAsync(
+                    GameQueries.UpdateScoreForTeam,
+                    new { Score = 121 - game.ScoreDifference, TeamId = game.Teams.Where(t => t.Id != game.Winner.Id), GameId = game.Id }
+                );
+            }
+
+            scope.Complete();
             return await GetById(game.Id);
         }
         public void Delete(Game game)

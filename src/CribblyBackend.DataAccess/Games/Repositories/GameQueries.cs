@@ -24,8 +24,14 @@ namespace CribblyBackend.DataAccess.Games.Repositories
 
         public static string Create = @"INSERT INTO Games(GameRound) VALUES (@GameRound)";
 
-        public static string CreateScoresForTeam =
+        public static string InitializeScoresForTeam =
             @"INSERT INTO Scores(GameId, TeamId, GameScore) VALUES ((SELECT MAX(id) FROM Games), @TeamId, 0)";
+
+        public static string UpdateScoreForTeam =
+            @"UPDATE Scores s
+            SET s.GameScore = @Score
+            WHERE s.GameId = @GameId
+            AND s.TeamId = @TeamId";
 
         public static string UpdateGame =
             @"UPDATE Games g

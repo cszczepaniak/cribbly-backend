@@ -5,7 +5,7 @@ test:
 .PHONY: serve
 serve:
 	dotnet run --project src/CribblyBackend
-
-.PHONY: launch
-launch:
-	sh ./launch.sh
+	
+.PHONY: build
+build:
+	dotnet publish src/CribblyBackend -c Release

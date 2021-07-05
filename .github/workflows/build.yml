@@ -34,4 +34,4 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
-      - run: echo "this is where the fun begins"
+      - run: ./scripts/deploy.sh

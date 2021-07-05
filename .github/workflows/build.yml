@@ -30,7 +30,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Build
+        env:
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
         run: ./scripts/build.sh
 
   deploy:

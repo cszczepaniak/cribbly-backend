@@ -9,7 +9,7 @@ function run_tests() {
 }
 
 function build_project() {
-    dotnet release src/CribblyBackend
+    dotnet publish src/CribblyBackend -c Release
     docker build -t "$CONTAINER_URI" src/CribblyBackend
 }
 

@@ -22,3 +22,5 @@ function main() {
     build_project
     upload_artifact
 }
+
+main

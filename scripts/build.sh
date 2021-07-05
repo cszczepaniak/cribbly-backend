@@ -13,8 +13,12 @@ function build_project() {
 }
 
 function upload_artifact() {
-    zip $BUILD_NAME.zip -r src/CribblyBackend/bin/Release/net5.0/publish
-    aws s3 cp $BUILD_NAME.zip $ARTIFACT_BUCKET/$BUILD_NAME.zip
+    if [ $IS_PR = false ]; then
+        zip $BUILD_NAME.zip -r src/CribblyBackend/bin/Release/net5.0/publish
+        aws s3 cp $BUILD_NAME.zip $ARTIFACT_BUCKET/$BUILD_NAME.zip
+    else
+        echo "PR build; skipping artifact upload..."
+    fi
 }
 
 function main() {

@@ -11,5 +11,5 @@
   "s3-prefix": "CribblyBackend.Serverless/",
   "template": "serverless.template",
   "template-parameters": "",
-  "docker-host-build-output-dir": "./bin/Release/net5.0/linux-x64/publish"
+  "docker-host-build-output-dir": "./bin/Release/net5.0/publish"
 }

@@ -28,3 +28,10 @@ jobs:
 
       - name: Build
         run: ./scripts/build.sh
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - run: echo "this is where the fun begins"

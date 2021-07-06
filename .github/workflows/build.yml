@@ -42,4 +42,4 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
-      - run: ./scripts/deploy.sh
+      - run: ./scripts/deploy.sh ${{ env.GITHUB_SHA }}

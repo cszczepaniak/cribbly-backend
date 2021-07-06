@@ -10,7 +10,7 @@ export TF_VAR_aws_region=$AWS_REGION
 export TF_VAR_db_name=$DB_NAME
 
 
-if [ $IS_PR = false ]; then
+if [ $IS_PR = true ]; then
     terraform init -input=false
     terraform plan -out=tfplan -input=false
     terraform apply -input=false tfplan

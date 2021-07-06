@@ -14,7 +14,7 @@ function build_project() {
 }
 
 function upload_docker_image() {
-    if [ $IS_PR = false ]; then
+    if [ $IS_PR = true ]; then
         docker push "$CONTAINER_URI"
     else
         echo "PR build; skipping container upload..."

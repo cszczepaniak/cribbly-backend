@@ -50,4 +50,6 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy
-        run: ./scripts/deploy.sh ${{ env.GITHUB_SHA }}
+        run: ./scripts/deploy.sh $GITHUB_SHA
+        env:
+          GITHUB_SHA: ${{ env.GITHUB_SHA }}

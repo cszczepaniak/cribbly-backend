@@ -40,6 +40,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.event_name == 'push' }}
+    # if: ${{ github.event_name == 'push' }}
     steps:
       - run: ./scripts/deploy.sh ${{ env.GITHUB_SHA }}

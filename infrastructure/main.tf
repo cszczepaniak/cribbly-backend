@@ -5,6 +5,12 @@ terraform {
       version = "3.48"
     }
   }
+
+  backend "s3" {
+    bucket = "cribbly-backend-terraform-state"
+    key    = "cribbly.tfstate"
+    region = "us-east-2"
+  }
 }
 
 variable "aws_region" {

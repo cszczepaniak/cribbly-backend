@@ -11,6 +11,7 @@ export TF_VAR_db_name=$DB_NAME
 
 
 if [ $IS_PR = true ]; then
+    cd ./infrastructure/
     terraform init -input=false
     terraform plan -out=tfplan -input=false
     terraform apply -input=false tfplan

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Reflection;
 using CribblyBackend.Core.Extensions;
@@ -46,16 +47,23 @@ namespace CribblyBackend
                             ValidateLifetime = true
                         };
                     });
+
+            var dbServer = Environment.GetEnvironmentVariable("DNS_HOST");
+            var dbUser = Environment.GetEnvironmentVariable("DNS_USER");
+            var dbPassword = Environment.GetEnvironmentVariable("DNS_PASSWORD");
+            var dbPort = Environment.GetEnvironmentVariable("DNS_PORT");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var mysqlConnection = $"SERVER={dbServer};PORT={dbPort};DATABASE={dbName};USER={dbUser};PASSWORD={dbPassword};";
             services.AddAuthorization();
             services.AddFluentMigratorCore()
                 .ConfigureRunner(c => c
                     .AddMySql5()
-                    .WithGlobalConnectionString(Configuration["MySQL:ConnectionString"])
+                    .WithGlobalConnectionString(mysqlConnection)
                     .ScanIn(Assembly.GetAssembly(typeof(GameQueries))).For.All());
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddSingleton(Log.Logger);
-            services.AddTransient<IDbConnection>(db => new MySqlConnection(Configuration["MySQL:ConnectionString"]));
+            services.AddTransient<IDbConnection>(db => new MySqlConnection(mysqlConnection));
 
             services.AddCoreServices();
             services.AddDataAccess();

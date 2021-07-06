@@ -50,5 +50,4 @@ jobs:
           # ./scripts/deploy.sh ${{ env.GITHUB_SHA }}
 
       - name: Deploy
-        run: |
-          ls
+        run: source ./scripts/variables.sh

@@ -12,8 +12,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      config: "Release"
 
     steps:
       - uses: actions/checkout@v2

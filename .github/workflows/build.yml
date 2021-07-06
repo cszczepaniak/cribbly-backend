@@ -35,8 +35,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
         run: ./scripts/build.sh
 
   deploy:

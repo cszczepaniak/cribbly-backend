@@ -106,14 +106,14 @@ namespace CribblyBackend.Controllers
         /// <param name="id">The Team object that will be deleted from the database</param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromBody] Team team)
+        public async Task<IActionResult> Delete(int id)
         {
-            _logger.Information("Received request to delete team {@team}", team);
+            _logger.Information("Received request to delete team {@id}", id);
 
             try
             {
-                await _teamService.Delete(team); 
-                _logger.Warning("Team {@team} was deleted", team);
+                await _teamService.Delete(id); 
+                _logger.Warning("Team {@id} was deleted", id);
                 return NoContent();
             }
             catch (TeamNotFoundException)
@@ -122,7 +122,7 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
-                _logger.Information(e, "Failed to delete {@team}", team);
+                _logger.Information(e, "Failed to delete {@id}", id);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
 

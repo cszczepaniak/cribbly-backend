@@ -127,16 +127,16 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Delete_ShouldReturnNoContent_IfNoError()
         {
-            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>()));
-            var result = await TeamController.Delete(new Team());
+            mockTeamService.Setup(x => x.Delete(It.IsAny<int>()));
+            var result = await TeamController.Delete(1);
             Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
         public async Task Delete_ShouldReturn404_IfTeamNotFound()
         {
-            mockTeamService.Setup(x => x.Delete(It.IsAny<Team>())).ThrowsAsync(new TeamNotFoundException());
-            var result = await TeamController.Delete(new Team());
+            mockTeamService.Setup(x => x.Delete(It.IsAny<int>())).ThrowsAsync(new TeamNotFoundException());
+            var result = await TeamController.Delete(1);
             Assert.IsType<NotFoundResult>(result);
         }
     }

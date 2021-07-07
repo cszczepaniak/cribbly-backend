@@ -15,7 +15,7 @@ namespace CribblyBackend.DataAccess.Repositories
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
-        Task Delete(Team Team);
+        Task Delete(int id);
     }
     public class TeamRepository : ITeamRepository
     {
@@ -64,9 +64,9 @@ namespace CribblyBackend.DataAccess.Repositories
             return (await _connection.QueryAsync<int>(@"SELECT LAST_INSERT_ID()")).First();
         }
 
-        public async Task Delete(Team team)
+        public async Task Delete(int id)
         {
-            if (this.GetById(team.Id).Result == null)
+            if (this.GetById(id).Result == null)
             {
                 throw new TeamNotFoundException();
             };
@@ -80,7 +80,7 @@ namespace CribblyBackend.DataAccess.Repositories
                     DELETE FROM teams
                     WHERE teams.Id = @Id;
                 ",
-                new { Id = team.Id }
+                new { Id = id }
             );
         }
 

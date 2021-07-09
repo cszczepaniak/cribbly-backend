@@ -41,8 +41,5 @@ msbuild.wrn
 
 TestResults
 
-.terraform*
-terraform.*
-
 .env.*
 !.env.example

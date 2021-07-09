@@ -2,10 +2,18 @@
 test:
 	dotnet test CribblyBackend.UnitTests
 
-.PHONY: serve
-serve:
-	dotnet run --project src/CribblyBackend
-	
 .PHONY: build
 build:
 	dotnet publish src/CribblyBackend -c Release
+
+.PHONY: start
+start:
+	docker-compose -f docker-compose.yml --env-file ./config/.env.dev up --build -d
+
+.PHONY: stop
+stop:
+	docker-compose stop
+
+.PHONY: destroy
+destroy:
+	docker-compose down -v

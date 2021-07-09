@@ -1,6 +1,6 @@
-using System;
 using System.Data;
 using System.Reflection;
+using CribblyBackend.Common;
 using CribblyBackend.Core.Extensions;
 using CribblyBackend.DataAccess;
 using CribblyBackend.DataAccess.Games.Repositories;
@@ -32,39 +32,13 @@ namespace CribblyBackend
         {
             services.AddControllers();
 
-            var audience = Configuration["FirebaseAuth:Audience"];
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                    {
-                        options.Authority = $"https://securetoken.google.com/{audience}";
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidIssuer = $"https://securetoken.google.com/{audience}",
-                            ValidateAudience = true,
-                            ValidAudience = audience,
-                            ValidateLifetime = true
-                        };
-                    });
-
-            var dbServer = Environment.GetEnvironmentVariable("DNS_HOST");
-            var dbUser = Environment.GetEnvironmentVariable("DNS_USER");
-            var dbPassword = Environment.GetEnvironmentVariable("DNS_PASSWORD");
-            var dbPort = Environment.GetEnvironmentVariable("DNS_PORT");
-            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-            var mysqlConnection = $"SERVER={dbServer};PORT={dbPort};DATABASE={dbName};USER={dbUser};PASSWORD={dbPassword};";
-            services.AddAuthorization();
-            services.AddFluentMigratorCore()
-                .ConfigureRunner(c => c
-                    .AddMySql5()
-                    .WithGlobalConnectionString(mysqlConnection)
-                    .ScanIn(Assembly.GetAssembly(typeof(GameQueries))).For.All());
-
+            services.AddFirebaseAuthentication();
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-            services.AddSingleton(Log.Logger);
-            services.AddTransient<IDbConnection>(db => new MySqlConnection(mysqlConnection));
+            services.AddAuthorization();
 
+            services.AddSingleton(Log.Logger);
+
+            services.AddCribblyMySql();
             services.AddCoreServices();
             services.AddDataAccess();
         }

@@ -13,6 +13,10 @@ terraform {
   }
 }
 
+data "digitalocean_ssh_key" "terraform" {
+  name = "terraform"
+}
+
 # Set the variable value in *.tfvars file
 # or using -var="do_token=..." CLI option
 variable "do_token" {
@@ -20,6 +24,10 @@ variable "do_token" {
 }
 
 variable "db_password" {
+  type = string
+}
+
+variable "ssh_key" {
   type = string
 }
 
@@ -34,8 +42,18 @@ resource "digitalocean_droplet" "web" {
   name   = "web-1"
   region = "nyc1"
   size   = "s-1vcpu-1gb"
+  ssh_keys = [
+    data.digitalocean_ssh_key.terraform.id
+  ]
 
   # still need to set up SSH keys to connect from GitHub actions machine to DO droplet
+  connection {
+    host        = self.ipv4_address
+    user        = "root"
+    type        = "ssh"
+    private_key = var.ssh_key
+    timeout     = "2m"
+  }
 
   provisioner "remote-exec" {
     inline = [

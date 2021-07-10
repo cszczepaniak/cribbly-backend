@@ -2,9 +2,10 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess;
-using CribblyBackend.Services;
+using CribblyBackend.DataAccess.Exceptions;
+using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.Core.Divisions.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -44,8 +45,9 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Create_ShouldReturnOk_IfNoError()
         {
-            mockDivisionService.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(_division);
-            var result = await divisionController.Create(_division);
+            Division division = new Division() { Id = 1 };
+            mockDivisionService.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(division);
+            var result = await divisionController.Create(division);
             Assert.IsType<OkObjectResult>(result);
         }
 
@@ -69,7 +71,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task GetById_ShouldReturn404_IfDivisionNotFound()
         {
-            mockDivisionService.Setup(x => x.GetById(1)).Throws(new DivisionNotFoundException());
+            mockDivisionService.Setup(x => x.GetById(1)).Throws(new DivisionNotFoundException("Test"));
             var result = await divisionController.GetById(1);
             Assert.IsType<NotFoundResult>(result);
         }
@@ -86,7 +88,7 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task AddTeam_ShouldReturn404_IfDivisionNotFound()
         {
-            mockDivisionService.Setup(x => x.AddTeam(1, It.IsAny<Team>())).Throws(new DivisionNotFoundException());
+            mockDivisionService.Setup(x => x.AddTeam(1, It.IsAny<Team>())).Throws(new DivisionNotFoundException("Test"));
             var result = await divisionController.AddTeam(1, _team1);
             Assert.IsType<NotFoundResult>(result);
         }

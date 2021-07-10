@@ -1,24 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Threading.Tasks;
-using CribblyBackend.Controllers;
-using CribblyBackend.DataAccess.Models;
-using CribblyBackend.DataAccess.Repositories;
-using CribblyBackend.Services;
-using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using CribblyBackend.Core.Tournaments.Models;
+using CribblyBackend.Core.Tournaments.Repositories;
+using CribblyBackend.Core.Tournaments.Services;
 using Moq;
-using Moq.Dapper;
 using Xunit;
 
 namespace CribblyBackend.UnitTests
 {
     public class TournamentServiceTests
     {
-        private readonly TournamentService tournamentService;
+        private readonly ITournamentService tournamentService;
         private readonly Mock<ITournamentRepository> mockTournamentRepository;
 
         public TournamentServiceTests()

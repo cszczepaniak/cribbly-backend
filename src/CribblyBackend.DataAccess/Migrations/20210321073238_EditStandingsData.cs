@@ -1,3 +1,4 @@
+using System.Dynamic;
 using FluentMigrator;
 
 namespace CribblyBackend.Migrations
@@ -7,6 +8,7 @@ namespace CribblyBackend.Migrations
     {
         public override void Down()
         {
+            Delete.Column("Division").FromTable("Teams");
             Alter.Table("Teams")
                 .AddColumn("Division").AsString()
                 .AddColumn("Wins").AsInt32()

@@ -12,6 +12,12 @@ function build_project() {
     dotnet publish src/CribblyBackend -c Release -o $BUILD_OUTPUT_DIR
 }
 
+function publish_container {
+    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URL
+    docker build -t $ECR_REGISTRY:$BUILD_NAME .
+    docker push
+}
+
 function upload_artifact() {
     if [ $IS_PR = false ]; then
         pushd $BUILD_OUTPUT_DIR
@@ -26,7 +32,7 @@ function upload_artifact() {
 function main() {
     run_tests
     build_project
-    upload_artifact
+    publish_container
 }
 
 main

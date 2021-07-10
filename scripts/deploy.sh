@@ -2,8 +2,8 @@
 
 set -ex
 
-TF_VAR_do_token=$DO_TOKEN
-TF_VAR_db_password=$DB_PASSWORD
+export TF_VAR_do_token=$DO_TOKEN
+export TF_VAR_db_password=$DB_PASSWORD
 
 cd infrastructure/
 terraform init -input=false

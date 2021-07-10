@@ -73,7 +73,7 @@ namespace CribblyBackend.Controllers
         /// <param name="Division">The Id of the division that the Team will be added to</param>
         /// <param name="Team">The Team that will be added to the Division</param>
         /// <returns></returns>
-        [HttpPut("{id}/add")]
+        [HttpPatch("{id}/team")]
         public async Task<IActionResult> AddTeam(int id, [FromBody] Team team)
         {
             try

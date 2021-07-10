@@ -38,8 +38,7 @@ namespace CribblyBackend.DataAccess.Divisions
                 {
                     teams.Add(t);
                     return d;
-                }
-                ,
+                },
                 new {Id = id}
             );
             result.First().Teams = teams;
@@ -56,24 +55,21 @@ namespace CribblyBackend.DataAccess.Divisions
         }
         public async Task<Division> AddTeam(int id, Team team)
         {
-            if (GetById(id) != null)
-            {
-                var result = await _connection.ExecuteAsync(
-                    @"
-                        UPDATE Teams
-                        SET Teams.Division = @Id
-                        WHERE Teams.Id = @TeamId
-                    ",
-                    new {Id = id, TeamId = team.Id}
-                );
-
-                return await this.GetById(id);
-            }
-            else
+            if (GetById(id) == null)
             {
                 throw new DivisionNotFoundException(id);
             }
 
+            var result = await _connection.ExecuteAsync(
+                @"
+                    UPDATE Teams
+                    SET Teams.Division = @Id
+                    WHERE Teams.Id = @TeamId
+                ",
+                new {Id = id, TeamId = team.Id}
+            );
+
+            return await this.GetById(id);
         }
         public void Update(Division division)
         {

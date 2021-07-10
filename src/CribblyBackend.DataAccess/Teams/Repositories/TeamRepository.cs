@@ -74,9 +74,9 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
 
         public async Task Delete(int id)
         {
-            if (this.GetById(id).Result == null)
+            if (GetById(id).Result == null)
             {
-                throw new TeamNotFoundException();
+                throw new TeamNotFoundException(id);
             };
 
             await _connection.ExecuteAsync(

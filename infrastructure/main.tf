@@ -35,6 +35,8 @@ resource "digitalocean_droplet" "web" {
   region = "nyc1"
   size   = "s-1vcpu-1gb"
 
+  # still need to set up SSH keys to connect from GitHub actions machine to DO droplet
+
   provisioner "remote-exec" {
     inline = [
       "apt install make",

@@ -8,7 +8,7 @@ build:
 
 .PHONY: start
 start:
-	docker-compose -f docker-compose.yml --env-file ./config/.env.dev up --build -d
+	docker-compose -f docker-compose.yml --env-file ./config/dev.env up --build -d
 
 .PHONY: stop
 stop:

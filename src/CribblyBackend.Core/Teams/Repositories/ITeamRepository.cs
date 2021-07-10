@@ -10,6 +10,6 @@ namespace CribblyBackend.Core.Teams.Repositories
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
-        void Delete(Team Team);
+        Task Delete(int id);
     }
 }

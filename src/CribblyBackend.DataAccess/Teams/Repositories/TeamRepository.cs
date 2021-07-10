@@ -8,6 +8,7 @@ using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Extensions;
+using CribblyBackend.DataAccess.Exceptions;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Teams.Repositories
@@ -75,9 +76,31 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             return createdId;
         }
 
-        public void Delete(Team team)
+        public async Task Delete(int id)
         {
-            throw new System.NotImplementedException();
+            if (GetById(id).Result == null)
+            {
+                throw new TeamNotFoundException(id);
+            };
+
+            await _connection.ExecuteAsync(
+                @"
+                    UPDATE players
+                    SET players.TeamId = null
+                    WHERE TeamId = @Id;
+
+                    DELETE FROM scores
+                    WHERE TeamId = @Id;
+
+                    UPDATE games
+                    SET games.WinnerId = null
+                    WHERE WinnerId = @Id;
+
+                    DELETE FROM teams
+                    WHERE teams.Id = @Id;
+                ",
+                new { Id = id }
+            );
         }
 
         public async Task<Team> GetById(int id)
@@ -100,7 +123,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                 },
                 new { Id = id }
             );
-            var team = teams.Single();
+            var team = teams.FirstOrDefault();
             team.Players = players.Values.ToList();
             return team;
         }

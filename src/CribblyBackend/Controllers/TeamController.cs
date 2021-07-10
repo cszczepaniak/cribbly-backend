@@ -105,7 +105,8 @@ namespace CribblyBackend.Controllers
         /// </summary>
         /// <param name="id">The Team object that will be deleted from the database</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route("{id}/delete")]
         public async Task<IActionResult> Delete(int id)
         {
             _logger.Information("Received request to delete team {@id}", id);

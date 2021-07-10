@@ -77,6 +77,13 @@ namespace CribblyBackend.DataAccess.Repositories
                     SET players.TeamId = null
                     WHERE TeamId = @Id;
 
+                    DELETE FROM scores
+                    WHERE TeamId = @Id;
+
+                    UPDATE games
+                    SET games.WinnerId = null
+                    WHERE WinnerId = @Id;
+
                     DELETE FROM teams
                     WHERE teams.Id = @Id;
                 ",

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Divisions.Repositories;
 
 namespace CribblyBackend.Core.Divisions.Services

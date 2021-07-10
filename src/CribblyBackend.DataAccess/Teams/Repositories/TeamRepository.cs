@@ -119,7 +119,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
                 },
                 new { Id = id }
             );
-            var team = teams.Single();
+            var team = teams.FirstOrDefault();
             team.Players = players.Values.ToList();
             return team;
         }

@@ -13,8 +13,9 @@ terraform {
   }
 }
 
-data "digitalocean_ssh_key" "terraform" {
-  name = "terraform"
+resource "digitalocean_ssh_key" "terraform" {
+  name       = "terraform"
+  public_key = var.ssh_pub_key
 }
 
 # Set the variable value in *.tfvars file
@@ -31,6 +32,10 @@ variable "ssh_key" {
   type = string
 }
 
+variable "ssh_pub_key" {
+  type = string
+}
+
 # Configure the DigitalOcean Provider
 provider "digitalocean" {
   token = var.do_token
@@ -43,7 +48,7 @@ resource "digitalocean_droplet" "web" {
   region = "nyc1"
   size   = "s-1vcpu-1gb"
   ssh_keys = [
-    data.digitalocean_ssh_key.terraform.id
+    digitalocean_ssh_key.terraform.fingerprint
   ]
 
   # still need to set up SSH keys to connect from GitHub actions machine to DO droplet

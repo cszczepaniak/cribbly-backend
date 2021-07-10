@@ -48,3 +48,4 @@ jobs:
           DO_TOKEN: ${{ secrets.DO_TOKEN }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_PUB_KEY: ${{ secrets.SSH_PUB_KEY }}

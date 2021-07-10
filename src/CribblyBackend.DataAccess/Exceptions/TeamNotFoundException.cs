@@ -1,5 +1,5 @@
 using System;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Core.Teams.Models;
 
 namespace CribblyBackend.DataAccess.Exceptions
 {

@@ -32,7 +32,7 @@ function upload_artifact() {
 function main() {
     run_tests
     build_project
-    publish_container
+    # publish_container
 }
 
 main

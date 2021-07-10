@@ -15,7 +15,7 @@ function build_project() {
 function publish_container {
     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URL
     docker build -t $ECR_REGISTRY:$BUILD_NAME .
-    docker push
+    docker push $ECR_REGISTRY:$BUILD_NAME
 }
 
 function upload_artifact() {

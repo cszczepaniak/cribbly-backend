@@ -26,6 +26,8 @@ jobs:
 
       - name: Build
         run: ./scripts/build.sh
+        env:
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
 
   deploy:
     runs-on: ubuntu-latest

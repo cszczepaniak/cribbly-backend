@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\src\CribblyBackend\CribblyBackend.csproj" />
     <ProjectReference Include="..\src\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
+    <ProjectReference Include="..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
   </ItemGroup>
 
 </Project>

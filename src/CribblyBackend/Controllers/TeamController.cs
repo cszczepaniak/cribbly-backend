@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.DataAccess.Models;
+using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.Core.Teams.Services;
 using CribblyBackend.DataAccess.Exceptions;
-using CribblyBackend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 

@@ -67,5 +67,19 @@ namespace CribblyBackend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
             }
         }
+
+        [HttpPost("{tournamentId}/register/{playerId}")]
+        public async Task<IActionResult> RegisterPlayerForTournament(int tournamentId, int playerId)
+        {
+            try
+            {
+                await tournamentService.RegisterPlayerAsync(tournamentId, playerId);
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Bad time: {e.Message}");
+            }
+        }
     }
 }

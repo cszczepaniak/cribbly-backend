@@ -16,7 +16,7 @@ namespace CribblyBackend.Core.Tournaments.Services
         Task<Tournament> Create(DateTime date);
         Task ChangeActiveStatus(int tournamentId, bool newVal);
         Task ChangeOpenForRegistrationStatus(int tournamentId, bool newVal);
-        Task RegisterPlayer(int tournamentId, int playerId);
+        Task RegisterPlayerAsync(int tournamentId, int playerId);
     }
     public class TournamentService : ITournamentService
     {
@@ -115,7 +115,7 @@ namespace CribblyBackend.Core.Tournaments.Services
             return (true, "");
         }
 
-        public async Task RegisterPlayer(int tournamentId, int playerId)
+        public async Task RegisterPlayerAsync(int tournamentId, int playerId)
         {
             var playerTask = _playerRepository.GetById(playerId);
             var tournamentTask = _tournamentRepository.GetById(tournamentId);

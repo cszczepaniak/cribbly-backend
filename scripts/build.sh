@@ -3,7 +3,7 @@
 set -ex
 
 function run_tests() {
-	dotnet test CribblyBackend.UnitTests
+    make test
 }
 
 function build_project() {

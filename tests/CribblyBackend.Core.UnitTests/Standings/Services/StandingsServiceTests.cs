@@ -7,7 +7,7 @@ using CribblyBackend.Core.Teams.Services;
 using Moq;
 using Xunit;
 
-namespace CribblyBackend.UnitTests
+namespace CribblyBackend.Core.UnitTests.Standings.Services
 {
     public class StandingsServiceTests
     {

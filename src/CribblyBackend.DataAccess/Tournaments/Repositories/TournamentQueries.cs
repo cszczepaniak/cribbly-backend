@@ -8,6 +8,11 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
             VALUES (@Date, FALSE, FALSE)";
         public static string GetLast = $"SELECT Id, Date, IsOpenForRegistration, IsActive FROM Tournaments WHERE Id = LAST_INSERT_ID()";
 
+        public static string GetById =
+            @"SELECT Id, Date, IsOpenForRegistration, IsActive
+            FROM Tournaments
+            WHERE Id = @Id";
+
         // Note: this breaks the rule of using only parameterized query strings; however, the external world
         // CANNOT control flagName here since flagName is passed by us and never from an external source
         public static string GetAllWithActiveFlag(string flagName) =>

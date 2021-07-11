@@ -28,9 +28,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         public async Task<Tournament> GetById(int id)
         {
             var tournaments = await _connection.QueryAsync<Tournament>(
-                @"SELECT Id, Date, IsOpenForRegistration, IsActive
-                FROM Tournaments
-                WHERE Id = @Id",
+                TournamentQueries.GetById,
                 new { Id = id }
             );
             return tournaments.Single();

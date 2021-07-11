@@ -1,25 +1,19 @@
-name: .NET Core Build with Tests
+name: PR Build
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      config: "Release"
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.202
 
       - name: Build and Test
-        run: |
-          make build
-          make test
+        run: ./scripts/build.sh

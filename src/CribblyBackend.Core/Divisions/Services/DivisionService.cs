@@ -1,14 +1,16 @@
 using System.Threading.Tasks;
 using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Divisions.Repositories;
 
 namespace CribblyBackend.Core.Divisions.Services
 {
     public interface IDivisionService
     {
-        void GetById(int Id);
+        Task<Division> GetById(int Id);
         void Update(Division division);
         Task<Division> Create(Division division);
+        Task<Division> AddTeam(int id, Team team);
         void Delete(Division division);
     }
     public class DivisionService : IDivisionService
@@ -20,13 +22,17 @@ namespace CribblyBackend.Core.Divisions.Services
             _divisionRepository = divisionRepository;
         }
 
-        public void GetById(int id)
+        public async Task<Division> GetById(int id)
         {
-            throw new System.NotImplementedException();
+            return await _divisionRepository.GetById(id);
         }
         public async Task<Division> Create(Division division)
         {
             return await _divisionRepository.Create(division);
+        }
+        public async Task<Division> AddTeam(int id, Team team)
+        {
+            return await _divisionRepository.AddTeam(id, team);
         }
         public void Update(Division division)
         {

@@ -5,6 +5,7 @@ using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Services;
+using CribblyBackend.DataAccess.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -124,6 +125,22 @@ namespace CribblyBackend.UnitTests
             var result = await TeamController.Create(new Team());
             var typedResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldReturnNoContent_IfNoError()
+        {
+            mockTeamService.Setup(x => x.Delete(It.IsAny<int>()));
+            var result = await TeamController.Delete(1);
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldReturn404_IfTeamNotFound()
+        {
+            mockTeamService.Setup(x => x.Delete(It.IsAny<int>())).ThrowsAsync(new TeamNotFoundException(1));
+            var result = await TeamController.Delete(1);
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

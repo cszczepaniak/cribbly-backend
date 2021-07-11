@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using CribblyBackend.Controllers;
+using CribblyBackend.DataAccess.Exceptions;
 using CribblyBackend.Core.Divisions.Models;
+using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Divisions.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +21,15 @@ namespace CribblyBackend.UnitTests
         private readonly DivisionController divisionController;
         private readonly Mock<IDivisionService> mockDivisionService;
         private readonly Mock<ILogger> mockLoggerService;
+        private Team _team1 = new() { Id = 1, Name = "team1"};
+        private Team _team2 = new() { Id = 2, Name = "team2"};
+        private Division _division = new() { Id = 1, Name = "Test", Teams = new() };
 
 
         public DivisionControllerTests()
         {
+            _division.Teams.Add(_team1);
+            _division.Teams.Add(_team2);
             mockDivisionService = new Mock<IDivisionService>();
             mockLoggerService = new Mock<ILogger>();
             mockHttpRequest = new Mock<HttpRequest>();
@@ -50,6 +58,39 @@ namespace CribblyBackend.UnitTests
             var result = await divisionController.Create(new Division());
             var typedResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetById_ShouldReturnOk_IfNoError()
+        {
+            mockDivisionService.Setup(x => x.GetById(1)).ReturnsAsync(_division);
+            var result = await divisionController.GetById(1);
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GetById_ShouldReturn404_IfDivisionNotFound()
+        {
+            mockDivisionService.Setup(x => x.GetById(1)).Throws(new DivisionNotFoundException("Test"));
+            var result = await divisionController.GetById(1);
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task AddTeam_ShouldReturnOk_IfNoError()
+        {
+            _division.Teams.Remove(_team2);
+            mockDivisionService.Setup(x => x.AddTeam(1, It.IsAny<Team>())).ReturnsAsync(_division);
+            var result = await divisionController.AddTeam(1, _team2);
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task AddTeam_ShouldReturn404_IfDivisionNotFound()
+        {
+            mockDivisionService.Setup(x => x.AddTeam(1, It.IsAny<Team>())).Throws(new DivisionNotFoundException("Test"));
+            var result = await divisionController.AddTeam(1, _team1);
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

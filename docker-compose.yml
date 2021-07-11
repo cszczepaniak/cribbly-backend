@@ -12,8 +12,7 @@ services:
       DB_PORT: 3306
       DB_HOST: db
       DB_NAME: cribblydb
-    command:
-      ["./wait-for-it.sh", "db:3306", "--", "dotnet", "CribblyBackend.dll"]
+    command: ["dotnet", "CribblyBackend.dll"]
 
   db:
     image: "mysql:5.7"

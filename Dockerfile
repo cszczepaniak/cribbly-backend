@@ -22,5 +22,4 @@ ENV FIREBASE_PROJ_ID $FIREBASE_PROJ_ID
 
 WORKDIR /app
 COPY --from=build-env /app/out .
-COPY ./wait-for-it.sh .
 ENTRYPOINT [ "dotnet", "CribblyBackend.dll" ]

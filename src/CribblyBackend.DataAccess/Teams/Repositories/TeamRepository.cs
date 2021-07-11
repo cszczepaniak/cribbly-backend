@@ -44,6 +44,10 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         }
         public async Task<int> Create(Team team)
         {
+            if (team.Players == null)
+            {
+                throw new System.Exception("Must set Players when creating a team");
+            }
             if (team.Players.Count < 2)
             {
                 throw new System.Exception("A Team must not have less than two players");

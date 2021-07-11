@@ -1,9 +1,0 @@
-version: "3.3"
-services:
-  web_prod:
-    build: .
-    ports:
-      - "80:80"
-    env_file:
-      - ./config/prod.env
-    command: ["dotnet", "CribblyBackend.dll"]

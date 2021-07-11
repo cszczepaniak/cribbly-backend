@@ -99,5 +99,35 @@ namespace CribblyBackend.UnitTests
             var typedResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(StatusCodes.Status500InternalServerError, typedResult.StatusCode);
         }
+
+        [Fact]
+        public async Task Update_ShouldReturnUpdatedObjectAndOk()
+        {
+            var newGame = new Game()
+            {
+                ScoreDifference = 1,
+                Winner = new Team(){Id = 69},
+                GameRound = (Round)1
+            };
+            mockGameService.Setup(x => x.Update(It.IsAny<Game>())).ReturnsAsync(newGame);
+            var result = await GameController.Update(newGame);
+            var typedResult = Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<Game>(typedResult.Value);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturn404_IfGameNotFound()
+        {
+            var badGame = new Game()
+            {
+                Id = 99,
+                Winner = new Team(){Id = 69},
+                GameRound = (Round)8
+            };
+
+            mockGameService.Setup(x => x.Update(It.IsAny<Game>())).ReturnsAsync(() => null);
+            var result = await GameController.Update(badGame);
+            Assert.IsType<NotFoundResult>(result);
+        }
     }
 }

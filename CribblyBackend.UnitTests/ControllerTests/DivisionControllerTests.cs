@@ -21,9 +21,9 @@ namespace CribblyBackend.UnitTests
         private readonly DivisionController divisionController;
         private readonly Mock<IDivisionService> mockDivisionService;
         private readonly Mock<ILogger> mockLoggerService;
-        private Team _team1 = new Team() { Id = 1, Name = "team1"};
-        private Team _team2 = new Team() { Id = 2, Name = "team2"};
-        private Division _division = new Division() { Id = 1, Name = "Test", Teams = new List<Team>()};
+        private Team _team1 = new() { Id = 1, Name = "team1"};
+        private Team _team2 = new() { Id = 2, Name = "team2"};
+        private Division _division = new() { Id = 1, Name = "Test", Teams = new() };
 
 
         public DivisionControllerTests()

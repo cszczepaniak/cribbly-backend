@@ -18,8 +18,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         public async Task CreateAsync(int tournamentId, int playerId)
         {
             await _connection.ExecuteAsync(
-                @"INSERT INTO TournamentPlayerAssociation (TournamentId, PlayerId)
-                VALUES (@TournamentId, @PlayerId)",
+                TournamentPlayerQueries.CreateTournamentPlayerAssociation,
                 new { TournamentId = tournamentId, PlayerId = playerId }
             );
         }
@@ -27,9 +26,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         public async Task DeleteAsync(int tournamentId, int playerId)
         {
             await _connection.ExecuteAsync(
-                @"DELETE FROM TournamentPlayerAssociation
-                WHERE TournamentId = @TournamentId
-                AND PlayerId = @PlayerId",
+                TournamentPlayerQueries.DeleteTournamentPlayerAssociation,
                 new { TournamentId = tournamentId, PlayerId = playerId }
             );
         }

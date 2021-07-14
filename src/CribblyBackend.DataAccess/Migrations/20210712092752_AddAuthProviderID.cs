@@ -7,7 +7,7 @@ namespace CribblyBackend.Migrations
     {
         public override void Down()
         {
-            Delete.Index("auth_provider_id");
+            Delete.Index("auth_provider_id").OnTable("Players");
             Delete.Column("AuthProviderId").FromTable("Players");
         }
 

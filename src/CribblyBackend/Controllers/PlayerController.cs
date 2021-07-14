@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
+using CribblyBackend.Common;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Services;
 using CribblyBackend.Network;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Serilog;
@@ -26,19 +28,22 @@ namespace CribblyBackend.Controllers
         /// <param name="request">The request</param>
         /// <returns></returns>
         [HttpPost("login")]
+        [Authorize]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            var email = User.GetEmail();
+            var authProviderId = User.GetAuthProviderId();
             logger.Debug("Received login request: {@request}", request);
-            if (request.Email == null)
+            if (email == null)
             {
-                logger.Information("Login request submitted with no email: {@request}", request);
+                logger.Information("No email found in user token", request);
                 return BadRequest("Must provide an email");
             }
-            var exists = await playerService.Exists(request.Email);
+            var exists = await playerService.ExistsAsync(authProviderId);
             Player player;
             if (exists)
             {
-                player = await playerService.GetByEmail(request.Email);
+                player = await playerService.GetByEmailAsync(email);
                 logger.Debug("User {player} successfully logged in", player.Id);
                 return Ok(new LoginResponse()
                 {
@@ -51,7 +56,7 @@ namespace CribblyBackend.Controllers
                 logger.Information("Login request submitted with no name: {@request}", request);
                 return BadRequest("Must provide a name if the specified player doesn't exist");
             }
-            player = await playerService.Create(request.Email, request.Name);
+            player = await playerService.CreateAsync(authProviderId, email, request.Name);
             logger.Debug("New user created: {@player}", player);
             return Ok(new LoginResponse()
             {
@@ -69,7 +74,7 @@ namespace CribblyBackend.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             logger.Debug("Received request to get user using email {id}", id);
-            var p = await playerService.GetById(id);
+            var p = await playerService.GetByIdAsync(id);
             if (p != null)
             {
                 return Ok(p);
@@ -93,7 +98,7 @@ namespace CribblyBackend.Controllers
                 logger.Information("GetByEmail user request submitted with no email");
                 return BadRequest("`Email` header must be provided");
             }
-            var p = await playerService.GetByEmail(email);
+            var p = await playerService.GetByEmailAsync(email);
             if (p != null)
             {
                 return Ok(p);

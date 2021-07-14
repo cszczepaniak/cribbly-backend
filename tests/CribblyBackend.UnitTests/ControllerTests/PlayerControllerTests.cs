@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;

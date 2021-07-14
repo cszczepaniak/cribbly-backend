@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.90" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="serilog" Version="2.10.0" />
+    <PackageReference Include="serilog.aspnetcore" Version="3.4.0" />
+    <PackageReference Include="serilog.enrichers.environment" Version="2.1.3" />
+    <PackageReference Include="serilog.enrichers.process" Version="2.0.1" />
+    <PackageReference Include="serilog.enrichers.thread" Version="3.1.0" />
+    <PackageReference Include="serilog.settings.configuration" Version="3.1.0" />
+    <PackageReference Include="serilog.sinks.rollingfile" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
+  </ItemGroup>
+
+</Project>

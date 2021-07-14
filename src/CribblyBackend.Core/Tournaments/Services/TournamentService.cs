@@ -117,7 +117,7 @@ namespace CribblyBackend.Core.Tournaments.Services
 
         public async Task RegisterPlayerAsync(int tournamentId, int playerId)
         {
-            var playerTask = _playerRepository.GetById(playerId);
+            var playerTask = _playerRepository.GetByIdAsync(playerId);
             var tournamentTask = _tournamentRepository.GetById(tournamentId);
 
             await Task.WhenAll(tournamentTask, playerTask);

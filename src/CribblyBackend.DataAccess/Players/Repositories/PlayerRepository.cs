@@ -10,27 +10,27 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly IDbConnection connection;
+        private readonly IDbConnection _connection;
         public PlayerRepository(IDbConnection connection)
         {
-            this.connection = connection;
+            _connection = connection;
         }
 
-        public async Task<bool> Exists(string email)
+        public async Task<bool> ExistsAsync(string authProviderId)
         {
-            return (await connection.QueryAsync<bool>(
-                PlayerQueries.PlayerExistsWithEmail,
-                new { Email = email }
+            return (await _connection.QueryAsync<bool>(
+                PlayerQueries.PlayerExistsWithAuthProviderId,
+                new { AuthProviderId = authProviderId }
             )).Single();
         }
 
-        public async Task<Player> Create(string email, string name)
+        public async Task<Player> CreateAsync(string authProviderId, string email, string name)
         {
-            await connection.ExecuteAsync(
+            await _connection.ExecuteAsync(
                 PlayerQueries.CreatePlayerQuery,
-                new { Email = email, Name = name }
+                new { AuthProviderId = authProviderId, Email = email, Name = name }
             );
-            return await GetByEmail(email);
+            return await GetByEmailAsync(email);
         }
 
         public void Delete(Player player)
@@ -38,39 +38,35 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             throw new System.NotImplementedException();
         }
 
-        public async Task<Player> GetById(int id)
+        public async Task<Player> GetByIdAsync(int id) =>
+            await GetPlayerAsync(PlayerQueries.GetById, new { Id = id });
+        public async Task<Player> GetByAuthProviderIdAsync(string authProviderId) =>
+            await GetPlayerAsync(PlayerQueries.GetByAuthProviderId, new { AuthProviderId = authProviderId });
+        public async Task<Player> GetByEmailAsync(string email) =>
+            await GetPlayerAsync(PlayerQueries.GetByEmail, new { Email = email });
+
+        private async Task<Player> GetPlayerAsync(string query, object queryParams)
         {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                PlayerQueries.GetById,
-                MapTeamToPlayer,
-                new { Id = id }
+            var players = await _connection.QueryAsync<Player, Team, Player>(
+                query,
+                (p, t) =>
+                {
+                    if (t == null || t.Id == 0)
+                    {
+                        p.Team = null;
+                        return p;
+                    }
+                    p.Team = t;
+                    return p;
+                },
+                queryParams
             );
-            return players.FirstOrDefault();
-        }
-        public async Task<Player> GetByEmail(string email)
-        {
-            var players = await connection.QueryAsync<Player, Team, Player>(
-                PlayerQueries.GetByEmail,
-                MapTeamToPlayer,
-                new { Email = email }
-            );
-            return players.FirstOrDefault();
+            return players.SingleOrDefault();
         }
 
         public void Update(Player player)
         {
             throw new System.NotImplementedException();
-        }
-
-        private Player MapTeamToPlayer(Player player, Team team)
-        {
-            if (team == null || team.Id == 0)
-            {
-                player.Team = null;
-                return player;
-            }
-            player.Team = team;
-            return player;
         }
     }
 }

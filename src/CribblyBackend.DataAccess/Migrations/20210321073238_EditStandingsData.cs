@@ -26,8 +26,6 @@ namespace CribblyBackend.Migrations
             Delete.Column("TotalScore").FromTable("Teams");
             Delete.Column("Seed").FromTable("Teams");
             Delete.Column("InTournament").FromTable("Teams");
-            Alter.Table("Teams")
-                .AddColumn("Division").AsInt32();
         }
     }
 }

@@ -7,10 +7,8 @@ namespace CribblyBackend.Migrations
     {
         public override void Down()
         {
-            Delete.Column("Division").FromTable("Teams");
+            Delete.ForeignKey("FK_Teams_Division_Divisions_Id").OnTable("Teams");
             Delete.Table("Divisions");
-            Alter.Table("Teams")
-                .AddColumn("Division").AsInt32();
         }
 
         public override void Up()
@@ -18,7 +16,6 @@ namespace CribblyBackend.Migrations
             Create.Table("Divisions")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Name").AsString();
-            Delete.Column("Division").FromTable("Teams");
             Alter.Table("Teams")
                 .AddColumn("Division").AsInt32().ForeignKey("Divisions", "Id").Nullable();
         }

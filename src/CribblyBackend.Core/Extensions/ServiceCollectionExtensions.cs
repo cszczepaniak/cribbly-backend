@@ -18,7 +18,8 @@ namespace CribblyBackend.Core.Extensions
                 .AddTransient<IGameService, GameService>()
                 .AddTransient<ITournamentService, TournamentService>()
                 .AddTransient<IDivisionService, DivisionService>()
-                .AddTransient<IStandingsService, StandingsService>();
+                .AddTransient<IStandingsService, StandingsService>()
+                .AddMemoryCache();
         }
     }
 }

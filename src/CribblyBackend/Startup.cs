@@ -27,7 +27,6 @@ namespace CribblyBackend
             services.AddControllers();
 
             services.AddFirebaseAuthentication();
-            services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             services.AddAuthorization();
 
             services.AddSingleton(Log.Logger);

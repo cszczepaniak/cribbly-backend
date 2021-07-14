@@ -13,7 +13,7 @@ namespace CribblyBackend.Migrations
 
         public override void Up()
         {
-            Alter.Table("Players").AddColumn("AuthProviderId").AsString(32).Indexed("auth_provider_id");
+            Alter.Table("Players").AddColumn("AuthProviderId").AsString(32).Unique().Indexed("auth_provider_id");
         }
     }
 }

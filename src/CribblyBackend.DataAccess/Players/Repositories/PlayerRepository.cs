@@ -1,6 +1,6 @@
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CribblyBackend.Core.Common;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Teams.Models;
@@ -10,16 +10,15 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly IConnectionFactory _factory;
-        public PlayerRepository(IConnectionFactory factory)
+        private readonly IDbConnection _connection;
+        public PlayerRepository(IDbConnection connection)
         {
-            _factory = factory;
+            _connection = connection;
         }
 
         public async Task<bool> ExistsAsync(string authProviderId)
         {
-            using var connection = await _factory.GetConnectionAsync();
-            return (await connection.QueryAsync<bool>(
+            return (await _connection.QueryAsync<bool>(
                 PlayerQueries.PlayerExistsWithAuthProviderId,
                 new { AuthProviderId = authProviderId }
             )).Single();
@@ -27,8 +26,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task<Player> CreateAsync(string authProviderId, string email, string name)
         {
-            using var connection = await _factory.GetConnectionAsync();
-            await connection.ExecuteAsync(
+            await _connection.ExecuteAsync(
                 PlayerQueries.CreatePlayerQuery,
                 new { AuthProviderId = authProviderId, Email = email, Name = name }
             );
@@ -49,8 +47,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         private async Task<Player> GetPlayerAsync(string query, object queryParams)
         {
-            using var connection = await _factory.GetConnectionAsync();
-            var players = await connection.QueryAsync<Player, Team, Player>(
+            var players = await _connection.QueryAsync<Player, Team, Player>(
                 query,
                 (p, t) =>
                 {

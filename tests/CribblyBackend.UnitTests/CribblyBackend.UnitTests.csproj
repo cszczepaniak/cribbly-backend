@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\src\CribblyBackend\CribblyBackend.csproj" />
     <ProjectReference Include="..\..\src\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
     <ProjectReference Include="..\..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
+    <ProjectReference Include="..\CribblyBackend.Test.Support\CribblyBackend.Test.Support.csproj" />
   </ItemGroup>
 
 </Project>

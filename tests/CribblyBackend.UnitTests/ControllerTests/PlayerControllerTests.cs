@@ -3,10 +3,10 @@ using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Services;
 using CribblyBackend.Network;
-using Microsoft.AspNetCore.Http;
+using CribblyBackend.Test.Support;
+using CribblyBackend.Test.Support.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using Moq;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Xunit;
 
@@ -14,33 +14,21 @@ namespace CribblyBackend.UnitTests
 {
     public class PlayerControllerTests
     {
-        private readonly Mock<HttpRequest> mockHttpRequest;
-        private readonly Mock<HttpContext> mockHttpContext;
-        private readonly PlayerController playerController;
-        private readonly Mock<IPlayerService> mockPlayerService;
-        private readonly Mock<ILogger> mockLoggerService;
+        private readonly PlayerController _playerController;
+        private readonly IPlayerService _playerService;
 
         public PlayerControllerTests()
         {
-            mockPlayerService = new Mock<IPlayerService>();
-            mockLoggerService = new Mock<ILogger>();
-            mockHttpRequest = new Mock<HttpRequest>();
-            mockHttpContext = new Mock<HttpContext>();
-            mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            playerController = new PlayerController(mockPlayerService.Object, mockLoggerService.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = mockHttpContext.Object
-                }
-            };
+            var provider = ServiceProviderFactory.GetProvider();
+            _playerService = provider.GetRequiredService<IPlayerService>();
+            var logger = provider.GetRequiredService<ILogger>();
+            _playerController = new PlayerController(_playerService, logger);
         }
 
         [Fact]
         public async Task GetById_ShouldReturnNotFound_WhenPlayerIsNull()
         {
-            mockPlayerService.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync((Player)null);
-            var result = await playerController.GetById(1);
+            var result = await _playerController.GetById(1);
             Assert.IsType<NotFoundResult>(result);
         }
         [Fact]
@@ -49,11 +37,13 @@ namespace CribblyBackend.UnitTests
             var expPlayer = new Player()
             {
                 Id = 1,
+                AuthProviderId = "authId",
                 Email = "test@test.com",
                 Name = "test player",
             };
-            mockPlayerService.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync(expPlayer);
-            var result = await playerController.GetById(1);
+            await _playerService.CreateAsync(expPlayer.AuthProviderId, expPlayer.Email, expPlayer.Name);
+
+            var result = await _playerController.GetById(1);
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actPlayer = Assert.IsType<Player>(okResult.Value);
             Assert.Equal(expPlayer.Id, actPlayer.Id);
@@ -61,26 +51,17 @@ namespace CribblyBackend.UnitTests
             Assert.Equal(expPlayer.Name, actPlayer.Name);
         }
         [Fact]
-        public async Task GetByEmail_ShouldReturnBadRequest_WhenHeaderIsOmitted()
+        public async Task GetByEmail_ShouldReturnBadRequest_WhenNoEmailIsInJWT()
         {
-            var headers = new HeaderDictionary();
-            headers.Append("NotTheRightHeader", "");
-            mockHttpRequest.Setup(x => x.Headers).Returns(headers);
-            var result = await playerController.GetByEmail();
+            _playerController.AddTestUser("authId");
+            var result = await _playerController.GetByEmail();
             var typedResult = Assert.IsType<BadRequestObjectResult>(result);
-            var msg = Assert.IsType<string>(typedResult.Value);
-            Assert.Equal("`Email` header must be provided", msg);
         }
         [Fact]
         public async Task GetByEmail_ShouldReturnNotFound_WhenPlayerIsNull()
         {
-            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync((Player)null);
-
-            var headers = new HeaderDictionary();
-            headers.Append("Email", "something@something.com");
-            mockHttpRequest.Setup(x => x.Headers).Returns(headers);
-
-            var result = await playerController.GetByEmail();
+            _playerController.AddHeader("Email", "abc@abc.com");
+            var result = await _playerController.GetByEmail();
             Assert.IsType<NotFoundResult>(result);
         }
         [Fact]
@@ -89,16 +70,15 @@ namespace CribblyBackend.UnitTests
             var expPlayer = new Player()
             {
                 Id = 1,
+                AuthProviderId = "authId",
                 Email = "test@test.com",
                 Name = "test player",
             };
-            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync(expPlayer);
+            await _playerService.CreateAsync(expPlayer.AuthProviderId, expPlayer.Email, expPlayer.Name);
 
-            var headers = new HeaderDictionary();
-            headers.Append("Email", expPlayer.Email);
-            mockHttpRequest.Setup(x => x.Headers).Returns(headers);
+            _playerController.AddHeader("Email", "test@test.com");
 
-            var result = await playerController.GetByEmail();
+            var result = await _playerController.GetByEmail();
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actPlayer = Assert.IsType<Player>(okResult.Value);
             Assert.Equal(expPlayer.Id, actPlayer.Id);
@@ -109,37 +89,28 @@ namespace CribblyBackend.UnitTests
         [Fact]
         public async Task Login_ShouldReturn400_IfNoEmail()
         {
-            var result = await playerController.Login(new LoginRequest());
+            _playerController.AddTestUser("authId");
+            var result = await _playerController.Login(new LoginRequest());
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
         public async Task Login_ShouldGetPlayerAndReturn200_IfPlayerExists()
         {
-            var req = new LoginRequest()
-            {
-                Email = "abc@abc.com"
-            };
-            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(true);
-            mockPlayerService.Setup(x => x.GetByEmail(It.IsAny<string>())).ReturnsAsync(new Player() { });
+            _playerController.AddTestUser("auth id", "abc@abc.com");
+            await _playerService.CreateAsync("auth id", "abc@abc.com", "dom toretto");
 
-            var result = Assert.IsType<OkObjectResult>(await playerController.Login(req));
+            var result = Assert.IsType<OkObjectResult>(await _playerController.Login(new() { Name = "dom toretto" }));
             var response = Assert.IsType<LoginResponse>(result.Value);
             Assert.True(response.IsReturning);
-            mockPlayerService.Verify(x => x.GetByEmail(req.Email));
         }
 
         [Fact]
         public async Task Login_ShouldReturn400_IfPlayerDoesNotExistAndNoName()
         {
-            var req = new LoginRequest()
-            {
-                Email = "abc@abc.com"
-            };
-            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(false);
-            mockPlayerService.Setup(x => x.GetByEmail(req.Email)).ReturnsAsync(new Player() { });
+            _playerController.AddTestUser("auth id", "abc@abc.com");
 
-            var result = Assert.IsType<BadRequestObjectResult>(await playerController.Login(req));
+            var result = Assert.IsType<BadRequestObjectResult>(await _playerController.Login(new()));
         }
 
         [Fact]
@@ -147,16 +118,14 @@ namespace CribblyBackend.UnitTests
         {
             var req = new LoginRequest()
             {
-                Email = "abc@abc.com",
                 Name = "name"
             };
-            mockPlayerService.Setup(x => x.Exists(It.IsAny<string>())).ReturnsAsync(false);
-            mockPlayerService.Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new Player() { });
+            _playerController.AddTestUser("auth id", "abc@abc.com");
 
-            var result = Assert.IsType<OkObjectResult>(await playerController.Login(req));
+            var result = Assert.IsType<OkObjectResult>(await _playerController.Login(req));
             var response = Assert.IsType<LoginResponse>(result.Value);
+            Assert.Equal("name", response.Player.Name);
             Assert.False(response.IsReturning);
-            mockPlayerService.Verify(x => x.Create(req.Email, req.Name), Times.Once());
         }
     }
 }

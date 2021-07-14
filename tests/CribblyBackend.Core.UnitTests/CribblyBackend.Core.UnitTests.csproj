@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
+    <ProjectReference Include="..\CribblyBackend.Test.Support\CribblyBackend.Test.Support.csproj" />
   </ItemGroup>
 
 </Project>

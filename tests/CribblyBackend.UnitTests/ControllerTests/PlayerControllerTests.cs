@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
 using CribblyBackend.Core.Players.Models;
@@ -150,6 +152,37 @@ namespace CribblyBackend.UnitTests
             var response = Assert.IsType<LoginResponse>(result.Value);
             Assert.False(response.IsReturning);
             mockPlayerService.Verify(x => x.CreateAsync("", req.Email, req.Name), Times.Once());
+        }
+
+
+        private void AddTestUser(ControllerBase controller, string authId, string email = "")
+        {
+            var user = NewIdentityUser(authId, email);
+            controller.ControllerContext = new ControllerContext();
+            controller.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
+        }
+
+        private void AddHeader(ControllerBase controller, string header, string value)
+        {
+            var ctx = controller.ControllerContext.HttpContext;
+            if (controller.ControllerContext.HttpContext == null)
+            {
+                controller.ControllerContext.HttpContext = new DefaultHttpContext();
+            }
+            controller.ControllerContext.HttpContext.Request.Headers.Add(header, value);
+        }
+
+        private ClaimsPrincipal NewIdentityUser(string authProviderId, string email = "")
+        {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, authProviderId),
+            };
+            if (!string.IsNullOrEmpty(email))
+            {
+                claims.Add(new(ClaimTypes.Email, email));
+            }
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }
     }
 }

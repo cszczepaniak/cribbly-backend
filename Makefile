@@ -2,6 +2,7 @@
 test:
 	dotnet test tests/CribblyBackend.UnitTests
 	dotnet test tests/CribblyBackend.Core.UnitTests
+	dotnet test tests/CribblyBackend.Api.Tests
 
 .PHONY: build
 build:

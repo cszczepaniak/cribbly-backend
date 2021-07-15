@@ -29,18 +29,21 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
             Assert.Equal("an auth id", player.AuthProviderId);
             Assert.Equal("abc@abc.com", player.Email);
             Assert.Equal("james bond", player.Name);
-            Assert.Equal(false, player.IsReturning);
+            Assert.False(player.IsReturning);
         }
 
         [Fact]
         public async Task GetOrCreateAsyncShouldGet_IfPlayerDoesExist()
         {
-            var player = await _playerService.GetOrCreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
+            var p = await _fakePlayerRepository.CreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
+
+            var player = await _playerService.GetOrCreateAsync(p);
 
             Assert.Equal(1, player.Id);
             Assert.Equal("an auth id", player.AuthProviderId);
             Assert.Equal("abc@abc.com", player.Email);
             Assert.Equal("james bond", player.Name);
+            Assert.True(player.IsReturning);
         }
 
         [Fact]

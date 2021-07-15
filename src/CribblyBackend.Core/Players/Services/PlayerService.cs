@@ -32,6 +32,7 @@ namespace CribblyBackend.Core.Players.Services
             {
                 var p = await _playerRepository.GetByAuthProviderIdAsync(player.AuthProviderId);
                 p.IsReturning = true;
+                return p;
             }
             return await _playerRepository.CreateAsync(player);
         }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using CribblyBackend.Api.Tests.Common.Auth;
 using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Test.Support;
 
 namespace CribblyBackend.Api.Tests.Common
 {
@@ -27,6 +28,11 @@ namespace CribblyBackend.Api.Tests.Common
         public static HttpClient CreateAuthenticatedClient<T>(this WebApplicationFactory<T> factory, Player p) where T : class
         {
             return factory.CreateAuthenticatedClient(p.AuthProviderId, p.Email);
+        }
+
+        public static HttpClient CreateAuthenticatedClient<T>(this WebApplicationFactory<T> factory) where T : class
+        {
+            return factory.CreateAuthenticatedClient(TestData.NewString(), TestData.NewString());
         }
     }
 }

@@ -34,12 +34,12 @@ namespace CribblyBackend.Controllers
             var email = User.GetEmail();
             var authProviderId = User.GetAuthProviderId();
             logger.Debug("Received login request: {@request}", request);
-            if (email == null)
+            if (string.IsNullOrWhiteSpace(email))
             {
                 logger.Information("No email found in user token", request);
                 return BadRequest("Must provide an email");
             }
-            if (request.Name == null)
+            if (string.IsNullOrWhiteSpace(request.Name))
             {
                 logger.Information("Login request submitted with no name: {@request}", request);
                 return BadRequest("Must provide a name if the specified player doesn't exist");

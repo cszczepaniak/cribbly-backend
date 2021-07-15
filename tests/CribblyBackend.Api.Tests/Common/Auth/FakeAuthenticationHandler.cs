@@ -24,6 +24,11 @@ namespace CribblyBackend.Api.Tests.Common.Auth
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var claims = _provider.GetClaims();
+            if (claims == null || !claims.Any())
+            {
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
             var identity = new ClaimsIdentity(_provider.GetClaims(), "Test");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "Test");

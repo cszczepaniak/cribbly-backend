@@ -13,8 +13,13 @@ namespace CribblyBackend.Test.Support.Extensions
         }
 
         private static IServiceCollection ReplaceService<TInterface, TNewImpl>(this IServiceCollection services)
+            where TInterface : class
+            where TNewImpl : class, TInterface, new()
         {
-            return services.Replace(new ServiceDescriptor(typeof(TInterface), typeof(TNewImpl), ServiceLifetime.Singleton));
+            return services
+                .RemoveAll<TInterface>()
+                .AddSingleton<TNewImpl>()
+                .AddSingleton<TInterface>(p => p.GetRequiredService<TNewImpl>());
         }
     }
 }

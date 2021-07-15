@@ -8,10 +8,17 @@ namespace CribblyBackend.Test.Support.Players.Repositories
 {
     public class FakePlayerRepository : IPlayerRepository
     {
+        private string someId = Guid.NewGuid().ToString();
         private int nextId = 0;
-        private readonly Dictionary<int, Player> _idToPlayer = new();
-        private readonly Dictionary<string, Player> _authIdToPlayer = new();
-        private readonly Dictionary<string, Player> _emailToPlayer = new();
+        private readonly Dictionary<int, Player> _idToPlayer;
+        private readonly Dictionary<string, Player> _authIdToPlayer;
+        private readonly Dictionary<string, Player> _emailToPlayer;
+        public FakePlayerRepository()
+        {
+            _idToPlayer = new();
+            _authIdToPlayer = new();
+            _emailToPlayer = new();
+        }
         public Task<Player> CreateAsync(Player player)
         {
             if (_authIdToPlayer.ContainsKey(player.AuthProviderId))

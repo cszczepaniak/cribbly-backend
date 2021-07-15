@@ -5,8 +5,8 @@ namespace CribblyBackend.Api.Tests.Common.Auth
 {
     public class FakeClaimsProvider
     {
-        private readonly Claim[] _claims;
-        public FakeClaimsProvider(string authId, string email)
+        private Claim[] _claims;
+        public void AddUser(string authId, string email)
         {
             _claims = new[]
             {

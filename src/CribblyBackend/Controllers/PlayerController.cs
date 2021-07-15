@@ -39,30 +39,15 @@ namespace CribblyBackend.Controllers
                 logger.Information("No email found in user token", request);
                 return BadRequest("Must provide an email");
             }
-            var exists = await playerService.ExistsAsync(authProviderId);
-            Player player;
-            if (exists)
-            {
-                player = await playerService.GetByEmailAsync(email);
-                logger.Debug("User {player} successfully logged in", player.Id);
-                return Ok(new LoginResponse()
-                {
-                    Player = player,
-                    IsReturning = true,
-                });
-            }
             if (request.Name == null)
             {
                 logger.Information("Login request submitted with no name: {@request}", request);
                 return BadRequest("Must provide a name if the specified player doesn't exist");
             }
-            player = await playerService.CreateAsync(authProviderId, email, request.Name);
-            logger.Debug("New user created: {@player}", player);
-            return Ok(new LoginResponse()
-            {
-                Player = player,
-                IsReturning = false,
-            });
+            var player = await playerService.GetOrCreateAsync(
+                new Player { AuthProviderId = authProviderId, Email = email, Name = request.Name }
+            );
+            return Ok(player);
         }
 
         /// <summary>

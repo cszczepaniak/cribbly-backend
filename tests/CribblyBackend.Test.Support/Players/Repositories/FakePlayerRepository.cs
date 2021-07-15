@@ -12,13 +12,13 @@ namespace CribblyBackend.Test.Support.Players.Repositories
         private readonly Dictionary<int, Player> _idToPlayer = new();
         private readonly Dictionary<string, Player> _authIdToPlayer = new();
         private readonly Dictionary<string, Player> _emailToPlayer = new();
-        public Task<Player> CreateAsync(string authProviderId, string email, string name)
+        public Task<Player> CreateAsync(Player player)
         {
-            if (_authIdToPlayer.ContainsKey(authProviderId))
+            if (_authIdToPlayer.ContainsKey(player.AuthProviderId))
             {
                 throw new Exception("duplicate auth provider id not allowed");
             }
-            if (_emailToPlayer.ContainsKey(email))
+            if (_emailToPlayer.ContainsKey(player.Email))
             {
                 throw new Exception("duplicate email not allowed");
             }
@@ -27,13 +27,13 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             var p = new Player
             {
                 Id = nextId,
-                AuthProviderId = authProviderId,
-                Name = name,
-                Email = email,
+                AuthProviderId = player.AuthProviderId,
+                Name = player.Name,
+                Email = player.Email,
             };
             _idToPlayer[nextId] = p;
-            _authIdToPlayer[authProviderId] = p;
-            _emailToPlayer[email] = p;
+            _authIdToPlayer[player.AuthProviderId] = p;
+            _emailToPlayer[player.Email] = p;
             return Task.FromResult(p);
         }
 

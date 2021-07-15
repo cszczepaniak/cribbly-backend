@@ -21,9 +21,21 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         }
 
         [Fact]
-        public async Task CreateAsyncShouldCreate()
+        public async Task GetOrCreateAsyncShouldCreate_IfPlayerDoesNotExist()
         {
-            var player = await _playerService.CreateAsync("an auth id", "abc@abc.com", "james bond");
+            var player = await _playerService.GetOrCreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
+
+            Assert.Equal(1, player.Id);
+            Assert.Equal("an auth id", player.AuthProviderId);
+            Assert.Equal("abc@abc.com", player.Email);
+            Assert.Equal("james bond", player.Name);
+            Assert.Equal(false, player.IsReturning);
+        }
+
+        [Fact]
+        public async Task GetOrCreateAsyncShouldGet_IfPlayerDoesExist()
+        {
+            var player = await _playerService.GetOrCreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
 
             Assert.Equal(1, player.Id);
             Assert.Equal("an auth id", player.AuthProviderId);
@@ -32,24 +44,23 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         }
 
         [Fact]
-        public async Task CreateAsyncShouldThrowOnDuplicateEmail()
+        public async Task GetOrCreateAsyncShouldThrowOnDuplicateEmail_IfCreating()
         {
-            await _playerService.CreateAsync("an auth id", "abc@abc.com", "james bond");
-            await Assert.ThrowsAsync<Exception>(() => _playerService.CreateAsync("an auth id1", "abc@abc.com", "james bond1"));
-        }
-
-        [Fact]
-        public async Task CreateAsyncShouldThrowOnDuplicateAuthId()
-        {
-            await _playerService.CreateAsync("an auth id", "abc@abc.com", "james bond");
-            await Assert.ThrowsAsync<Exception>(() => _playerService.CreateAsync("an auth id", "xyz@abc.com", "james bond1"));
+            await _fakePlayerRepository.CreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
+            await Assert.ThrowsAsync<Exception>(
+                () => _playerService.GetOrCreateAsync(new Player { AuthProviderId = "an auth id1", Email = "abc@abc.com", Name = "james bond1" })
+            );
         }
 
         [Fact]
         public async Task GetByIdShouldGetCorrectPlayer()
         {
-            var testP1 = await _playerService.CreateAsync(TestData.NewString(), TestData.NewString(), TestData.NewString());
-            var testP2 = await _playerService.CreateAsync(TestData.NewString(), TestData.NewString(), TestData.NewString());
+            var testP1 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = TestData.NewString(), Email = TestData.NewString(), Name = TestData.NewString() }
+            );
+            var testP2 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = TestData.NewString(), Email = TestData.NewString(), Name = TestData.NewString() }
+            );
 
             var p1 = await _playerService.GetByIdAsync(1);
             Assert.Equal(1, p1.Id);
@@ -68,8 +79,12 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         {
             var email1 = TestData.NewString();
             var email2 = TestData.NewString();
-            var testP1 = await _playerService.CreateAsync(TestData.NewString(), email1, TestData.NewString());
-            var testP2 = await _playerService.CreateAsync(TestData.NewString(), email2, TestData.NewString());
+            var testP1 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = TestData.NewString(), Email = email1, Name = TestData.NewString() }
+            );
+            var testP2 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = TestData.NewString(), Email = email2, Name = TestData.NewString() }
+            );
 
             var p1 = await _playerService.GetByEmailAsync(email1);
             Assert.Equal(1, p1.Id);
@@ -88,8 +103,12 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         {
             var authId1 = TestData.NewString();
             var authId2 = TestData.NewString();
-            var testP1 = await _playerService.CreateAsync(authId1, TestData.NewString(), "1");
-            var testP2 = await _playerService.CreateAsync(authId2, TestData.NewString(), "2");
+            var testP1 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = authId1, Email = TestData.NewString(), Name = "1" }
+            );
+            var testP2 = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = authId2, Email = TestData.NewString(), Name = "2" }
+            );
 
             var p1 = await _playerService.GetByAuthProviderIdAsync(authId1);
             Assert.Equal(1, p1.Id);
@@ -107,7 +126,9 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         public async Task GetByAuthProviderIdShouldCacheResult()
         {
             var authId = TestData.NewString();
-            var testPlayer = await _playerService.CreateAsync(authId, TestData.NewString(), TestData.NewString());
+            var testPlayer = await _fakePlayerRepository.CreateAsync(
+                new Player { AuthProviderId = authId, Email = TestData.NewString(), Name = TestData.NewString() }
+            );
 
             var p = await _playerService.GetByAuthProviderIdAsync(authId);
             Assert.Equal(authId, p.AuthProviderId);
@@ -124,17 +145,6 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
             Assert.Equal(authId, cachedPlayer.AuthProviderId);
             Assert.Equal(testPlayer.Email, cachedPlayer.Email);
             Assert.Equal(testPlayer.Name, cachedPlayer.Name);
-        }
-
-        [Fact]
-        public async Task ExistsAsyncShouldReturnCorrectResult()
-        {
-            var authId = TestData.NewString();
-            Assert.False(await _playerService.ExistsAsync(authId));
-
-            await _playerService.CreateAsync(authId, "email", "name");
-
-            Assert.True(await _playerService.ExistsAsync(authId));
         }
     }
 }

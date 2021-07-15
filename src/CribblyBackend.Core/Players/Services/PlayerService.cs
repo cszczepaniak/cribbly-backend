@@ -7,12 +7,11 @@ namespace CribblyBackend.Core.Players.Services
 {
     public interface IPlayerService
     {
-        Task<bool> ExistsAsync(string email);
         Task<Player> GetByAuthProviderIdAsync(string authProviderId);
         Task<Player> GetByEmailAsync(string email);
         Task<Player> GetByIdAsync(int id);
+        Task<Player> GetOrCreateAsync(Player player);
         void Update(Player player);
-        Task<Player> CreateAsync(string authProviderId, string email, string name);
         void Delete(Player player);
     }
     public class PlayerService : IPlayerService
@@ -26,14 +25,15 @@ namespace CribblyBackend.Core.Players.Services
             _cache = cache;
         }
 
-        public async Task<bool> ExistsAsync(string authProviderId)
+        public async Task<Player> GetOrCreateAsync(Player player)
         {
-            return await _playerRepository.ExistsAsync(authProviderId);
-        }
-
-        public async Task<Player> CreateAsync(string authProviderId, string email, string name)
-        {
-            return await _playerRepository.CreateAsync(authProviderId, email, name);
+            var exists = await _playerRepository.ExistsAsync(player.AuthProviderId);
+            if (exists)
+            {
+                var p = await _playerRepository.GetByAuthProviderIdAsync(player.AuthProviderId);
+                p.IsReturning = true;
+            }
+            return await _playerRepository.CreateAsync(player);
         }
 
         public void Delete(Player player)

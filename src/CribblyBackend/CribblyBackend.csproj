@@ -4,7 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RootNamespace>CribblyBackend</RootNamespace>
-    <UserSecretsId>6fcb902c-390b-4a8c-8a94-c56999a8b33b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.10" />

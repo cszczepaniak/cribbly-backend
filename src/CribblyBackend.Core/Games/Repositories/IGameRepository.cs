@@ -7,7 +7,7 @@ namespace CribblyBackend.Core.Games.Repositories
     public interface IGameRepository
     {
         Task<Game> GetById(int Id);
-        void Update(Game Game);
+        Task<Game> Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
         Task<IEnumerable<Game>> GetByTeamId(int teamId);

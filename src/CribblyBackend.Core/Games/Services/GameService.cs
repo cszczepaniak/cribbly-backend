@@ -2,13 +2,13 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using System.Collections.Generic;
-
+using Serilog;
 namespace CribblyBackend.Core.Games.Services
 {
     public interface IGameService
     {
         Task<Game> GetById(int Id);
-        void Update(Game Game);
+        Task<Game> Update(Game Game);
         Task Create(Game Game);
         void Delete(Game Game);
     }
@@ -29,9 +29,9 @@ namespace CribblyBackend.Core.Games.Services
         {
             await _gameRepository.Create(game);
         }
-        public void Update(Game game)
+        public async Task<Game> Update(Game game)
         {
-            throw new System.NotImplementedException();
+            return await _gameRepository.Update(game);
         }
         public void Delete(Game game)
         {

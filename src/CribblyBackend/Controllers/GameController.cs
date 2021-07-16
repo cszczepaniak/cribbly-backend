@@ -52,10 +52,35 @@ namespace CribblyBackend.Controllers
             }
             catch (Exception e)
             {
-                logger.Information("Failed to create game: {@game} -- MSG: {message}", game, e.Message);
+                logger.Information(e.Message, "Failed to create game: {@game}", game);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
             return Ok();
+        }
+
+        /// <summary>
+        /// Update changes a given Game object based upon a version of the Game included in the request body.
+        /// </summary>
+        /// <param name="Game">The Game object that will be updated</param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] Game game)
+        {
+            try
+            {
+                logger.Information("Received request to update game: {@game}", game);
+                Game updatedGame = await gameService.Update(game);
+                if (updatedGame != null)
+                {
+                    return Ok(updatedGame);
+                }
+
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+            }
         }
     }
 }

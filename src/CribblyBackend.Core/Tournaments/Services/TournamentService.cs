@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Common.Exceptions;
+using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Tournaments.Models;
 using CribblyBackend.Core.Tournaments.Repositories;
 
@@ -13,14 +16,23 @@ namespace CribblyBackend.Core.Tournaments.Services
         Task<Tournament> Create(DateTime date);
         Task ChangeActiveStatus(int tournamentId, bool newVal);
         Task ChangeOpenForRegistrationStatus(int tournamentId, bool newVal);
+        Task RegisterPlayerAsync(int tournamentId, int playerId);
     }
     public class TournamentService : ITournamentService
     {
         private readonly ITournamentRepository _tournamentRepository;
+        private readonly ITournamentPlayerRepository _tournamentPlayerRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public TournamentService(ITournamentRepository tournamentRepository)
+        public TournamentService(
+            ITournamentRepository tournamentRepository,
+            IPlayerRepository playerRepository,
+            ITournamentPlayerRepository tournamentPlayerRepository
+        )
         {
             _tournamentRepository = tournamentRepository;
+            _playerRepository = playerRepository;
+            _tournamentPlayerRepository = tournamentPlayerRepository;
         }
 
         public async Task<Tournament> Create(DateTime date)
@@ -101,6 +113,24 @@ namespace CribblyBackend.Core.Tournaments.Services
                 return (false, $"Cannot unset {flagName}; it isn't set on the specified tournament");
             }
             return (true, "");
+        }
+
+        public async Task RegisterPlayerAsync(int tournamentId, int playerId)
+        {
+            var playerTask = _playerRepository.GetByIdAsync(playerId);
+            var tournamentTask = _tournamentRepository.GetById(tournamentId);
+
+            await Task.WhenAll(tournamentTask, playerTask);
+            if (await playerTask == null)
+            {
+                throw new EntityNotFoundException<Player>(playerId);
+            }
+            if (await tournamentTask == null)
+            {
+                throw new EntityNotFoundException<Tournament>(tournamentId);
+            }
+
+            await _tournamentPlayerRepository.CreateAsync(tournamentId, playerId);
         }
     }
 }

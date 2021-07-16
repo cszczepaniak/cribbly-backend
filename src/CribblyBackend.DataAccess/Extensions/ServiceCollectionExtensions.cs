@@ -21,7 +21,8 @@ namespace CribblyBackend.DataAccess
                 .AddTransient<ITeamRepository, TeamRepository>()
                 .AddTransient<IGameRepository, GameRepository>()
                 .AddTransient<IDivisionRepository, DivisionRepository>()
-                .AddTransient<ITournamentRepository, TournamentRepository>();
+                .AddTransient<ITournamentRepository, TournamentRepository>()
+                .AddTransient<ITournamentPlayerRepository, TournamentPlayerRepository>();
         }
     }
 }

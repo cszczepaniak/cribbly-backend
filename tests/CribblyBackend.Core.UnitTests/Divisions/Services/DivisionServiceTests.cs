@@ -5,7 +5,7 @@ using CribblyBackend.Core.Divisions.Services;
 using Moq;
 using Xunit;
 
-namespace CribblyBackend.UnitTests
+namespace CribblyBackend.Core.UnitTests.Divisions.Services
 {
     public class DivisionServiceTests
     {

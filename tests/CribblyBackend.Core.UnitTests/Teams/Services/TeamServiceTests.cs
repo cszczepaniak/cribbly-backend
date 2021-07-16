@@ -12,7 +12,7 @@ using Moq;
 
 using Xunit;
 
-namespace CribblyBackend.UnitTests
+namespace CribblyBackend.Core.UnitTests.Teams.Services
 {
     public class TeamServiceTests
     {

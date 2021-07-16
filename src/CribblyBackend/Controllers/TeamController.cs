@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Services;
+using CribblyBackend.DataAccess.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -64,6 +65,7 @@ namespace CribblyBackend.Controllers
         /// GetAll returns all teams that are in the active tournament. 
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
@@ -96,6 +98,35 @@ namespace CribblyBackend.Controllers
             }
             _logger.Information("Request for games from team {id} returned no results", id);
             return NotFound();
+        }
+
+        /// <summary>
+        /// Delete permanently removes the team with the specified id.
+        /// </summary>
+        /// <param name="id">The Team object that will be deleted from the database</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}/delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            _logger.Information("Received request to delete team {@id}", id);
+
+            try
+            {
+                await _teamService.Delete(id); 
+                _logger.Warning("Team {@id} was deleted", id);
+                return NoContent();
+            }
+            catch (TeamNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                _logger.Information(e, "Failed to delete {@id}", id);
+                return StatusCode(500, $"Uh oh, bad time: {e.Message}");
+            }
+
         }
     }
 }

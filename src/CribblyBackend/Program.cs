@@ -1,11 +1,14 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace CribblyBackend
 {
+    /// <summary>
+    /// The Main function can be used to run the ASP.NET Core application locally using the Kestrel webserver.
+    /// </summary>
     public class Program
     {
         private const string _startup = "----------------------Application Starting----------------------";
@@ -19,7 +22,7 @@ namespace CribblyBackend
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
-            try 
+            try
             {
                 Log.Information(_startup);
                 CreateHostBuilder(args).Build().Run();

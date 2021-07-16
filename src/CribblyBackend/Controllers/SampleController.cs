@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CribblyBackend.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,14 @@ namespace CribblyBackend.Controllers
                 return Ok("Hello, cribbly!");
             });
         }
+
+        [HttpGet("aboutme")]
+        [Authorize]
+        public IActionResult GetAboutMe()
+        {
+            return Ok(new { AuthId = User.GetAuthProviderId(), Email = User.GetEmail() });
+        }
+
         [HttpGet("private")]
         [Authorize]
         public async Task<IActionResult> GetPrivate()

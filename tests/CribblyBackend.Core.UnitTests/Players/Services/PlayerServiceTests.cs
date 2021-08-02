@@ -4,20 +4,20 @@ using CribblyBackend.Test.Support;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using System;
-using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Players.Models;
+using CribblyBackend.Test.Support.Players.Repositories;
 
 namespace CribblyBackend.Core.UnitTests.Players.Services
 {
     public class PlayerServiceTests
     {
         private readonly IPlayerService _playerService;
-        private readonly IPlayerRepository _fakePlayerRepository;
+        private readonly FakePlayerRepository _fakePlayerRepository;
         public PlayerServiceTests()
         {
             var provider = ServiceProviderFactory.GetProvider();
             _playerService = provider.GetRequiredService<IPlayerService>();
-            _fakePlayerRepository = provider.GetRequiredService<IPlayerRepository>();
+            _fakePlayerRepository = provider.GetRequiredService<FakePlayerRepository>();
         }
 
         [Fact]
@@ -35,8 +35,8 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
         [Fact]
         public async Task GetOrCreateAsyncShouldGet_IfPlayerDoesExist()
         {
-            var p = await _fakePlayerRepository.CreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
 
+            var p = await _fakePlayerRepository.CreateAsync(new Player { AuthProviderId = "an auth id", Email = "abc@abc.com", Name = "james bond" });
             var player = await _playerService.GetOrCreateAsync(p);
 
             Assert.Equal(1, player.Id);

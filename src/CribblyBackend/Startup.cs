@@ -2,7 +2,6 @@ using CribblyBackend.Common;
 using CribblyBackend.Core.Extensions;
 using CribblyBackend.DataAccess;
 using FluentMigrator.Runner;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +36,7 @@ namespace CribblyBackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -52,7 +51,11 @@ namespace CribblyBackend
             {
                 endpoints.MapControllers();
             });
-            migrationRunner.MigrateUp();
+            if (!env.IsDevelopment())
+            {
+                var runner = app.ApplicationServices.GetService<IMigrationRunner>();
+                runner.MigrateUp();
+            }
         }
     }
 }

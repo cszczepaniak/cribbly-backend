@@ -10,5 +10,6 @@ namespace CribblyBackend.Core.Players.Models
         public string Name { get; set; }
         public Team Team { get; set; }
         public string Role { get; set; }
+        public bool IsReturning { get; set; }
     }
 }

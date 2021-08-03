@@ -1,14 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RootNamespace>CribblyBackend</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
-    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="serilog" Version="2.10.0" />
     <PackageReference Include="serilog.aspnetcore" Version="3.4.0" />
     <PackageReference Include="serilog.enrichers.environment" Version="2.1.3" />
@@ -16,9 +17,11 @@
     <PackageReference Include="serilog.enrichers.thread" Version="3.1.0" />
     <PackageReference Include="serilog.settings.configuration" Version="3.1.0" />
     <PackageReference Include="serilog.sinks.rollingfile" Version="3.3.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\CribblyBackend.DataAccess\CribblyBackend.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\CribblyBackend.Core\CribblyBackend.Core.csproj" />
   </ItemGroup>
+
 </Project>

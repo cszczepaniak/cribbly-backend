@@ -24,13 +24,13 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             )).Single();
         }
 
-        public async Task<Player> CreateAsync(string authProviderId, string email, string name)
+        public async Task<Player> CreateAsync(Player player)
         {
             await _connection.ExecuteAsync(
                 PlayerQueries.CreatePlayerQuery,
-                new { AuthProviderId = authProviderId, Email = email, Name = name }
+                player
             );
-            return await GetByEmailAsync(email);
+            return await GetByAuthProviderIdAsync(player.AuthProviderId);
         }
 
         public void Delete(Player player)

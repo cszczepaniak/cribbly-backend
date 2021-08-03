@@ -15,7 +15,7 @@ namespace CribblyBackend.Test.Support.Extensions
 
         public static void AddHeader(this ControllerBase controller, string header, string value)
         {
-            var ctx = controller.ControllerContext.HttpContext;
+            var context = controller.ControllerContext.HttpContext;
             if (controller.ControllerContext.HttpContext == null)
             {
                 controller.ControllerContext.HttpContext = new DefaultHttpContext();

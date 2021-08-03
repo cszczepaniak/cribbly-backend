@@ -10,6 +10,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
     {
         private string someId = Guid.NewGuid().ToString();
         private int nextId = 0;
+        private readonly object _nextIdLock;
         private readonly Dictionary<int, Player> _idToPlayer;
         private readonly Dictionary<string, Player> _authIdToPlayer;
         private readonly Dictionary<string, Player> _emailToPlayer;
@@ -20,6 +21,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             _authIdToPlayer = new();
             _emailToPlayer = new();
             _methodCalls = new();
+            _nextIdLock = new();
         }
         public Task<Player> CreateAsync(Player player)
         {
@@ -32,7 +34,10 @@ namespace CribblyBackend.Test.Support.Players.Repositories
                 throw new Exception("duplicate email not allowed");
             }
 
-            nextId++;
+            lock (_nextIdLock)
+            {
+                nextId++;
+            }
             var p = new Player
             {
                 Id = nextId,

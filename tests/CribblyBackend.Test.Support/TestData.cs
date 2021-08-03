@@ -7,10 +7,7 @@ namespace CribblyBackend.Test.Support
 {
     public static class TestData
     {
-        public static string NewString()
-        {
-            return $"{Guid.NewGuid()}";
-        }
+        public static string NewString() => $"{Guid.NewGuid()}";
 
         public static Player NewPlayer(string authProviderId = null, string email = null, string name = null)
         {

@@ -10,7 +10,7 @@ namespace CribblyBackend.Test.Support
 {
     public static class ServiceProviderFactory
     {
-        public static IServiceProvider GetProvider(bool runMigrations = true)
+        public static IServiceProvider GetProvider()
         {
             var services = new ServiceCollection();
             services

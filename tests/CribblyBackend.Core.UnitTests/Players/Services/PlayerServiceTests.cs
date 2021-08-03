@@ -65,13 +65,13 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
                 new Player { AuthProviderId = TestData.NewString(), Email = TestData.NewString(), Name = TestData.NewString() }
             );
 
-            var p1 = await _playerService.GetByIdAsync(1);
-            Assert.Equal(1, p1.Id);
+            var p1 = await _playerService.GetByIdAsync(testP1.Id);
+            Assert.Equal(testP1.Id, p1.Id);
             Assert.Equal(testP1.AuthProviderId, p1.AuthProviderId);
             Assert.Equal(testP1.Email, p1.Email);
             Assert.Equal(testP1.Name, p1.Name);
-            var p2 = await _playerService.GetByIdAsync(2);
-            Assert.Equal(2, p2.Id);
+            var p2 = await _playerService.GetByIdAsync(testP2.Id);
+            Assert.Equal(testP2.Id, p2.Id);
             Assert.Equal(testP2.AuthProviderId, p2.AuthProviderId);
             Assert.Equal(testP2.Email, p2.Email);
             Assert.Equal(testP2.Name, p2.Name);
@@ -90,12 +90,12 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
             );
 
             var p1 = await _playerService.GetByEmailAsync(email1);
-            Assert.Equal(1, p1.Id);
+            Assert.Equal(testP1.Id, p1.Id);
             Assert.Equal(testP1.AuthProviderId, p1.AuthProviderId);
             Assert.Equal(testP1.Email, p1.Email);
             Assert.Equal(testP1.Name, p1.Name);
             var p2 = await _playerService.GetByEmailAsync(email2);
-            Assert.Equal(2, p2.Id);
+            Assert.Equal(testP2.Id, p2.Id);
             Assert.Equal(testP2.AuthProviderId, p2.AuthProviderId);
             Assert.Equal(testP2.Email, p2.Email);
             Assert.Equal(testP2.Name, p2.Name);
@@ -114,12 +114,12 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
             );
 
             var p1 = await _playerService.GetByAuthProviderIdAsync(authId1);
-            Assert.Equal(1, p1.Id);
+            Assert.Equal(testP1.Id, p1.Id);
             Assert.Equal(testP1.AuthProviderId, p1.AuthProviderId);
             Assert.Equal(testP1.Email, p1.Email);
             Assert.Equal(testP1.Name, p1.Name);
             var p2 = await _playerService.GetByAuthProviderIdAsync(authId2);
-            Assert.Equal(2, p2.Id);
+            Assert.Equal(testP2.Id, p2.Id);
             Assert.Equal(testP2.AuthProviderId, p2.AuthProviderId);
             Assert.Equal(testP2.Email, p2.Email);
             Assert.Equal(testP2.Name, p2.Name);
@@ -138,16 +138,12 @@ namespace CribblyBackend.Core.UnitTests.Players.Services
             Assert.Equal(testPlayer.Email, p.Email);
             Assert.Equal(testPlayer.Name, p.Name);
 
-            _fakePlayerRepository.Update(new Player { Id = testPlayer.Id, AuthProviderId = authId, Name = "super not random", Email = "not random" });
-            var updatedPlayer = await _playerService.GetByIdAsync(testPlayer.Id);
-            Assert.Equal(authId, updatedPlayer.AuthProviderId);
-            Assert.Equal("not random", updatedPlayer.Email);
-            Assert.Equal("super not random", updatedPlayer.Name);
-
             var cachedPlayer = await _playerService.GetByAuthProviderIdAsync(authId);
             Assert.Equal(authId, cachedPlayer.AuthProviderId);
             Assert.Equal(testPlayer.Email, cachedPlayer.Email);
             Assert.Equal(testPlayer.Name, cachedPlayer.Name);
+
+            Assert.Equal(1, _fakePlayerRepository.GetNumberOfCalls(nameof(_fakePlayerRepository.GetByAuthProviderIdAsync)));
         }
     }
 }

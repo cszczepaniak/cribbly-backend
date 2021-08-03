@@ -13,11 +13,13 @@ namespace CribblyBackend.Test.Support.Players.Repositories
         private readonly Dictionary<int, Player> _idToPlayer;
         private readonly Dictionary<string, Player> _authIdToPlayer;
         private readonly Dictionary<string, Player> _emailToPlayer;
+        private readonly Dictionary<string, int> _methodCalls;
         public FakePlayerRepository()
         {
             _idToPlayer = new();
             _authIdToPlayer = new();
             _emailToPlayer = new();
+            _methodCalls = new();
         }
         public Task<Player> CreateAsync(Player player)
         {
@@ -56,6 +58,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
 
         public Task<Player> GetByAuthProviderIdAsync(string authProviderId)
         {
+            IncrementMethodCall(nameof(GetByAuthProviderIdAsync));
             if (_authIdToPlayer.TryGetValue(authProviderId, out var p))
             {
                 return Task.FromResult(p);
@@ -88,6 +91,21 @@ namespace CribblyBackend.Test.Support.Players.Repositories
                 throw new Exception("player not found");
             }
             _idToPlayer[player.Id] = player;
+        }
+
+        private void IncrementMethodCall(string methodName)
+        {
+            if (!_methodCalls.ContainsKey(methodName))
+            {
+                _methodCalls[methodName] = 1;
+                return;
+            }
+            _methodCalls[methodName]++;
+        }
+
+        public int GetNumberOfCalls(string methodName)
+        {
+            return _methodCalls[methodName];
         }
     }
 }

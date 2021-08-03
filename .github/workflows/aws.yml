@@ -24,8 +24,8 @@
 #    and best practices on handling the access key credentials.
 
 on:
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 name: Deploy to Amazon ECS
@@ -52,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment: production
+    if: false
 
     steps:
       - name: Checkout

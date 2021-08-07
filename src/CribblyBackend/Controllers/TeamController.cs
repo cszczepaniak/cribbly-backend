@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Games.Services;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Services;
 using CribblyBackend.DataAccess.Exceptions;
@@ -15,10 +16,12 @@ namespace CribblyBackend.Controllers
     public class TeamController : ControllerBase
     {
         private readonly ITeamService _teamService;
+        private readonly IGameService _gameService;
         private readonly ILogger _logger;
-        public TeamController(ITeamService teamService, ILogger logger)
+        public TeamController(ITeamService teamService, ILogger logger, IGameService gameService)
         {
             _teamService = teamService;
+            _gameService = gameService;
             _logger = logger;
         }
 
@@ -91,7 +94,7 @@ namespace CribblyBackend.Controllers
         [Route("{id}/games")]
         public async Task<IActionResult> GetByTeamId(int id)
         {
-            var games = await _teamService.GetGamesAsync(id);
+            var games = await _gameService.GetByTeamAsync(id);
             if (games.Any())
             {
                 return Ok(games);
@@ -113,7 +116,7 @@ namespace CribblyBackend.Controllers
 
             try
             {
-                await _teamService.Delete(id); 
+                await _teamService.Delete(id);
                 _logger.Warning("Team {@id} was deleted", id);
                 return NoContent();
             }

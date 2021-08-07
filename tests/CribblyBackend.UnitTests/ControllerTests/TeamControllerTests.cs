@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CribblyBackend.Controllers;
+using CribblyBackend.Core.Games.Services;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Services;
@@ -20,17 +21,19 @@ namespace CribblyBackend.UnitTests
         private readonly Mock<HttpContext> mockHttpContext;
         private readonly TeamController TeamController;
         private readonly Mock<ITeamService> mockTeamService;
+        private readonly Mock<IGameService> mockGameService;
         private readonly Mock<ILogger> mockLoggerService;
 
 
         public TeamControllerTests()
         {
             mockTeamService = new Mock<ITeamService>();
+            mockGameService = new Mock<IGameService>();
             mockLoggerService = new Mock<ILogger>();
             mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(x => x.Request).Returns(mockHttpRequest.Object);
-            TeamController = new TeamController(mockTeamService.Object, mockLoggerService.Object)
+            TeamController = new TeamController(mockTeamService.Object, mockLoggerService.Object, mockGameService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

@@ -20,7 +20,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
         {
             _connection = connection;
         }
-        public async Task<List<Team>> Get()
+        public async Task<List<Team>> GetAllAsync()
         {
             var playerMap = new Dictionary<int, List<Player>>();
             var teams = await _connection.QueryAsync<Team, Player, Team>(
@@ -42,7 +42,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             }
             return teams.ToList();
         }
-        public async Task<int> Create(Team team)
+        public async Task<int> CreateAsync(Team team)
         {
             if (team.Players == null)
             {
@@ -76,9 +76,9 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             return createdId;
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            if (GetById(id).Result == null)
+            if (await GetByIdAsync(id) == null)
             {
                 throw new TeamNotFoundException(id);
             };
@@ -103,7 +103,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             );
         }
 
-        public async Task<Team> GetById(int id)
+        public async Task<Team> GetByIdAsync(int id)
         {
             var players = new Dictionary<int, Player>();
             var teams = await _connection.QueryAsync<Team, Player, Division, Team>(
@@ -127,7 +127,7 @@ namespace CribblyBackend.DataAccess.Teams.Repositories
             team.Players = players.Values.ToList();
             return team;
         }
-        public void Update(Team team)
+        public Task UpdateAsync(Team team)
         {
             throw new System.NotImplementedException();
         }

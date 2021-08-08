@@ -31,7 +31,7 @@ namespace CribblyBackend.Test.Support.Tournaments.Repositories
             {
                 return Task.FromResult(tournament);
             }
-            throw new Exception("Tournament not found");
+            return Task.FromResult<Tournament>(null);
         }
 
         public Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlagAsync(string flagName)

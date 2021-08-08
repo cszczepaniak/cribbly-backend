@@ -22,7 +22,8 @@ namespace CribblyBackend.Test.Support.Extensions
                 .ReplaceService<ITeamRepository, FakeTeamRepository>()
                 .ReplaceService<IGameRepository, FakeGameRepository>()
                 .ReplaceService<IDivisionRepository, FakeDivisionRepository>()
-                .ReplaceService<ITournamentRepository, FakeTournamentRepository>();
+                .ReplaceService<ITournamentRepository, FakeTournamentRepository>()
+                .ReplaceService<ITournamentPlayerRepository, FakeTournamentPlayerRepository>();
         }
 
         private static IServiceCollection ReplaceService<TInterface, TNewImpl>(this IServiceCollection services)

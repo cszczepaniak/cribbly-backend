@@ -87,7 +87,7 @@ namespace CribblyBackend.Core.Tournaments.Services
             {
                 if (resultsWithFlagSet.Count != 0)
                 {
-                    // can't set flag is a tournament already has the flag active
+                    // can't set flag if a tournament already has the flag active
                     var idList = string.Join(", ", resultsWithFlagSet.Select(t => t.Id.ToString()));
                     return (false, $"Cannot set {flagName}; it is already set on tournament(s) {idList}");
                 }

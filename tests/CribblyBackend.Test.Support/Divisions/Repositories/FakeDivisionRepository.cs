@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Divisions.Models;
 using CribblyBackend.Core.Divisions.Repositories;
 using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.DataAccess.Exceptions;
 using CribblyBackend.Test.Support.Common;
 
 namespace CribblyBackend.Test.Support.Divisions.Repositories
@@ -11,11 +12,15 @@ namespace CribblyBackend.Test.Support.Divisions.Repositories
     public class FakeDivisionRepository : FakeRepository, IDivisionRepository
     {
         private readonly Dictionary<int, Division> _divisionsById;
+        public FakeDivisionRepository()
+        {
+            _divisionsById = new();
+        }
         public Task<Division> AddTeamAsync(int id, Team team)
         {
             if (!_divisionsById.ContainsKey(id))
             {
-                throw new Exception("Division not found");
+                throw new DivisionNotFoundException(id);
             }
             var div = _divisionsById[id];
             if (div.Teams == null)

@@ -57,7 +57,7 @@ namespace CribblyBackend.Test.Support.Games.Repositories
                 {
                     throw new Exception("No games found!");
                 }
-                return Task.FromResult((IEnumerable<Game>)games);
+                return Task.FromResult<IEnumerable<Game>>(games);
             }
             throw new Exception("No games found!");
         }

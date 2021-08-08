@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
+using CribblyBackend.Test.Support.Common;
 
 namespace CribblyBackend.Test.Support.Players.Repositories
 {
-    public class FakePlayerRepository : IPlayerRepository
+    public class FakePlayerRepository : FakeRepository, IPlayerRepository
     {
-        private int nextId;
         private readonly Dictionary<int, Player> _idToPlayer;
         private readonly Dictionary<string, Player> _authIdToPlayer;
         private readonly Dictionary<string, Player> _emailToPlayer;
@@ -32,8 +32,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             {
                 throw new Exception("duplicate email not allowed");
             }
-            Interlocked.Increment(ref nextId);
-            player.Id = nextId;
+            player.Id = IncrementId();
             _idToPlayer[player.Id] = player;
             _authIdToPlayer[player.AuthProviderId] = player;
             _emailToPlayer[player.Email] = player;

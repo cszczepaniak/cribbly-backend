@@ -4,25 +4,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
+using CribblyBackend.Test.Support.Common;
 
 namespace CribblyBackend.Test.Support.Games.Repositories
 {
-    public class FakeGameRepository : IGameRepository
+    public class FakeGameRepository : FakeRepository, IGameRepository
     {
-        private int nextId;
         private readonly Dictionary<int, Game> _gamesById;
         private readonly Dictionary<int, List<Game>> _gamesByTeamId;
         public FakeGameRepository()
         {
             _gamesById = new();
             _gamesByTeamId = new();
-            nextId = 0;
         }
         public Task CreateAsync(Game game)
         {
             Interlocked.Increment(ref nextId);
-            game.Id = nextId;
-            _gamesById[nextId] = game;
+            game.Id = IncrementId();
+            _gamesById[game.Id] = game;
             foreach (var t in game.Teams)
             {
                 if (!_gamesByTeamId.ContainsKey(t.Id))

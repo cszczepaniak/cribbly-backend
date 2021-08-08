@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Repositories;
 using CribblyBackend.DataAccess.Exceptions;
+using CribblyBackend.Test.Support.Common;
 
 namespace CribblyBackend.Test.Support.Teams.Repositories
 {
-    public class FakeTeamRepository : ITeamRepository
+    public class FakeTeamRepository : FakeRepository, ITeamRepository
     {
-        private int nextId;
         private readonly Dictionary<int, Team> _teamsById;
         private readonly HashSet<string> _teamNames;
 
@@ -19,11 +19,9 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
         {
             _teamNames = new();
             _teamsById = new();
-            nextId = 0;
         }
         public Task<int> CreateAsync(Team team)
         {
-
             if (team.Players == null)
             {
                 throw new Exception("Must set Players when creating a team");
@@ -36,8 +34,7 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
             {
                 throw new Exception("Duplicate team name");
             }
-            Interlocked.Increment(ref nextId);
-            team.Id = nextId;
+            team.Id = IncrementId();
             _teamsById[team.Id] = team;
             _teamNames.Add(team.Name);
             return Task.FromResult(team.Id);

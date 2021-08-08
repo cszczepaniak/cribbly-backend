@@ -29,14 +29,17 @@ namespace CribblyBackend.Core.Teams.Services
 
             foreach (var game in allGames)
             {
-                if (game.Winner != null && game.Winner.Name == team.Name)
+                if (game.Winner == null)
+                {
+                    // no one has won yet
+                    continue;
+                }
+                if (game.Winner.Id == team.Id)
                 {
                     team.TotalScore += 121;
+                    continue;
                 }
-                else if (game.Winner != null)
-                {
-                    team.TotalScore += (121 - game.ScoreDifference);
-                }
+                team.TotalScore += (121 - game.ScoreDifference);
             }
 
             return team;

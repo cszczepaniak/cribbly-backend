@@ -36,7 +36,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task GetById_ShouldReturnTeamAndOkStatus()
         {
-            var expTeam = CreateTestTeams(1).Single();
+            var expTeam = TestData.CreateTeams(1).Single();
             var id = await _fakeTeamRepository.CreateAsync(expTeam);
 
             var result = await _factory.CreateClient().GetAsync($"/api/team/{id}");
@@ -53,7 +53,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task GetAll_ShouldReturnTeamsAndOkStatus()
         {
-            var expTeams = CreateTestTeams(30);
+            var expTeams = TestData.CreateTeams(30);
             foreach (var t in expTeams)
             {
                 t.Id = await _fakeTeamRepository.CreateAsync(t);
@@ -73,7 +73,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task Create_ShouldReturnOkAndCreatedId_IfNoError()
         {
-            var expTeam = CreateTestTeams(1).Single();
+            var expTeam = TestData.CreateTeams(1).Single();
             var result = await _factory.CreateClient().PostAsJsonAsync("/api/team", expTeam);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.NotEqual("0", await result.Content.ReadAsStringAsync());
@@ -84,7 +84,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task Delete_ShouldReturnNoContent_IfNoError()
         {
-            var expTeam = CreateTestTeams(1).Single();
+            var expTeam = TestData.CreateTeams(1).Single();
             var id = await _fakeTeamRepository.CreateAsync(expTeam);
 
             var result = await _factory.CreateClient().DeleteAsync($"api/team/{id}");
@@ -97,20 +97,6 @@ namespace CribblyBackend.Api.Tests
         {
             var result = await _factory.CreateClient().DeleteAsync($"api/team/123");
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
-        }
-
-        private IEnumerable<Team> CreateTestTeams(int n)
-        {
-            return Enumerable.Range(0, n).Select(_ => new Team
-            {
-                Name = $"{TestData.NewString()}",
-                Players = Enumerable.Range(0, 2).Select(i => new Player
-                {
-                    Id = i + 1,
-                    Email = $"{TestData.NewString()}@test.com",
-                    Name = $"{TestData.NewString()}"
-                }).ToList(),
-            });
         }
     }
 }

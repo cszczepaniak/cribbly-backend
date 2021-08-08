@@ -20,7 +20,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             _connection = connection;
         }
 
-        public async Task<Game> GetById(int id)
+        public async Task<Game> GetByIdAsync(int id)
         {
             var teams = new Dictionary<int, Team>();
             var scores = new Dictionary<int, Score>(2);
@@ -68,7 +68,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             return game;
         }
 
-        public async Task<IEnumerable<Game>> GetByTeamId(int id)
+        public async Task<IEnumerable<Game>> GetByTeamIdAsync(int id)
         {
             return (await _connection.QueryAsync<Game, Team, Team, Game>(
                 GameQueries.GetByTeamId,
@@ -81,7 +81,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             )).ToList();
         }
 
-        public async Task Create(Game game)
+        public async Task CreateAsync(Game game)
         {
             using var scope = new TransactionScope();
 
@@ -97,7 +97,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
 
             scope.Complete();
         }
-        public async Task<Game> Update(Game game)
+        public async Task<Game> UpdateAsync(Game game)
         {
             await _connection.ExecuteAsync(
                 GameQueries.UpdateGame,
@@ -122,10 +122,10 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     new { Score = 121 - game.ScoreDifference, TeamId = game.Teams.FirstOrDefault(t => t.Id != game.Winner.Id).Id, GameId = game.Id }
                 );
             }
-            
-            return await GetById(game.Id);
+
+            return await GetByIdAsync(game.Id);
         }
-        public void Delete(Game game)
+        public void DeleteAsync(Game game)
         {
             throw new System.NotImplementedException();
         }

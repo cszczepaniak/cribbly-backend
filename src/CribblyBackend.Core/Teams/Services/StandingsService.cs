@@ -20,7 +20,7 @@ namespace CribblyBackend.Core.Teams.Services
         }
         public async Task<Team> Calculate(Team team)
         {
-            var allGames = await _gameRepository.GetByTeamId(team.Id);
+            var allGames = await _gameRepository.GetByTeamIdAsync(team.Id);
             team.PlayInGames = allGames.Where(g => g.GameRound <= Round.Round3).ToList();
             team.BracketGames = allGames.Where(g => g.GameRound >= Round.TourneyRound1).ToList();
 

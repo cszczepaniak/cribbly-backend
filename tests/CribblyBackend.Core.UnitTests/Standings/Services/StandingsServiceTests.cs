@@ -27,7 +27,7 @@ namespace CribblyBackend.Core.UnitTests.Standings.Services
         {
             Game game = new() { Teams = new() { team1, team2 } };
             var games = new List<Game>() { game };
-            mockGameRepository.Setup(x => x.GetByTeamId(team1.Id)).ReturnsAsync(games);
+            mockGameRepository.Setup(x => x.GetByTeamIdAsync(team1.Id)).ReturnsAsync(games);
             var result = await StandingsService.Calculate(team1);
             Assert.IsType<List<Game>>(result.BracketGames);
             Assert.IsType<List<Game>>(result.PlayInGames);
@@ -36,7 +36,7 @@ namespace CribblyBackend.Core.UnitTests.Standings.Services
         public async Task Calculate_ShouldReturnTeamWithOneLossIfTheyHaveLoss()
         {
             Game game = new() { Teams = new() { team1, team2 }, Winner = team2 };
-            mockGameRepository.Setup(x => x.GetByTeamId(team1.Id)).ReturnsAsync(new List<Game>() { game });
+            mockGameRepository.Setup(x => x.GetByTeamIdAsync(team1.Id)).ReturnsAsync(new List<Game>() { game });
             var result = await StandingsService.Calculate(team1);
             Assert.Equal(0, result.Wins);
             Assert.Equal(1, result.Losses);

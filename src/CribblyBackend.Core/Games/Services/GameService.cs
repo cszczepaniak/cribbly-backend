@@ -24,15 +24,15 @@ namespace CribblyBackend.Core.Games.Services
 
         public async Task<Game> GetById(int id)
         {
-            return await _gameRepository.GetById(id);
+            return await _gameRepository.GetByIdAsync(id);
         }
         public async Task Create(Game game)
         {
-            await _gameRepository.Create(game);
+            await _gameRepository.CreateAsync(game);
         }
         public async Task<Game> Update(Game game)
         {
-            return await _gameRepository.Update(game);
+            return await _gameRepository.UpdateAsync(game);
         }
         public void Delete(Game game)
         {
@@ -41,7 +41,7 @@ namespace CribblyBackend.Core.Games.Services
 
         public async Task<IEnumerable<Game>> GetByTeamAsync(int teamId)
         {
-            return await _gameRepository.GetByTeamId(teamId);
+            return await _gameRepository.GetByTeamIdAsync(teamId);
         }
     }
 }

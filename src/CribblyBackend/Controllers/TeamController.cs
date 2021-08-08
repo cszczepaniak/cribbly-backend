@@ -16,12 +16,10 @@ namespace CribblyBackend.Controllers
     public class TeamController : ControllerBase
     {
         private readonly ITeamService _teamService;
-        private readonly IGameService _gameService;
         private readonly ILogger _logger;
         public TeamController(ITeamService teamService, ILogger logger, IGameService gameService)
         {
             _teamService = teamService;
-            _gameService = gameService;
             _logger = logger;
         }
 
@@ -83,24 +81,6 @@ namespace CribblyBackend.Controllers
                 _logger.Information(e, "Failed to fetch all teams");
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-        }
-
-        /// <summary>
-        /// GetByTeamId fetches all games associated with a given TeamId.
-        /// </summary>
-        /// <param name="id">The id of the Team for which to get all games</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("{id}/games")]
-        public async Task<IActionResult> GetByTeamId(int id)
-        {
-            var games = await _gameService.GetByTeamAsync(id);
-            if (games.Any())
-            {
-                return Ok(games);
-            }
-            _logger.Information("Request for games from team {id} returned no results", id);
-            return NotFound();
         }
 
         /// <summary>

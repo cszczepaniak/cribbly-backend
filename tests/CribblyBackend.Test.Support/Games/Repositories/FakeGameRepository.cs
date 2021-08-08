@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
@@ -17,11 +16,14 @@ namespace CribblyBackend.Test.Support.Games.Repositories
             _gamesById = new();
             _gamesByTeamId = new();
         }
-        public Task CreateAsync(Game game)
+        public Task<Game> CreateAsync(Game game)
         {
-            Interlocked.Increment(ref nextId);
             game.Id = IncrementId();
             _gamesById[game.Id] = game;
+            if (game.Teams == null)
+            {
+                return Task.FromResult(game);
+            }
             foreach (var t in game.Teams)
             {
                 if (!_gamesByTeamId.ContainsKey(t.Id))
@@ -30,10 +32,10 @@ namespace CribblyBackend.Test.Support.Games.Repositories
                 }
                 _gamesByTeamId[t.Id].Add(game);
             }
-            return Task.CompletedTask;
+            return Task.FromResult(game);
         }
 
-        public void DeleteAsync(Game game)
+        public Task DeleteAsync(Game game)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +46,7 @@ namespace CribblyBackend.Test.Support.Games.Repositories
             {
                 return Task.FromResult(game);
             }
-            throw new Exception("Game not found");
+            return Task.FromResult<Game>(null);
         }
 
         public Task<IEnumerable<Game>> GetByTeamIdAsync(int teamId)
@@ -64,7 +66,7 @@ namespace CribblyBackend.Test.Support.Games.Repositories
         {
             if (!_gamesById.ContainsKey(game.Id))
             {
-                throw new Exception("Game not found!");
+                return Task.FromResult<Game>(null);
             }
             _gamesById[game.Id] = game;
             return Task.FromResult(game);

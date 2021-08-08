@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using System.Collections.Generic;
-using Serilog;
 namespace CribblyBackend.Core.Games.Services
 {
     public interface IGameService
@@ -10,8 +9,8 @@ namespace CribblyBackend.Core.Games.Services
         Task<Game> GetById(int Id);
         Task<Game> Update(Game Game);
         Task<IEnumerable<Game>> GetByTeamAsync(int teamId);
-        Task Create(Game Game);
-        void Delete(Game Game);
+        Task<Game> Create(Game Game);
+        Task Delete(Game Game);
     }
     public class GameService : IGameService
     {
@@ -26,15 +25,15 @@ namespace CribblyBackend.Core.Games.Services
         {
             return await _gameRepository.GetByIdAsync(id);
         }
-        public async Task Create(Game game)
+        public async Task<Game> Create(Game game)
         {
-            await _gameRepository.CreateAsync(game);
+            return await _gameRepository.CreateAsync(game);
         }
         public async Task<Game> Update(Game game)
         {
             return await _gameRepository.UpdateAsync(game);
         }
-        public void Delete(Game game)
+        public Task Delete(Game game)
         {
             throw new System.NotImplementedException();
         }

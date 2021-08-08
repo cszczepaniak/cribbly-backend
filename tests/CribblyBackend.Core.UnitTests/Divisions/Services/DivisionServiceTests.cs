@@ -22,7 +22,7 @@ namespace CribblyBackend.Core.UnitTests.Divisions.Services
         public async Task Create_ShouldReturnCreatedObject()
         {
             Division division = new Division() { Id = 1, Name = "Test" };
-            _mockDivisionRepository.Setup(x => x.Create(It.IsAny<Division>())).ReturnsAsync(division);
+            _mockDivisionRepository.Setup(x => x.CreateAsync(It.IsAny<Division>())).ReturnsAsync(division);
             var result = await _divisionService.Create(division);
             Assert.Equal(division, result);
         }

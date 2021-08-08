@@ -6,10 +6,10 @@ namespace CribblyBackend.Core.Divisions.Repositories
 {
     public interface IDivisionRepository
     {
-        Task<Division> GetById(int id);
-        void Update(Division diivision);
-        Task<Division> Create(Division division);
-        Task<Division> AddTeam(int id, Team team);
-        void Delete(Division division);
+        Task<Division> GetByIdAsync(int id);
+        Task UpdateAsync(Division diivision);
+        Task<Division> CreateAsync(Division division);
+        Task<Division> AddTeamAsync(int id, Team team);
+        Task DeleteAsync(Division division);
     }
 }

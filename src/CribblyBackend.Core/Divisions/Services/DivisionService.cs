@@ -24,15 +24,15 @@ namespace CribblyBackend.Core.Divisions.Services
 
         public async Task<Division> GetById(int id)
         {
-            return await _divisionRepository.GetById(id);
+            return await _divisionRepository.GetByIdAsync(id);
         }
         public async Task<Division> Create(Division division)
         {
-            return await _divisionRepository.Create(division);
+            return await _divisionRepository.CreateAsync(division);
         }
         public async Task<Division> AddTeam(int id, Team team)
         {
-            return await _divisionRepository.AddTeam(id, team);
+            return await _divisionRepository.AddTeamAsync(id, team);
         }
         public void Update(Division division)
         {

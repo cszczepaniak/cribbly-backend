@@ -63,7 +63,7 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
             {
                 return Task.FromResult(team);
             }
-            return Task.FromResult((Team)null);
+            return Task.FromResult<Team>(null);
         }
 
         public Task UpdateAsync(Team team)

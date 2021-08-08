@@ -26,11 +26,11 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
 
             if (team.Players == null)
             {
-                throw new System.Exception("Must set Players when creating a team");
+                throw new Exception("Must set Players when creating a team");
             }
             if (team.Players.Count < 2)
             {
-                throw new System.Exception("A Team must not have less than two players");
+                throw new Exception("A Team must not have less than two players");
             }
             if (_teamNames.Contains(team.Name))
             {
@@ -49,6 +49,7 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
             {
                 throw new TeamNotFoundException(id);
             };
+            _teamsById.Remove(id);
         }
 
         public Task<List<Team>> GetAllAsync()
@@ -62,7 +63,7 @@ namespace CribblyBackend.Test.Support.Teams.Repositories
             {
                 return Task.FromResult(team);
             }
-            return null;
+            return Task.FromResult((Team)null);
         }
 
         public Task UpdateAsync(Team team)

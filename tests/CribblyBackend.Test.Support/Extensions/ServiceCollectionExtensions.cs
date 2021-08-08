@@ -1,5 +1,7 @@
+using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.Core.Teams.Repositories;
+using CribblyBackend.Test.Support.Games.Repositories;
 using CribblyBackend.Test.Support.Players.Repositories;
 using CribblyBackend.Test.Support.Teams.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +15,8 @@ namespace CribblyBackend.Test.Support.Extensions
         {
             return services
                 .ReplaceService<IPlayerRepository, FakePlayerRepository>()
-                .ReplaceService<ITeamRepository, FakeTeamRepository>();
+                .ReplaceService<ITeamRepository, FakeTeamRepository>()
+                .ReplaceService<IGameRepository, FakeGameRepository>();
         }
 
         private static IServiceCollection ReplaceService<TInterface, TNewImpl>(this IServiceCollection services)

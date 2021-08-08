@@ -7,9 +7,9 @@ namespace CribblyBackend.Core.Tournaments.Repositories
 {
     public interface ITournamentRepository
     {
-        Task<Tournament> Create(DateTime date);
-        Task SetFlagValue(int tournamentId, string flagName, bool newVal);
-        Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName);
-        Task<Tournament> GetById(int id);
+        Task<Tournament> CreateAsync(DateTime date);
+        Task SetFlagValueAsync(int tournamentId, string flagName, bool newVal);
+        Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlagAsync(string flagName);
+        Task<Tournament> GetByIdAsync(int id);
     }
 }

@@ -41,7 +41,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
                 new Tournament() { Date = new DateTime(1995, 4, 14) },
             };
             mockTournamentRepository
-                .Setup(x => x.GetTournamentsWithActiveFlag(It.IsAny<string>()))
+                .Setup(x => x.GetTournamentsWithActiveFlagAsync(It.IsAny<string>()))
                 .ReturnsAsync(mockTournaments);
 
             await Assert.ThrowsAsync<Exception>(async () => await tournamentService.GetNextTournament());
@@ -58,7 +58,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
             {
                 Id = 3456,
             };
-            mockTournamentRepository.Setup(x => x.GetById(1234)).ReturnsAsync(tournament);
+            mockTournamentRepository.Setup(x => x.GetByIdAsync(1234)).ReturnsAsync(tournament);
             mockPlayerRepository.Setup(x => x.GetByIdAsync(3456)).ReturnsAsync(player);
             mockTournamentPlayerRepository.Setup(x => x.CreateAsync(1234, 3456));
 
@@ -74,7 +74,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
             {
                 Id = 3456,
             };
-            mockTournamentRepository.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync((Tournament)null);
+            mockTournamentRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Tournament)null);
             mockPlayerRepository.Setup(x => x.GetByIdAsync(3456)).ReturnsAsync(player);
 
             await Assert.ThrowsAsync<EntityNotFoundException<Tournament>>(() => tournamentService.RegisterPlayerAsync(1234, 3456));
@@ -89,7 +89,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
             {
                 Id = 1234,
             };
-            mockTournamentRepository.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync(tournament);
+            mockTournamentRepository.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(tournament);
             mockPlayerRepository.Setup(x => x.GetByIdAsync(3456)).ReturnsAsync((Player)null);
 
             await Assert.ThrowsAsync<EntityNotFoundException<Player>>(() => tournamentService.RegisterPlayerAsync(1234, 3456));
@@ -195,18 +195,18 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
         private void SetupMockTournamentRepositoryFlagCalls(List<Tournament> fetchResult)
         {
             mockTournamentRepository
-                .Setup(r => r.GetTournamentsWithActiveFlag(It.IsAny<string>()))
+                .Setup(r => r.GetTournamentsWithActiveFlagAsync(It.IsAny<string>()))
                 .ReturnsAsync(fetchResult);
             mockTournamentRepository
-                .Setup(r => r.SetFlagValue(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()));
+                .Setup(r => r.SetFlagValueAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()));
         }
 
         private void VerifyMockTournamentRepositoryFlagCallsMadeWith(int expTourneyId, string expFlagName, bool expVal)
         {
-            mockTournamentRepository.Verify(r => r.GetTournamentsWithActiveFlag(
+            mockTournamentRepository.Verify(r => r.GetTournamentsWithActiveFlagAsync(
                 It.Is<string>(s => s == expFlagName)
             ));
-            mockTournamentRepository.Verify(r => r.SetFlagValue(
+            mockTournamentRepository.Verify(r => r.SetFlagValueAsync(
                 It.Is<int>(n => n == expTourneyId),
                 It.Is<string>(s => s == expFlagName),
                 It.Is<bool>(b => b == expVal)

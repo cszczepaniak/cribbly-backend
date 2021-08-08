@@ -16,7 +16,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
         {
             _connection = connection;
         }
-        public async Task<Tournament> Create(DateTime date)
+        public async Task<Tournament> CreateAsync(DateTime date)
         {
             await _connection.ExecuteAsync(
                 TournamentQueries.Create,
@@ -25,7 +25,7 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
             return await _connection.QuerySingleAsync<Tournament>(TournamentQueries.GetLast);
         }
 
-        public async Task<Tournament> GetById(int id)
+        public async Task<Tournament> GetByIdAsync(int id)
         {
             var tournaments = await _connection.QueryAsync<Tournament>(
                 TournamentQueries.GetById,
@@ -34,14 +34,14 @@ namespace CribblyBackend.DataAccess.Tournaments.Repositories
             return tournaments.Single();
         }
 
-        public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlag(string flagName)
+        public async Task<IEnumerable<Tournament>> GetTournamentsWithActiveFlagAsync(string flagName)
         {
             return await _connection.QueryAsync<Tournament>(
                 TournamentQueries.GetAllWithActiveFlag(flagName)
             );
         }
 
-        public async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
+        public async Task SetFlagValueAsync(int tournamentId, string flagName, bool newVal)
         {
             await _connection.ExecuteAsync(
                 TournamentQueries.SetFlag(flagName),

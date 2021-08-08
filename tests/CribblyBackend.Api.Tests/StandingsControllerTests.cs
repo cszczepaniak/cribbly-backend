@@ -52,7 +52,7 @@ namespace CribblyBackend.Api.Tests
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             var actualTeam = await result.Content.ReadFromJsonAsync<Team>();
             Assert.Equal(2, actualTeam.PlayInGames.Count);
-            Assert.Equal(1, actualTeam.BracketGames.Count);
+            Assert.Single(actualTeam.BracketGames);
         }
     }
 }

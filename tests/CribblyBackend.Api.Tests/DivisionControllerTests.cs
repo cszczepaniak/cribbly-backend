@@ -63,7 +63,7 @@ namespace CribblyBackend.Api.Tests
             var result = await _factory.CreateClient().PatchAsJsonAsync($"/api/division/{division.Id}/team", team);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             var actualDivision = await result.Content.ReadFromJsonAsync<Division>();
-            Assert.Equal(1, actualDivision.Teams.Count);
+            Assert.Single(actualDivision.Teams);
         }
 
         [Fact]

@@ -9,15 +9,15 @@ namespace CribblyBackend.Test.Support
 {
     public static class TestData
     {
-        public static string NewString() => $"{Guid.NewGuid()}";
+        public static string String() => $"{Guid.NewGuid()}";
 
-        public static Player NewPlayer(string authProviderId = null, string email = null, string name = null)
+        public static Player Player(string authProviderId = null, string email = null, string name = null)
         {
             return new Player
             {
-                AuthProviderId = authProviderId ?? TestData.NewString(),
-                Email = email ?? TestData.NewString(),
-                Name = name ?? TestData.NewString(),
+                AuthProviderId = authProviderId ?? TestData.String(),
+                Email = email ?? TestData.String(),
+                Name = name ?? TestData.String(),
             };
         }
 
@@ -38,12 +38,12 @@ namespace CribblyBackend.Test.Support
         {
             return Enumerable.Range(0, n).Select(_ => new Team
             {
-                Name = $"{TestData.NewString()}",
+                Name = $"{TestData.String()}",
                 Players = Enumerable.Range(0, 2).Select(i => new Player
                 {
                     Id = i + 1,
-                    Email = $"{TestData.NewString()}@test.com",
-                    Name = $"{TestData.NewString()}"
+                    Email = $"{TestData.String()}@test.com",
+                    Name = $"{TestData.String()}"
                 }).ToList(),
             });
         }

@@ -29,7 +29,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task Create_ShouldReturnOk_IfNoError()
         {
-            var division = new Division { Name = TestData.NewString() };
+            var division = new Division { Name = TestData.String() };
 
             var result = await _factory.CreateClient().PostAsJsonAsync("/api/division", division);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
@@ -40,7 +40,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task GetById_ShouldReturnOk_IfNoError()
         {
-            var expDivision = await _fakeDivisionRepository.CreateAsync(new() { Name = TestData.NewString() });
+            var expDivision = await _fakeDivisionRepository.CreateAsync(new() { Name = TestData.String() });
             var result = await _factory.CreateClient().GetAsync($"/api/division/{expDivision.Id}");
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             var actual = await result.Content.ReadFromJsonAsync<Division>();
@@ -57,8 +57,8 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task AddTeam_ShouldReturnOk_IfNoError()
         {
-            var division = await _fakeDivisionRepository.CreateAsync(new() { Name = TestData.NewString() });
-            var team = new Team { Id = 1, Name = TestData.NewString() };
+            var division = await _fakeDivisionRepository.CreateAsync(new() { Name = TestData.String() });
+            var team = new Team { Id = 1, Name = TestData.String() };
 
             var result = await _factory.CreateClient().PatchAsJsonAsync($"/api/division/{division.Id}/team", team);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
@@ -69,7 +69,7 @@ namespace CribblyBackend.Api.Tests
         [Fact]
         public async Task AddTeam_ShouldReturn404_IfDivisionNotFound()
         {
-            var team = new Team { Id = 1, Name = TestData.NewString() };
+            var team = new Team { Id = 1, Name = TestData.String() };
             var result = await _factory.CreateClient().PatchAsJsonAsync($"/api/division/1234/team", team);
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }

@@ -49,7 +49,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
         [Fact]
         public async Task RegisterPlayer_CreatesAssociation()
         {
-            var player = await _fakePlayerRepository.CreateAsync(new() { AuthProviderId = TestData.NewString(), Email = TestData.NewString() });
+            var player = await _fakePlayerRepository.CreateAsync(TestData.Player());
             var tournament = await _fakeTournamentRepository.CreateAsync(DateTime.Now);
             await _tournamentService.RegisterPlayerAsync(tournament.Id, player.Id);
             Assert.True(_fakeTournamentPlayerRepository.HasAssociation(tournament.Id, player.Id));
@@ -58,7 +58,7 @@ namespace CribblyBackend.Core.UnitTests.Tournaments.Services
         [Fact]
         public async Task RegisterPlayer_Throws_WhenTournamentDoesNotExist()
         {
-            var player = await _fakePlayerRepository.CreateAsync(new() { AuthProviderId = TestData.NewString(), Email = TestData.NewString() });
+            var player = await _fakePlayerRepository.CreateAsync(TestData.Player());
             await Assert.ThrowsAsync<EntityNotFoundException<Tournament>>(() => _tournamentService.RegisterPlayerAsync(1234, player.Id));
         }
 

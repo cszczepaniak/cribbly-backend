@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
@@ -7,29 +9,66 @@ namespace CribblyBackend.Test.Support.Games.Repositories
 {
     public class FakeGameRepository : IGameRepository
     {
-        public Task CreateAsync(Game Game)
+        private int nextId;
+        private readonly Dictionary<int, Game> _gamesById;
+        private readonly Dictionary<int, List<Game>> _gamesByTeamId;
+        public FakeGameRepository()
         {
-            throw new System.NotImplementedException();
+            _gamesById = new();
+            _gamesByTeamId = new();
+            nextId = 0;
+        }
+        public Task CreateAsync(Game game)
+        {
+            Interlocked.Increment(ref nextId);
+            game.Id = nextId;
+            _gamesById[nextId] = game;
+            foreach (var t in game.Teams)
+            {
+                if (!_gamesByTeamId.ContainsKey(t.Id))
+                {
+                    _gamesByTeamId[t.Id] = new();
+                }
+                _gamesByTeamId[t.Id].Add(game);
+            }
+            return Task.CompletedTask;
         }
 
-        public void DeleteAsync(Game Game)
+        public void DeleteAsync(Game game)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public Task<Game> GetByIdAsync(int Id)
+        public Task<Game> GetByIdAsync(int id)
         {
-            throw new System.NotImplementedException();
+            if (_gamesById.TryGetValue(id, out var game))
+            {
+                return Task.FromResult(game);
+            }
+            throw new Exception("Game not found");
         }
 
         public Task<IEnumerable<Game>> GetByTeamIdAsync(int teamId)
         {
-            throw new System.NotImplementedException();
+            if (_gamesByTeamId.TryGetValue(teamId, out var games))
+            {
+                if (games.Count == 0)
+                {
+                    throw new Exception("No games found!");
+                }
+                return Task.FromResult((IEnumerable<Game>)games);
+            }
+            throw new Exception("No games found!");
         }
 
-        public Task<Game> UpdateAsync(Game Game)
+        public Task<Game> UpdateAsync(Game game)
         {
-            throw new System.NotImplementedException();
+            if (!_gamesById.ContainsKey(game.Id))
+            {
+                throw new Exception("Game not found!");
+            }
+            _gamesById[game.Id] = game;
+            return Task.FromResult(game);
         }
     }
 }

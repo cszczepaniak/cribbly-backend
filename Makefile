@@ -1,8 +1,6 @@
 .PHONY: test
 test:
-	dotnet test tests/CribblyBackend.UnitTests
-	dotnet test tests/CribblyBackend.Core.UnitTests
-	dotnet test tests/CribblyBackend.Api.Tests
+	dotnet test
 
 .PHONY: build
 build:

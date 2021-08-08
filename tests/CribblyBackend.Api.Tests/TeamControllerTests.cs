@@ -87,7 +87,7 @@ namespace CribblyBackend.Api.Tests
             var expTeam = CreateTestTeams(1).Single();
             var id = await _fakeTeamRepository.CreateAsync(expTeam);
 
-            var result = await _factory.CreateClient().DeleteAsync($"api/team/{id}/delete");
+            var result = await _factory.CreateClient().DeleteAsync($"api/team/{id}");
             Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
             Assert.Null(await _fakeTeamRepository.GetByIdAsync(id));
         }

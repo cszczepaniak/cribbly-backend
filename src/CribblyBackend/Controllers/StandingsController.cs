@@ -25,7 +25,6 @@ namespace CribblyBackend.Controllers
         /// <param name="team">The team for which to get standings</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Calculate")]
         public async Task<IActionResult> Calculate([FromBody] Team team)
         {
             try

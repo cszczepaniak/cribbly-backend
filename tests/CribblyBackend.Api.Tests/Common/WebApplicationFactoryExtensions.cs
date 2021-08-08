@@ -32,7 +32,7 @@ namespace CribblyBackend.Api.Tests.Common
 
         public static HttpClient CreateAuthenticatedClient<T>(this WebApplicationFactory<T> factory) where T : class
         {
-            return factory.CreateAuthenticatedClient(TestData.NewString(), TestData.NewString());
+            return factory.CreateAuthenticatedClient(TestData.String(), TestData.String());
         }
     }
 }

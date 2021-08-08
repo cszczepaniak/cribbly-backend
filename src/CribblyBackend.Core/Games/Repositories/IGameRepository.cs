@@ -6,10 +6,10 @@ namespace CribblyBackend.Core.Games.Repositories
 {
     public interface IGameRepository
     {
-        Task<Game> GetById(int Id);
-        Task<Game> Update(Game Game);
-        Task Create(Game Game);
-        void Delete(Game Game);
-        Task<IEnumerable<Game>> GetByTeamId(int teamId);
+        Task<Game> GetByIdAsync(int id);
+        Task<Game> UpdateAsync(Game game);
+        Task<Game> CreateAsync(Game game);
+        Task DeleteAsync(Game game);
+        Task<IEnumerable<Game>> GetByTeamIdAsync(int teamId);
     }
 }

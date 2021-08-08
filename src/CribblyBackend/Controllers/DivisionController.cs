@@ -33,11 +33,11 @@ namespace CribblyBackend.Controllers
             {
                 _logger.Information("Received request to get division {@id}", id);
                 var division = await _divisionService.GetById(id);
+                if (division == null)
+                {
+                    return NotFound();
+                }
                 return Ok(division);
-            }
-            catch (DivisionNotFoundException)
-            {
-                return NotFound();
             }
             catch (Exception e)
             {
@@ -57,14 +57,14 @@ namespace CribblyBackend.Controllers
             try
             {
                 _logger.Information("Received request to create Division: {@Division}", division);
-                await _divisionService.Create(division);
+                var created = await _divisionService.Create(division);
+                return Ok(created);
             }
             catch (Exception e)
             {
                 _logger.Information(e.Message, "Failed to create Division: {@Division}", division);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-            return Ok(division);
         }
 
         /// <summary>

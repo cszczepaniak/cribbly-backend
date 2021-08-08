@@ -10,7 +10,6 @@ namespace CribblyBackend.Core.Teams.Services
     public interface ITeamService
     {
         Task<Team> GetById(int Id);
-        Task<IEnumerable<Game>> GetGamesAsync(int teamId);
         Task<List<Team>> Get();
         void Update(Team Team);
         Task<int> Create(Team Team);
@@ -19,41 +18,32 @@ namespace CribblyBackend.Core.Teams.Services
     public class TeamService : ITeamService
     {
         private readonly ITeamRepository _teamRepository;
-        private readonly IStandingsService _standingsService;
-        private readonly IGameRepository _gameRepository;
 
-        public TeamService(ITeamRepository teamRepository, IStandingsService standingsService, IGameRepository gameRepository)
+        public TeamService(ITeamRepository teamRepository)
         {
             _teamRepository = teamRepository;
-            _standingsService = standingsService;
-            _gameRepository = gameRepository;
         }
         public async Task<List<Team>> Get()
         {
-            return await _teamRepository.Get();
+            return await _teamRepository.GetAllAsync();
         }
         public async Task<int> Create(Team team)
         {
-            return await _teamRepository.Create(team);
+            return await _teamRepository.CreateAsync(team);
         }
 
         public async Task Delete(int id)
         {
-            await _teamRepository.Delete(id);
+            await _teamRepository.DeleteAsync(id);
         }
 
         public async Task<Team> GetById(int id)
         {
-            return await _teamRepository.GetById(id);;
+            return await _teamRepository.GetByIdAsync(id);
         }
         public void Update(Team team)
         {
             throw new System.NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Game>> GetGamesAsync(int teamId)
-        {
-            return await _gameRepository.GetByTeamId(teamId);
         }
     }
 }

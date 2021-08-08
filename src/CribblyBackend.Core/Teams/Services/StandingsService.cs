@@ -20,7 +20,7 @@ namespace CribblyBackend.Core.Teams.Services
         }
         public async Task<Team> Calculate(Team team)
         {
-            var allGames = await _gameRepository.GetByTeamId(team.Id);
+            var allGames = await _gameRepository.GetByTeamIdAsync(team.Id);
             team.PlayInGames = allGames.Where(g => g.GameRound <= Round.Round3).ToList();
             team.BracketGames = allGames.Where(g => g.GameRound >= Round.TourneyRound1).ToList();
 
@@ -29,14 +29,17 @@ namespace CribblyBackend.Core.Teams.Services
 
             foreach (var game in allGames)
             {
-                if (game.Winner != null && game.Winner.Name == team.Name)
+                if (game.Winner == null)
+                {
+                    // no one has won yet
+                    continue;
+                }
+                if (game.Winner.Id == team.Id)
                 {
                     team.TotalScore += 121;
+                    continue;
                 }
-                else if (game.Winner != null)
-                {
-                    team.TotalScore += (121 - game.ScoreDifference);
-                }
+                team.TotalScore += (121 - game.ScoreDifference);
             }
 
             return team;

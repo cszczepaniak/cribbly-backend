@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CribblyBackend.Core.Games.Services;
 using CribblyBackend.Core.Teams.Models;
 using CribblyBackend.Core.Teams.Services;
 using CribblyBackend.DataAccess.Exceptions;
@@ -16,7 +17,7 @@ namespace CribblyBackend.Controllers
     {
         private readonly ITeamService _teamService;
         private readonly ILogger _logger;
-        public TeamController(ITeamService teamService, ILogger logger)
+        public TeamController(ITeamService teamService, ILogger logger, IGameService gameService)
         {
             _teamService = teamService;
             _logger = logger;
@@ -83,37 +84,19 @@ namespace CribblyBackend.Controllers
         }
 
         /// <summary>
-        /// GetByTeamId fetches all games associated with a given TeamId.
-        /// </summary>
-        /// <param name="id">The id of the Team for which to get all games</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("{id}/games")]
-        public async Task<IActionResult> GetByTeamId(int id)
-        {
-            var games = await _teamService.GetGamesAsync(id);
-            if (games.Any())
-            {
-                return Ok(games);
-            }
-            _logger.Information("Request for games from team {id} returned no results", id);
-            return NotFound();
-        }
-
-        /// <summary>
         /// Delete permanently removes the team with the specified id.
         /// </summary>
         /// <param name="id">The Team object that will be deleted from the database</param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("{id}/delete")]
+        [Route("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             _logger.Information("Received request to delete team {@id}", id);
 
             try
             {
-                await _teamService.Delete(id); 
+                await _teamService.Delete(id);
                 _logger.Warning("Team {@id} was deleted", id);
                 return NoContent();
             }

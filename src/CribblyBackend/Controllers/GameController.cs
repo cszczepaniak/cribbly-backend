@@ -12,12 +12,12 @@ namespace CribblyBackend.Controllers
     [Route("api/[controller]")]
     public class GameController : ControllerBase
     {
-        private readonly IGameService gameService;
-        private readonly ILogger logger;
+        private readonly IGameService _gameService;
+        private readonly ILogger _logger;
         public GameController(IGameService gameService, ILogger logger)
         {
-            this.gameService = gameService;
-            this.logger = logger;
+            _gameService = gameService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -28,12 +28,33 @@ namespace CribblyBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var p = await gameService.GetById(id);
+            var p = await _gameService.GetById(id);
             if (p != null)
             {
                 return Ok(p);
             }
-            logger.Information("Request for game {id} returned no results", id);
+            _logger.Information("Request for game {id} returned no results", id);
+            return NotFound();
+        }
+
+        /// <summary>
+        /// GetByTeamId fetches all games associated with a given TeamId.
+        /// </summary>
+        /// <param name="id">The id of the Team for which to get all games</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery(Name = "team")] int? teamId)
+        {
+            if (!teamId.HasValue)
+            {
+                return BadRequest("Must provide a team ID as a query parameter");
+            }
+            var games = await _gameService.GetByTeamAsync(teamId.Value);
+            if (games.Any())
+            {
+                return Ok(games);
+            }
+            _logger.Information("Request for games from team {id} returned no results", teamId);
             return NotFound();
         }
 
@@ -47,15 +68,15 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                logger.Information("Received request to create game: {@game}", game);
-                await gameService.Create(game);
+                _logger.Information("Received request to create game: {@game}", game);
+                game = await _gameService.Create(game);
+                return Ok(game);
             }
             catch (Exception e)
             {
-                logger.Information(e.Message, "Failed to create game: {@game}", game);
+                _logger.Information(e.Message, "Failed to create game: {@game}", game);
                 return StatusCode(500, $"Uh oh, bad time: {e.Message}");
             }
-            return Ok();
         }
 
         /// <summary>
@@ -68,8 +89,8 @@ namespace CribblyBackend.Controllers
         {
             try
             {
-                logger.Information("Received request to update game: {@game}", game);
-                Game updatedGame = await gameService.Update(game);
+                _logger.Information("Received request to update game: {@game}", game);
+                Game updatedGame = await _gameService.Update(game);
                 if (updatedGame != null)
                 {
                     return Ok(updatedGame);

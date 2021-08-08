@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
+using CribblyBackend.Test.Support.Common;
 
 namespace CribblyBackend.Test.Support.Players.Repositories
 {
-    public class FakePlayerRepository : IPlayerRepository
+    public class FakePlayerRepository : FakeRepository, IPlayerRepository
     {
-        private string someId = Guid.NewGuid().ToString();
-        private int nextId = 0;
-        private readonly object _nextIdLock;
         private readonly Dictionary<int, Player> _idToPlayer;
         private readonly Dictionary<string, Player> _authIdToPlayer;
         private readonly Dictionary<string, Player> _emailToPlayer;
@@ -21,7 +20,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             _authIdToPlayer = new();
             _emailToPlayer = new();
             _methodCalls = new();
-            _nextIdLock = new();
+            nextId = 0;
         }
         public Task<Player> CreateAsync(Player player)
         {
@@ -33,22 +32,11 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             {
                 throw new Exception("duplicate email not allowed");
             }
-
-            lock (_nextIdLock)
-            {
-                nextId++;
-            }
-            var p = new Player
-            {
-                Id = nextId,
-                AuthProviderId = player.AuthProviderId,
-                Name = player.Name,
-                Email = player.Email,
-            };
-            _idToPlayer[nextId] = p;
-            _authIdToPlayer[player.AuthProviderId] = p;
-            _emailToPlayer[player.Email] = p;
-            return Task.FromResult(p);
+            player.Id = IncrementId();
+            _idToPlayer[player.Id] = player;
+            _authIdToPlayer[player.AuthProviderId] = player;
+            _emailToPlayer[player.Email] = player;
+            return Task.FromResult(player);
         }
 
         public void Delete(Player player)

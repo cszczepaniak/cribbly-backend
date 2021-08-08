@@ -37,13 +37,13 @@ namespace CribblyBackend.Core.Tournaments.Services
 
         public async Task<Tournament> Create(DateTime date)
         {
-            return await _tournamentRepository.Create(date);
+            return await _tournamentRepository.CreateAsync(date);
         }
 
         public async Task<Tournament> GetNextTournament()
         {
             var tournaments =
-                await _tournamentRepository.GetTournamentsWithActiveFlag(nameof(Tournament.IsOpenForRegistration));
+                await _tournamentRepository.GetTournamentsWithActiveFlagAsync(nameof(Tournament.IsOpenForRegistration));
 
             var numTournaments = tournaments.Count();
 
@@ -72,13 +72,13 @@ namespace CribblyBackend.Core.Tournaments.Services
 
         private async Task SetFlagValue(int tournamentId, string flagName, bool newVal)
         {
-            var tournamentsWithFlagOn = await _tournamentRepository.GetTournamentsWithActiveFlag(flagName);
+            var tournamentsWithFlagOn = await _tournamentRepository.GetTournamentsWithActiveFlagAsync(flagName);
             var (canSetValue, errMessage) = CanSetFlag(newVal, flagName, tournamentsWithFlagOn.ToList());
             if (!canSetValue)
             {
                 throw new Exception($"{errMessage} [attempted to change {flagName} status of {tournamentId}]");
             }
-            await _tournamentRepository.SetFlagValue(tournamentId, flagName, newVal);
+            await _tournamentRepository.SetFlagValueAsync(tournamentId, flagName, newVal);
         }
 
         private static (bool, string) CanSetFlag(bool newVal, string flagName, List<Tournament> resultsWithFlagSet)
@@ -87,7 +87,7 @@ namespace CribblyBackend.Core.Tournaments.Services
             {
                 if (resultsWithFlagSet.Count != 0)
                 {
-                    // can't set flag is a tournament already has the flag active
+                    // can't set flag if a tournament already has the flag active
                     var idList = string.Join(", ", resultsWithFlagSet.Select(t => t.Id.ToString()));
                     return (false, $"Cannot set {flagName}; it is already set on tournament(s) {idList}");
                 }
@@ -118,7 +118,7 @@ namespace CribblyBackend.Core.Tournaments.Services
         public async Task RegisterPlayerAsync(int tournamentId, int playerId)
         {
             var playerTask = _playerRepository.GetByIdAsync(playerId);
-            var tournamentTask = _tournamentRepository.GetById(tournamentId);
+            var tournamentTask = _tournamentRepository.GetByIdAsync(tournamentId);
 
             await Task.WhenAll(tournamentTask, playerTask);
             if (await playerTask == null)

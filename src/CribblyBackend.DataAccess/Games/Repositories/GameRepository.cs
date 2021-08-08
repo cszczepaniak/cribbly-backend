@@ -8,6 +8,7 @@ using CribblyBackend.Core.Common.Exceptions;
 using CribblyBackend.Core.Games.Models;
 using CribblyBackend.Core.Games.Repositories;
 using CribblyBackend.Core.Teams.Models;
+using CribblyBackend.DataAccess.Extensions;
 using Dapper;
 
 namespace CribblyBackend.DataAccess.Games.Repositories
@@ -20,7 +21,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             _connection = connection;
         }
 
-        public async Task<Game> GetById(int id)
+        public async Task<Game> GetByIdAsync(int id)
         {
             var teams = new Dictionary<int, Team>();
             var scores = new Dictionary<int, Score>(2);
@@ -36,7 +37,11 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     return g;
                 },
                 new { Id = id }
-            )).First();
+            )).SingleOrDefault();
+            if (game == null)
+            {
+                return null;
+            }
             if (teams.Count != 2)
             {
                 throw new UnexpectedGameDataException(game.Id, $"Expected two teams, got {teams.Count}");
@@ -68,7 +73,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             return game;
         }
 
-        public async Task<IEnumerable<Game>> GetByTeamId(int id)
+        public async Task<IEnumerable<Game>> GetByTeamIdAsync(int id)
         {
             return (await _connection.QueryAsync<Game, Team, Team, Game>(
                 GameQueries.GetByTeamId,
@@ -81,7 +86,7 @@ namespace CribblyBackend.DataAccess.Games.Repositories
             )).ToList();
         }
 
-        public async Task Create(Game game)
+        public async Task<Game> CreateAsync(Game game)
         {
             using var scope = new TransactionScope();
 
@@ -90,15 +95,24 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                 new { GameRound = game.GameRound }
             );
 
+            var createdId = await _connection.QueryLastInsertedId();
+
             await _connection.ExecuteAsync(
                 GameQueries.InitializeScoresForTeam,
                 game.Teams.Select(t => new { TeamId = t.Id })
             );
 
             scope.Complete();
+            game.Id = createdId;
+            return game;
         }
-        public async Task<Game> Update(Game game)
+        public async Task<Game> UpdateAsync(Game game)
         {
+            if (await GetByIdAsync(game.Id) == null)
+            {
+                return null;
+            }
+
             await _connection.ExecuteAsync(
                 GameQueries.UpdateGame,
                 new
@@ -122,12 +136,12 @@ namespace CribblyBackend.DataAccess.Games.Repositories
                     new { Score = 121 - game.ScoreDifference, TeamId = game.Teams.FirstOrDefault(t => t.Id != game.Winner.Id).Id, GameId = game.Id }
                 );
             }
-            
-            return await GetById(game.Id);
+
+            return await GetByIdAsync(game.Id);
         }
-        public void Delete(Game game)
+        public Task DeleteAsync(Game game)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

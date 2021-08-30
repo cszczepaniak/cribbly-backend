@@ -9,8 +9,8 @@ namespace CribblyBackend.Core.Players.Repositories
         Task<Player> GetByAuthProviderIdAsync(string authProviderId);
         Task<Player> GetByEmailAsync(string email);
         Task<Player> GetByIdAsync(int id);
-        void Update(Player player);
+        Task UpdateAsync(Player player);
         Task<Player> CreateAsync(Player player);
-        void Delete(Player player);
+
     }
 }

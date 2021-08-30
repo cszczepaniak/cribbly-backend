@@ -1,5 +1,6 @@
+using System;
+using System.Text;
 using System.Threading.Tasks;
-using Amazon.S3;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.DataAccess.Common.S3;
@@ -15,28 +16,35 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         }
         public async Task<Player> CreateAsync(Player player)
         {
-            await _s3.PutObjectAsync(GenerateKey(player), player);
+            // we have to store players under auth id _and_ email so we can look them up by either
+            await Task.WhenAll(
+                _s3.PutObjectAsync(player.AuthProviderId, player),
+                _s3.PutObjectAsync(GenerateEmailKey(player.Email), player)
+            );
             return player;
         }
 
-        public void Delete(Player player)
+        public Task DeleteAsync(Player player)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> ExistsAsync(string email)
+        public async Task<bool> ExistsAsync(string email)
         {
-            throw new System.NotImplementedException();
+            var (_, exists) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(email));
+            return exists;
         }
 
-        public Task<Player> GetByAuthProviderIdAsync(string authProviderId)
+        public async Task<Player> GetByAuthProviderIdAsync(string authProviderId)
         {
-            throw new System.NotImplementedException();
+            var (p, _) = await _s3.GetObjectAsync<Player>(authProviderId);
+            return p;
         }
 
-        public Task<Player> GetByEmailAsync(string email)
+        public async Task<Player> GetByEmailAsync(string email)
         {
-            throw new System.NotImplementedException();
+            var (p, _) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(email));
+            return p;
         }
 
         public Task<Player> GetByIdAsync(int id)
@@ -44,14 +52,16 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             throw new System.NotImplementedException();
         }
 
-        public void Update(Player player)
+        public async Task UpdateAsync(Player player)
         {
-            throw new System.NotImplementedException();
+            await _s3.PutObjectAsync(player.AuthProviderId, player);
         }
-
-        private string GenerateKey(Player player)
+        private string GenerateEmailKey(string email)
         {
-            return player.AuthProviderId;
+            // generate a string from the hex representation of each character so we don't have to worry about
+            // @ or . being in the key
+            var bs = Encoding.Default.GetBytes(email);
+            return BitConverter.ToString(bs).Replace("-", "");
         }
     }
 }

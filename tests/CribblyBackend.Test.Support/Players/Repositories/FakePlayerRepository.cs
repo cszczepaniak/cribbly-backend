@@ -51,7 +51,7 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             return Task.FromResult(p);
         }
 
-        public void Delete(Player player)
+        public Task DeleteAsync(Player player)
         {
             throw new System.NotImplementedException();
         }
@@ -89,13 +89,14 @@ namespace CribblyBackend.Test.Support.Players.Repositories
             return Task.FromResult<Player>(null);
         }
 
-        public void Update(Player player)
+        public Task UpdateAsync(Player player)
         {
             if (!_idToPlayer.ContainsKey(player.Id))
             {
                 throw new Exception("player not found");
             }
             _idToPlayer[player.Id] = player;
+            return Task.CompletedTask;
         }
 
         private void IncrementMethodCall(string methodName)

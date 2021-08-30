@@ -64,7 +64,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             return players.SingleOrDefault();
         }
 
-        public void Update(Player player)
+        public Task UpdateAsync(Player player)
         {
             throw new System.NotImplementedException();
         }

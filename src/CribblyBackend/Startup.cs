@@ -30,7 +30,6 @@ namespace CribblyBackend
 
             services.AddSingleton(Log.Logger);
 
-            services.AddCribblyMySql();
             services.AddCoreServices();
             services.AddDataAccess();
         }
@@ -51,7 +50,7 @@ namespace CribblyBackend
             {
                 endpoints.MapControllers();
             });
-            if (!env.IsDevelopment())
+            if (Persister.IsMySQL())
             {
                 var runner = app.ApplicationServices.GetService<IMigrationRunner>();
                 runner.MigrateUp();

@@ -1,8 +1,8 @@
 using System;
 
-namespace CribblyBackend.Common
+namespace CribblyBackend.DataAccess.Common.Config
 {
-    public class Config
+    public static class Config
     {
         internal static string FirebaseAudience => Environment.GetEnvironmentVariable("FIREBASE_PROJ_ID");
         internal static DbConfig MySqlConfig => new DbConfig(
@@ -29,7 +29,7 @@ namespace CribblyBackend.Common
             _password = password;
             _dbName = dbName;
         }
+
         internal string Connection => $"server={_host};port={_port};database={_dbName};uid={_user};pwd={_password};";
     }
-
 }

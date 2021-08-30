@@ -14,7 +14,7 @@ namespace CribblyBackend.Common
     {
         public static AuthenticationBuilder AddFirebaseAuthentication(this IServiceCollection services)
         {
-            var audience = Config.FirebaseAudience;
+            var audience = CribblyConfig.FirebaseAudience;
             return services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -30,16 +30,6 @@ namespace CribblyBackend.Common
                         };
                     }
                 );
-        }
-
-        public static IServiceCollection AddCribblyMySql(this IServiceCollection services)
-        {
-            return services.AddFluentMigratorCore()
-                .ConfigureRunner(c => c
-                    .AddMySql5()
-                    .WithGlobalConnectionString(Config.MySqlConfig.Connection)
-                    .ScanIn(Assembly.GetAssembly(typeof(GameQueries))).For.All())
-                .AddTransient<IDbConnection>(db => new MySqlConnection(Config.MySqlConfig.Connection));
         }
     }
 }

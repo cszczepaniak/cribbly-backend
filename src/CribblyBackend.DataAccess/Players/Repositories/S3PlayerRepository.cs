@@ -10,6 +10,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
     public class S3PlayerRepository : IPlayerRepository
     {
         private readonly IS3Wrapper _s3;
+        private const string BaseKey = "players";
         public S3PlayerRepository(IS3Wrapper s3)
         {
             _s3 = s3;
@@ -18,7 +19,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
         {
             // we have to store players under auth id _and_ email so we can look them up by either
             await Task.WhenAll(
-                _s3.PutObjectAsync(player.AuthProviderId, player),
+                _s3.PutObjectAsync(GenerateAuthProviderIdKey(player.AuthProviderId), player),
                 _s3.PutObjectAsync(GenerateEmailKey(player.Email), player)
             );
             return player;
@@ -37,7 +38,7 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task<Player> GetByAuthProviderIdAsync(string authProviderId)
         {
-            var (p, _) = await _s3.GetObjectAsync<Player>(authProviderId);
+            var (p, _) = await _s3.GetObjectAsync<Player>(GenerateAuthProviderIdKey(authProviderId));
             return p;
         }
 
@@ -54,14 +55,19 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task UpdateAsync(Player player)
         {
-            await _s3.PutObjectAsync(player.AuthProviderId, player);
+            await _s3.PutObjectAsync(GenerateAuthProviderIdKey(player.AuthProviderId), player);
         }
+        private string GenerateAuthProviderIdKey(string authProviderId)
+        {
+            return $"{BaseKey}/authid/{authProviderId}";
+        }
+
         private string GenerateEmailKey(string email)
         {
             // generate a string from the hex representation of each character so we don't have to worry about
             // @ or . being in the key
             var bs = Encoding.Default.GetBytes(email);
-            return BitConverter.ToString(bs).Replace("-", "");
+            return $"{BaseKey}/email/{BitConverter.ToString(bs).Replace("-", "")}";
         }
     }
 }

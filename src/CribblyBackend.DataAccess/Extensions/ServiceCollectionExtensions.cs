@@ -30,6 +30,7 @@ namespace CribblyBackend.DataAccess
         }
         private static IServiceCollection AddSelectedPersister(this IServiceCollection services, string persister)
         {
+            services.AddS3Support().AddMysqlSupport();
             switch (persister)
             {
                 case Persisters.MySQL:
@@ -46,12 +47,7 @@ namespace CribblyBackend.DataAccess
             }
         }
 
-        private static IServiceCollection AddMemoryPersistence(this IServiceCollection services)
-        {
-            throw new NotImplementedException("In-memory persistence is not implemented");
-        }
-
-        private static IServiceCollection AddS3Persistence(this IServiceCollection services)
+        private static IServiceCollection AddS3Support(this IServiceCollection services)
         {
             var bucket = Environment.GetEnvironmentVariable("CRIBBLY_BUCKET");
             if (string.IsNullOrEmpty(bucket))
@@ -61,14 +57,30 @@ namespace CribblyBackend.DataAccess
             return services.AddSingleton<IS3Wrapper>(_ => new S3Wrapper(bucket));
         }
 
-        private static IServiceCollection AddMysqlPersistence(this IServiceCollection services)
+        private static IServiceCollection AddMemoryPersistence(this IServiceCollection services)
         {
-            return services.AddFluentMigratorCore()
+            throw new NotImplementedException("In-memory persistence is not implemented");
+        }
+
+        private static IServiceCollection AddS3Persistence(this IServiceCollection services)
+        {
+            throw new NotImplementedException("S3 persistence is not implemented");
+        }
+
+        private static IServiceCollection AddMysqlSupport(this IServiceCollection services)
+        {
+            return services
+                .AddFluentMigratorCore()
                 .ConfigureRunner(c => c
                     .AddMySql5()
                     .WithGlobalConnectionString(Config.MySqlConfig.Connection)
                     .ScanIn(Assembly.GetAssembly(typeof(GameQueries))).For.All())
-                .AddTransient<IDbConnection>(db => new MySqlConnection(Config.MySqlConfig.Connection))
+                .AddTransient<IDbConnection>(db => new MySqlConnection(Config.MySqlConfig.Connection));
+        }
+
+        private static IServiceCollection AddMysqlPersistence(this IServiceCollection services)
+        {
+            return services
                 .AddTransient<IPlayerRepository, PlayerRepository>()
                 .AddTransient<ITeamRepository, TeamRepository>()
                 .AddTransient<IGameRepository, GameRepository>()

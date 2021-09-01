@@ -50,6 +50,15 @@ namespace CribblyBackend.Controllers
             return Ok(player);
         }
 
+        [HttpPost("test")]
+        public async Task<IActionResult> CreateForTest([FromQuery] string name, [FromQuery] string email, [FromQuery] string authProviderId)
+        {
+            var player = await playerService.GetOrCreateAsync(
+                new() { AuthProviderId = authProviderId, Email = email, Name = name }
+            );
+            return Ok(player);
+        }
+
         /// <summary>
         /// GetById returns a player given an ID.
         /// </summary>

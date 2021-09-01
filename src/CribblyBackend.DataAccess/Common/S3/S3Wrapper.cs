@@ -19,7 +19,7 @@ namespace CribblyBackend.DataAccess.Common.S3
         public S3Wrapper(string bucket)
         {
             _bucket = bucket;
-            _s3 = new AmazonS3Client();
+            _s3 = new AmazonS3Client(Amazon.RegionEndpoint.USEast2);
         }
 
         private readonly IAmazonS3 _s3;
@@ -32,7 +32,7 @@ namespace CribblyBackend.DataAccess.Common.S3
                 var obj = await JsonSerializer.DeserializeAsync<T>(content.ResponseStream);
                 return (obj, true);
             }
-            catch (AmazonS3Exception e) when (e.Message == "The specified key does not exist")
+            catch (AmazonS3Exception e) when (e.Message == "The specified key does not exist.")
             {
                 return (default(T), false);
             }

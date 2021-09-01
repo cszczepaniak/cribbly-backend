@@ -7,6 +7,8 @@ services:
     depends_on:
       - db
     environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       CRIBBLY_PERSISTER: mysql
       CRIBBLY_BUCKET: cribbly-data-local
       DB_USER: cribuser

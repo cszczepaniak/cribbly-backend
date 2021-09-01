@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CribblyBackend.Core.Players.Models;
 using CribblyBackend.Core.Players.Repositories;
 using CribblyBackend.DataAccess.Common.S3;
+using CribblyBackend.DataAccess.Players.Models;
 
 namespace CribblyBackend.DataAccess.Players.Repositories
 {
@@ -32,20 +33,20 @@ namespace CribblyBackend.DataAccess.Players.Repositories
 
         public async Task<bool> ExistsAsync(string authProviderId)
         {
-            var (_, exists) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(authProviderId));
+            var (_, exists) = await _s3.GetObjectAsync<S3Player>(GenerateEmailKey(authProviderId));
             return exists;
         }
 
         public async Task<Player> GetByAuthProviderIdAsync(string authProviderId)
         {
-            var (p, _) = await _s3.GetObjectAsync<Player>(GenerateAuthProviderIdKey(authProviderId));
-            return p;
+            var (p, _) = await _s3.GetObjectAsync<S3Player>(GenerateAuthProviderIdKey(authProviderId));
+            return p.ToPlayer();
         }
 
         public async Task<Player> GetByEmailAsync(string email)
         {
-            var (p, _) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(email));
-            return p;
+            var (p, _) = await _s3.GetObjectAsync<S3Player>(GenerateEmailKey(email));
+            return p.ToPlayer();
         }
 
         public Task<Player> GetByIdAsync(int id)

@@ -5,7 +5,7 @@ namespace CribblyBackend.Core.Players.Repositories
 {
     public interface IPlayerRepository
     {
-        Task<bool> ExistsAsync(string email);
+        Task<bool> ExistsAsync(string authProviderId);
         Task<Player> GetByAuthProviderIdAsync(string authProviderId);
         Task<Player> GetByEmailAsync(string email);
         Task<Player> GetByIdAsync(int id);

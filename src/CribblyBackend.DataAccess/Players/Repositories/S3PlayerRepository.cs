@@ -29,9 +29,9 @@ namespace CribblyBackend.DataAccess.Players.Repositories
             throw new System.NotImplementedException();
         }
 
-        public async Task<bool> ExistsAsync(string email)
+        public async Task<bool> ExistsAsync(string authProviderId)
         {
-            var (_, exists) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(email));
+            var (_, exists) = await _s3.GetObjectAsync<Player>(GenerateEmailKey(authProviderId));
             return exists;
         }
 
